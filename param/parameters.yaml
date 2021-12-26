@@ -1,0 +1,10 @@
+#  population size of chromosome 
+population_size : 20
+#  penalty for fitness function
+penalty_fitness : 50
+  # the range for local mutation, unit is [meter]
+local_search_range_radius : 0.2
+  # use to switch mutation mode 
+h_s : 5
+  #  use to terminate revolution process
+h_t : 10

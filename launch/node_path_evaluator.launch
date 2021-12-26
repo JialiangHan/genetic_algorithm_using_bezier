@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- ### add parameters ### -->
+	<!-- <arg name="server_name" default="$(env HOME)"/> -->
+	<!-- <arg name="deploy_dir" default="$(arg server_name)/Code/thesis_ws/src/path_planner"/> -->
+	<arg name="deploy_dir" default="/home/jialiang/Code/thesis_ws/src/genetic_algorithm_using_beizer"/>
+	<node name="node_path_evaluator" pkg="genetic_algorithm_using_beizer" type="node_path_evaluator" output="screen" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 --alsologtostderr" ></node>
+
+
+</launch>
