@@ -1,17 +1,17 @@
 <launch>
  <!-- Turn on hybrid_astar node -->
-	<arg name="deploy_dir" default="/home/jialiang/Code/thesis_ws/src/genetic_algorithm_using_beizer"/>
+	<arg name="deploy_dir" default="/home/jialiang/Code/thesis_ws/src/genetic_algorithm_using_bezier"/>
 
-	<node name="genetic_algorithm_using_beizer" pkg="genetic_algorithm_using_beizer" type="genetic_algorithm_using_beizer" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 --alsologtostderr" launch-prefix="xterm -e gdb -ex run --args ">
-		<rosparam command="load" file="$(find genetic_algorithm_using_beizer)/param/parameters.yaml" /> 
+	<node name="genetic_algorithm_using_bezier" pkg="genetic_algorithm_using_bezier" type="genetic_algorithm_using_bezier" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 --alsologtostderr true" launch-prefix="xterm -e gdb -ex run --args ">
+		<rosparam command="load" file="$(find genetic_algorithm_using_bezier)/param/parameters.yaml" /> 
 	</node>
 	
-	<node name="tf_broadcaster" pkg="genetic_algorithm_using_beizer" type="tf_broadcaster" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 --alsologtostderr"/>
+	<node name="tf_broadcaster" pkg="genetic_algorithm_using_bezier" type="tf_broadcaster" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 --alsologtostderr true"/>
 
-	<node name="map_server" pkg="map_server" type="map_server" args="$(find genetic_algorithm_using_beizer)/maps/map.yaml" />
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find genetic_algorithm_using_bezier)/maps/map.yaml" />
 
-	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find genetic_algorithm_using_beizer)/rviz/config.rviz" />
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find genetic_algorithm_using_bezier)/rviz/config.rviz" />
 
-	<!-- <include file="$(find genetic_algorithm_using_beizer)/launch/node_path_evaluator.launch" /> -->
+	<include file="$(find genetic_algorithm_using_bezier)/launch/node_path_evaluator.launch" />
 
 </launch>

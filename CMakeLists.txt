@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(genetic_algorithm_using_beizer)
+project(genetic_algorithm_using_bezier)
 
 
 find_package(catkin REQUIRED)
@@ -24,7 +24,9 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     tf
     steering_functions
+    roslaunch
     )
+roslaunch_add_file_check(launch)
 find_package(PythonLibs REQUIRED)
 FIND_PACKAGE(Glog REQUIRED)
 FIND_PACKAGE(Gflags)
@@ -38,29 +40,30 @@ endif()
 find_package(Eigen3 REQUIRED)
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
-set(SOURCES
-    # ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/parameter_manager.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/path_evaluator.cpp
-               ${CMAKE_CURRENT_SOURCE_DIR}/src/path.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/planner.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/utility.cpp
- 
-
-
-    )
 set(HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/bezier.h
-           ${CMAKE_CURRENT_SOURCE_DIR}/include/collision_detection.h
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/collision_detection.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/cubic_bezier.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/genetic_algorithm.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/matplotlibcpp.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/parameter_manager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/path_evaluator.h
-           ${CMAKE_CURRENT_SOURCE_DIR}/include/path.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/path_publisher.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/piecewise_cubic_bezier.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/planner.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/utility.h
-       )
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/utility.h
+    )
+set(SOURCES
+    # ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/collision_detection.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cubic_bezier.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/parameter_manager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/path_evaluator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/path_publisher.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/planner.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/utility.cpp
+    )
+
 add_library(GAB ${SOURCES} ${HEADERS} )
 ## Declare a catkin package
 catkin_package()
@@ -82,27 +85,27 @@ include_directories(
     ) 
 
 
-add_executable(tf_broadcaster_ga src/tf_broadcaster.cpp   )
-target_link_libraries(tf_broadcaster_ga ${catkin_LIBRARIES} glog::glog)
+add_executable(tf_broadcaster src/tf_broadcaster.cpp   )
+target_link_libraries(tf_broadcaster ${catkin_LIBRARIES} glog::glog)
 # guard against in-source builds
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
 endif()
 
-add_executable(genetic_algorithm_bezier src/main.cpp ${HEADERS} ${SOURCES})
-target_link_libraries(genetic_algorithm_bezier
+add_executable(genetic_algorithm_using_bezier src/main.cpp ${HEADERS} ${SOURCES})
+target_link_libraries(genetic_algorithm_using_bezier
                         ${PYTHON_LIBRARIES}                    
                         ${catkin_LIBRARIES} 
                     ${OMPL_LIBRARIES} 
                     glog::glog 
                         ${GFLAGS_LIBRARY} 
                     ) 
-add_executable(path_evaluator 
+add_executable(node_path_evaluator 
             src/node_path_evaluator.cpp 
             ${SOURCES}
             ${HEADERS}
             )
-target_link_libraries(path_evaluator 
+target_link_libraries(node_path_evaluator 
                         ${PYTHON_LIBRARIES}
                         ${catkin_LIBRARIES} 
                         ${OMPL_LIBRARIES}

@@ -17,6 +17,7 @@ namespace GeneticAlgorithm
 {
     class CollisionDetection
     {
+    public:
         CollisionDetection(){};
         CollisionDetection(const ParameterCollisionDetection &param)
         {

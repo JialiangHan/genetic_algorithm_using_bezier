@@ -13,11 +13,12 @@
 #include <eigen3/Eigen/Dense>
 #include <cmath>
 #include <nav_msgs/Path.h>
-
+#include <cubic_bezier.h>
 #include <Eigen/Dense>
 
 namespace Utility
 {
+    std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d(CubicBezier::CubicBezier &cubic_bezier);
 
     void ConvertRosPathToVectorVector3D(const nav_msgs::Path::ConstPtr &path, std::vector<Eigen::Vector3d> &vector_3d_vec);
 
@@ -34,6 +35,11 @@ namespace Utility
 
     float RadNormalization(const float &rad);
 
+    Eigen::Vector2d ConvertVector3dToVector2d(const Eigen::Vector3d &vector_3d);
+
+    Eigen::Vector3d ConvertVector2dToVector3d(const Eigen::Vector2d &vector_2d);
+
+    float ConvertRadToDeg(const float &rad);
 }
 
 #endif // UTILITY

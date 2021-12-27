@@ -20,11 +20,11 @@ int main(int argc, char **argv)
    google::ParseCommandLineFlags(&argc, &argv, true);
 
    google::InstallFailureSignalHandler();
+   google::EnableLogCleaner(3);
+   ros::init(argc, argv, "genetic_algorithm_using_bezier");
 
-   ros::init(argc, argv, "genetic_algorithm_using_beizer");
-
-   // GeneticAlgorithm::Planner planner;
-   // planner.MakePlan();
+   GeneticAlgorithm::Planner planner;
+   planner.MakePlan();
 
    ros::spin();
    return 0;

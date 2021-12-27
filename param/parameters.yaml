@@ -8,3 +8,10 @@ local_search_range_radius : 0.2
 h_s : 5
   #  use to terminate revolution process
 h_t : 10
+
+control_point_1_x : 10
+
+control_point_1_y : 5
+control_point_2_x : 40
+
+control_point_2_y : 5

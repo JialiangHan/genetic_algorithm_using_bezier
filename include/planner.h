@@ -20,6 +20,10 @@
 #include "genetic_algorithm.h"
 #include "glog/logging.h"
 #include "gflags/gflags.h"
+#include "utility.h"
+#include "path_publisher.h"
+#include "cubic_bezier.h"
+#include "parameter_manager.h"
 namespace GeneticAlgorithm
 {
    /*!
@@ -35,7 +39,7 @@ namespace GeneticAlgorithm
      \brief Sets the map e.g. through a callback from a subscriber listening to map updates.
      \param map the map or occupancy grid
   */
-      void SetMap(const nav_msgs::OccupancyGrid::ConstPtr &map);
+      void SetMap(const nav_msgs::OccupancyGrid::Ptr &map);
 
       /*!
      \brief SetStart
@@ -89,5 +93,9 @@ namespace GeneticAlgorithm
       std::shared_ptr<GeneticAlgorithm> algorithm_ptr_;
 
       std::shared_ptr<CollisionDetection> collision_detection_ptr_;
+
+      std::shared_ptr<PathPublisher> path_publisher_ptr_;
+
+      CubicBezier::CubicBezier cubic_bezier_;
    };
 }

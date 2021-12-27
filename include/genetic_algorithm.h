@@ -32,13 +32,13 @@ namespace GeneticAlgorithm
    */
    class GeneticAlgorithm
    {
+
+   public:
       GeneticAlgorithm(){};
       GeneticAlgorithm(const ParameterGeneticAlgorithm &param)
       {
          params_ = param;
       };
-
-   public:
       Population GenerateInitialPopulation();
 
       /**
