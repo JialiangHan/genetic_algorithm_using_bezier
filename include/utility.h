@@ -10,15 +10,15 @@
  */
 #ifndef UTILITY
 #define UTILITY
-#include <eigen3/Eigen/Dense>
+
 #include <cmath>
 #include <nav_msgs/Path.h>
-#include <cubic_bezier.h>
+#include "glog/logging.h"
+#include "gflags/gflags.h"
 #include <Eigen/Dense>
 
 namespace Utility
 {
-    std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d(CubicBezier::CubicBezier &cubic_bezier);
 
     void ConvertRosPathToVectorVector3D(const nav_msgs::Path::ConstPtr &path, std::vector<Eigen::Vector3d> &vector_3d_vec);
 

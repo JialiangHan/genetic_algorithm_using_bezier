@@ -15,6 +15,7 @@
 #include <eigen3/Eigen/Dense>
 #include "glog/logging.h"
 #include "gflags/gflags.h"
+#include "utility.h"
 namespace CubicBezier
 {
     class CubicBezier
@@ -25,8 +26,25 @@ namespace CubicBezier
         {
             start_point_ = start;
             goal_point_ = goal;
-            CalculateControlPoints(width, height);
+            map_width_ = width;
+            map_height_ = height;
+            CalculateControlPoints();
         };
+        CubicBezier(const std::vector<Eigen::Vector2d> &points_vec)
+        {
+            if (points_vec.size() != 4)
+            {
+                DLOG(WARNING) << "points_vec size is not correct!!!";
+            }
+            else
+            {
+                start_point_ = Utility::ConvertVector2dToVector3d(points_vec[0]);
+                control_points_vec_.clear();
+                control_points_vec_.emplace_back(points_vec[1]);
+                control_points_vec_.emplace_back(points_vec[2]);
+                goal_point_ = Utility::ConvertVector2dToVector3d(points_vec[3]);
+            }
+        }
 
         void SetControlPoints(const std::vector<Eigen::Vector2d> &control_points) { control_points_vec_ = control_points; };
 
@@ -38,10 +56,19 @@ namespace CubicBezier
 
         std::vector<Eigen::Vector2d> GetControlPointsAndAnchorPoints();
 
+        float GetLength() { return length_; };
+
+        std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d();
+
     private:
+        /**
+         * @brief split curve into 100, sum all euler distance.
+         * 
+         */
+        void CalculateLength();
         void CalculateCoefficient(const float &t);
 
-        void CalculateControlPoints(const int &width, const int &height);
+        void CalculateControlPoints();
 
         void CalculateFirstOrderDerivativeCoefficient(const float &t);
 
@@ -67,5 +94,15 @@ namespace CubicBezier
         std::vector<float> first_order_derivative_coefficient_;
 
         std::vector<float> second_order_derivative_coefficient_;
+
+        float length_ = 0;
+
+        float map_width_;
+        float map_height_;
+        /**
+         * @brief determine how to calculate control points, random or use the way in paper
+         * 
+         */
+        bool use_random_ = false;
     };
 }

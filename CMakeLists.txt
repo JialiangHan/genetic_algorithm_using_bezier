@@ -80,6 +80,7 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/parameter_manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/path_evaluator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/path_publisher.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/src/piecewise_cubic_bezier.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/planner.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/utility.cpp
     )

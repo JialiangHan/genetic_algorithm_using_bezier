@@ -12,6 +12,6 @@
 
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find genetic_algorithm_using_bezier)/rviz/config.rviz" />
 
-	<!-- <include file="$(find genetic_algorithm_using_bezier)/launch/node_path_evaluator.launch" /> -->
+	<include file="$(find genetic_algorithm_using_bezier)/launch/node_path_evaluator.launch" />
 
 </launch>

@@ -15,6 +15,31 @@
 #include <math.h>
 namespace CubicBezier
 {
+    std::vector<Eigen::Vector3d> CubicBezier::ConvertCubicBezierToVector3d()
+    {
+        std::vector<Eigen::Vector3d> out;
+        int i = 0;
+        for (i = 0; i < 100; ++i)
+        {
+            Eigen::Vector3d point3d;
+            Eigen::Vector2d point;
+            // DLOG(INFO) << " i/100 = " << i / 100.0;
+            point = GetValueAt(i / 100.0);
+            point3d = Utility::ConvertVector2dToVector3d(point);
+            point3d.z() = GetAngleAt(i / 100.0);
+            out.emplace_back(point3d);
+        }
+        return out;
+    }
+
+    void CubicBezier::CalculateLength()
+    {
+        for (uint i = 0; i < 100; ++i)
+        {
+            length_ += (GetValueAt((i + 1) / 100.0) - GetValueAt(i / 100.0)).norm();
+        }
+    }
+
     void CubicBezier::CalculateCoefficient(const float &t)
     {
         coefficient_.clear();
@@ -69,7 +94,7 @@ namespace CubicBezier
         return out;
     }
 
-    void CubicBezier::CalculateControlPoints(const int &width, const int &height)
+    void CubicBezier::CalculateControlPoints()
     {
         control_points_vec_.clear();
         float start_angle = start_point_.z();
@@ -77,38 +102,54 @@ namespace CubicBezier
         Eigen::Vector2d first_control_point;
         Eigen::Vector2d second_control_point;
         Eigen::Vector2d direction;
+        Eigen::Vector2d start_2d = Utility::ConvertVector3dToVector2d(start_point_);
+        Eigen::Vector2d goal_2d = Utility::ConvertVector3dToVector2d(goal_point_);
         direction.x() = std::cos(start_angle);
         direction.y() = std::sin(start_angle);
-        std::vector<Eigen::Vector2d> polygon;
-        polygon = Utility::CreatePolygon(width, height);
-        DLOG(INFO) << " map width is " << width << " height is " << height;
-        //t is some random number;
-        int t = rand() % ((int)std::sqrt(width * width + height * height));
-        first_control_point = Utility::ConvertVector3dToVector2d(start_point_) + direction * t;
-        LOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
-        int flag = Utility::IsInsidePolygon(polygon, first_control_point);
-        while (flag < 1)
+        if (use_random_)
         {
-            t = rand() % ((int)std::sqrt(width * width + height * height));
-            first_control_point = Utility::ConvertVector3dToVector2d(start_point_) + direction * t;
+
+            std::vector<Eigen::Vector2d> polygon;
+            polygon = Utility::CreatePolygon(map_width_, map_height_);
+            DLOG(INFO) << " map width is " << map_width_ << " height is " << map_height_;
+            //t is some random number;
+            int t = rand() % ((int)std::sqrt(map_width_ * map_width_ + map_height_ * map_height_));
+            first_control_point = start_2d + direction * t;
             DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
-            flag = Utility::IsInsidePolygon(polygon, first_control_point);
-            DLOG(INFO) << " is this point inside map? " << flag;
-        }
-        direction.x() = std::cos(goal_angle);
-        direction.y() = std::sin(goal_angle);
-        //t is another random number;
-        t = rand() % ((int)std::sqrt(width * width + height * height));
-        second_control_point = Utility::ConvertVector3dToVector2d(goal_point_) - direction * t;
-        DLOG(INFO) << "second control point is " << second_control_point.x() << " " << second_control_point.y();
-        flag = Utility::IsInsidePolygon(polygon, second_control_point);
-        while (flag < 1)
-        {
-            t = rand() % ((int)std::sqrt(width * width + height * height));
-            second_control_point = Utility::ConvertVector3dToVector2d(goal_point_) - direction * t;
+            int flag = Utility::IsInsidePolygon(polygon, first_control_point);
+            while (flag < 1)
+            {
+                t = rand() % ((int)std::sqrt(map_width_ * map_width_ + map_height_ * map_height_));
+                first_control_point = start_2d + direction * t;
+                DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
+                flag = Utility::IsInsidePolygon(polygon, first_control_point);
+                DLOG(INFO) << " is this point inside map? " << flag;
+            }
+            direction.x() = std::cos(goal_angle);
+            direction.y() = std::sin(goal_angle);
+            //t is another random number;
+            t = rand() % ((int)std::sqrt(map_width_ * map_width_ + map_height_ * map_height_));
+            second_control_point = goal_2d - direction * t;
             DLOG(INFO) << "second control point is " << second_control_point.x() << " " << second_control_point.y();
             flag = Utility::IsInsidePolygon(polygon, second_control_point);
-            DLOG(INFO) << " is this point inside map? " << flag;
+            while (flag < 1)
+            {
+                t = rand() % ((int)std::sqrt(map_width_ * map_width_ + map_height_ * map_height_));
+                second_control_point = goal_2d - direction * t;
+                DLOG(INFO) << "second control point is " << second_control_point.x() << " " << second_control_point.y();
+                flag = Utility::IsInsidePolygon(polygon, second_control_point);
+                DLOG(INFO) << " is this point inside map? " << flag;
+            }
+        }
+        else
+        { //use the way in paper
+            direction.x() = std::cos(start_angle);
+            direction.y() = std::sin(start_angle);
+            float t = (goal_2d - start_2d).norm() / 3;
+            first_control_point = start_2d + direction * t;
+            direction.x() = std::cos(goal_angle);
+            direction.y() = std::sin(goal_angle);
+            second_control_point = goal_2d - direction * t;
         }
         control_points_vec_.emplace_back(first_control_point);
         control_points_vec_.emplace_back(second_control_point);
@@ -118,6 +159,10 @@ namespace CubicBezier
     {
         std::vector<Eigen::Vector2d> out;
         out.emplace_back(Utility::ConvertVector3dToVector2d(start_point_));
+        if (control_points_vec_.size() == 0)
+        {
+            CalculateControlPoints();
+        }
         for (auto point : control_points_vec_)
         {
             out.emplace_back(point);

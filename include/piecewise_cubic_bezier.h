@@ -11,7 +11,9 @@
 #pragma once
 #include <vector>
 #include <eigen3/Eigen/Dense>
-
+#include "cubic_bezier.h"
+#include "utility.h"
+#include <cmath>
 namespace GeneticAlgorithm
 {
   class PiecewiseCubicBezier
@@ -27,9 +29,14 @@ namespace GeneticAlgorithm
      * 
      * @param control_points 
      */
-    PiecewiseCubicBezier(const std::vector<Eigen::Vector2d> &control_points)
+    PiecewiseCubicBezier(const Eigen::Vector3d &start, const Eigen::Vector3d &goal, int width, int height)
     {
-      control_points_vec_ = control_points;
+      start_point_ = start;
+      goal_point_ = goal;
+      map_width_ = width;
+      map_height_ = height;
+      CalculateControlPoints();
+      CalculateCubicBezier();
     };
 
     /**
@@ -38,21 +45,57 @@ namespace GeneticAlgorithm
      * @param u 
      * @return Eigen::Vector2d 
      */
-    Eigen::Vector2d ValueAt(const float &u);
+    Eigen::Vector2d GetValueAt(const float &u);
+
+    float GetAngleAt(const float &u);
+
+    void SetAnchorPoints(const std::vector<Eigen::Vector2d> &anchor_points_vec)
+    {
+      anchor_points_vec_ = anchor_points_vec;
+      CalculateControlPoints();
+      CalculateCubicBezier();
+    }
+
     /**
- * @brief Get the Length of bezier curve
- * 
- * @return float 
- */
+     * @brief Get the Length of bezier curve
+     * 
+     * @return float 
+     */
     float GetLength() { return length_; };
 
+    std::vector<Eigen::Vector3d> ConvertPiecewiseCubicBezierToVector3d();
+
   private:
-    //list of control point, include start and goal points;
-    std::vector<Eigen::Vector2d> control_points_vec_;
+    void CalculateLength();
+    /**
+     * @brief calculate control points according to anchor points, put all points into points_vec_
+     * 
+     */
+    void CalculateControlPoints();
+    /**
+     * @brief calculate cubic bezier object using points_vec_
+     * 
+     */
+    void CalculateCubicBezier();
+
+  private:
+    // int number_of_cubic_bezier_;
+    std::vector<CubicBezier::CubicBezier> cubic_bezier_vec_;
+    // points list contains both free,fixed anchor points and control points
+    std::vector<Eigen::Vector2d> points_vec_;
+
+    // list free anchor points(P), anchor points are the points which bezier curve pass through
+    std::vector<Eigen::Vector2d> anchor_points_vec_;
+
+    Eigen::Vector3d start_point_;
+    Eigen::Vector3d goal_point_;
     /**
      * @brief curve length
      * 
      */
-    float length_;
+    float length_ = 0;
+
+    float map_width_;
+    float map_height_;
   };
 }
