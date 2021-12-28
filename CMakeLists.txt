@@ -1,23 +1,9 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.14)
 project(genetic_algorithm_using_bezier)
 
+set(CMAKE_CXX_STANDARD 11)
 
-find_package(catkin REQUIRED)
-
-## C++11
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
-elseif(COMPILER_SUPPORTS_CXX0X)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-else()
-    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-endif()
-
-set(CMAKE_BUILD_TYPE "Debug")
-
+# find_package(catkin REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     rospy
@@ -30,6 +16,7 @@ roslaunch_add_file_check(launch)
 find_package(PythonLibs REQUIRED)
 FIND_PACKAGE(Glog REQUIRED)
 FIND_PACKAGE(Gflags)
+find_package(GTest REQUIRED)
 find_package(Python COMPONENTS Interpreter Development NumPy)
 if (${Python_FOUND})
   include_directories(${Python_INCLUDE_DIRS})
@@ -38,10 +25,43 @@ else()
   message(FATAL_ERROR "Python3 not found, please install it.")
 endif()
 find_package(Eigen3 REQUIRED)
+## OPEN MOTION PLANNING LIBRARY
+find_package(ompl REQUIRED)
 
-include_directories(${EIGEN3_INCLUDE_DIRS})
+if(NOT OMPL_FOUND)
+    message(AUTHOR_WARNING,"Open Motion Planning Library not found")
+endif(NOT OMPL_FOUND)
+
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+## C++11
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+elseif(COMPILER_SUPPORTS_CXX0X)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+else()
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
+set(CMAKE_BUILD_TYPE "Debug")
+
+enable_testing()
+include_directories(
+    include 
+    ${catkin_INCLUDE_DIRS} 
+    ${OMPL_INCLUDE_DIRS}
+    ${GLOG_INCLUDE_DIRS}
+    ${GFLAGS_INCLUDE_DIRS}
+    ${GTEST_INCLUDE_DIRS}
+    ${EIGEN3_INCLUDE_DIRS}
+    test
+    ) 
+
+
 set(HEADERS
-
     ${CMAKE_CURRENT_SOURCE_DIR}/include/collision_detection.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/cubic_bezier.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/genetic_algorithm.h
@@ -64,26 +84,9 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/utility.cpp
     )
 
-add_library(GAB ${SOURCES} ${HEADERS} )
+# add_library(GAB ${SOURCES} ${HEADERS} )
 ## Declare a catkin package
 catkin_package()
-
-## OPEN MOTION PLANNING LIBRARY
-find_package(ompl REQUIRED)
-
-if(NOT OMPL_FOUND)
-    message(AUTHOR_WARNING,"Open Motion Planning Library not found")
-endif(NOT OMPL_FOUND)
-
-
-include_directories(
-    include 
-    ${catkin_INCLUDE_DIRS} 
-    ${OMPL_INCLUDE_DIRS}
-    ${GLOG_INCLUDE_DIRS}
-    ${GFLAGS_INCLUDE_DIRS}
-    ) 
-
 
 add_executable(tf_broadcaster src/tf_broadcaster.cpp   )
 target_link_libraries(tf_broadcaster ${catkin_LIBRARIES} glog::glog)
@@ -94,7 +97,7 @@ endif()
 
 add_executable(genetic_algorithm_using_bezier src/main.cpp ${HEADERS} ${SOURCES})
 target_link_libraries(genetic_algorithm_using_bezier
-                        ${PYTHON_LIBRARIES}                    
+                        ${PYTHON_LIBRARIES}       
                         ${catkin_LIBRARIES} 
                     ${OMPL_LIBRARIES} 
                     glog::glog 
@@ -112,6 +115,7 @@ target_link_libraries(node_path_evaluator
                         glog::glog 
                         ${GFLAGS_LIBRARY} 
 )
+
 add_executable(node_test 
             test/test.cpp 
             ${SOURCES}
@@ -123,5 +127,13 @@ target_link_libraries(node_test
                         ${OMPL_LIBRARIES}
                         glog::glog 
                         ${GFLAGS_LIBRARY} 
-)
+                       ${GTEST_BOTH_LIBRARIES}
+                       pthread)
+gtest_add_tests(node_test
+                .noArgs
+                 AUTO)
+add_test(node_test node_test)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
+                  DEPENDS node_test)
+
 

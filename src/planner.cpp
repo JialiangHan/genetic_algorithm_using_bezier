@@ -171,8 +171,8 @@ void Planner::MakePlan()
 
         // ___________________________
         // LISTS ALLOCATED ROW MAJOR ORDER
-        // int width = grid_->info.width;
-        // int height = grid_->info.height;
+        int width = grid_->info.width;
+        int height = grid_->info.height;
         // int depth = params_.headings;
         // int length = width * height * depth;
 
@@ -204,19 +204,19 @@ void Planner::MakePlan()
         // ___________________________
         // START AND TIME THE PLANNING
         ros::Time t0 = ros::Time::now();
-        cubic_bezier_ = CubicBezier::CubicBezier(start, goal);
+        cubic_bezier_ = CubicBezier::CubicBezier(start, goal, width, height);
         std::vector<Eigen::Vector2d> control_points;
         Eigen::Vector2d control_point;
-        control_point.x() = params_.control_point_1_x;
-        control_point.y() = params_.control_point_1_y;
-        control_points.emplace_back(control_point);
-        control_point.x() = params_.control_point_2_x;
-        control_point.y() = params_.control_point_2_y;
-        control_points.emplace_back(control_point);
+        // control_point.x() = params_.control_point_1_x;
+        // control_point.y() = params_.control_point_1_y;
+        // control_points.emplace_back(control_point);
+        // control_point.x() = params_.control_point_2_x;
+        // control_point.y() = params_.control_point_2_y;
+        // control_points.emplace_back(control_point);
         cubic_bezier_.SetControlPoints(control_points);
         std::vector<Eigen::Vector3d> path;
         path = Utility::ConvertCubicBezierToVector3d(cubic_bezier_);
-        DLOG(INFO) << "path length is : " << path.size() << " first point is: " << path.front().x() << " " << path.front().y() << " last point is : " << path.back().x() << " " << path.back().y();
+        // DLOG(INFO) << "path length is : " << path.size() << " first point is: " << path.front().x() << " " << path.front().y() << " last point is : " << path.back().x() << " " << path.back().y();
         // CLEAR THE VISUALIZATION
         // visualization_ptr_->clear();
         // CLEAR THE PATH

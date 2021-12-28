@@ -21,11 +21,11 @@ namespace CubicBezier
     {
     public:
         CubicBezier(){};
-        CubicBezier(const Eigen::Vector3d &start, const Eigen::Vector3d &goal)
+        CubicBezier(const Eigen::Vector3d &start, const Eigen::Vector3d &goal, int width, int height)
         {
             start_point_ = start;
             goal_point_ = goal;
-            // CalculateControlPoints();
+            CalculateControlPoints(width, height);
         };
 
         void SetControlPoints(const std::vector<Eigen::Vector2d> &control_points) { control_points_vec_ = control_points; };
@@ -34,12 +34,18 @@ namespace CubicBezier
 
         float GetAngleAt(const float &t);
 
+        std::vector<Eigen::Vector2d> GetControlPoints() { return control_points_vec_; };
+
+        std::vector<Eigen::Vector2d> GetControlPointsAndAnchorPoints();
+
     private:
         void CalculateCoefficient(const float &t);
 
-        void CalculateControlPoints();
+        void CalculateControlPoints(int width, int height);
 
         void CalculateFirstOrderDerivativeCoefficient(const float &t);
+
+        void CalculateSecondOrderDerivativeCoefficient(const float &t);
 
         Eigen::Vector2d GetFirstOrderDerivativeValueAt(const float &t);
 
@@ -59,5 +65,7 @@ namespace CubicBezier
         std::vector<float> coefficient_;
 
         std::vector<float> first_order_derivative_coefficient_;
+
+        std::vector<float> second_order_derivative_coefficient_;
     };
 }

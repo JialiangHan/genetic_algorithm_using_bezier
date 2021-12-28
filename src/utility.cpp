@@ -94,4 +94,55 @@ namespace Utility
         }
         return out;
     }
+    bool OnSegment(Eigen::Vector2d p1, Eigen::Vector2d p2, Eigen::Vector2d p3)
+    {
+        if (p2.x() <= std::max(p1.x(), p3.x()) && p2.x() >= std::min(p1.x(), p3.x()) && p2.y() <= std::max(p1.y(), p3.y()) && p2.y() >= std::min(p1.y(), p3.y()))
+        {
+            Eigen::Vector2d p1p2 = p2 - p1;
+            Eigen::Vector2d p1p3 = p3 - p1;
+            if (p1p2.dot(p1p3) / p1p2.norm() / p1p3.norm() == 1)
+            {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    float CrossProduct(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2)
+    {
+        return p1.x() * p2.y() - p2.x() * p1.y();
+    }
+
+    int IsIntersect(Eigen::Vector2d p1, Eigen::Vector2d p2, Eigen::Vector2d p3, Eigen::Vector2d p4)
+    {
+        if (std::max(p3.x(), p4.x()) < std::min(p1.x(), p2.x()) ||
+            std::max(p3.y(), p4.y()) < std::min(p1.y(), p2.y()) ||
+            std::max(p1.x(), p2.x()) < std::min(p3.x(), p4.x()) ||
+            std::max(p1.y(), p2.y()) < std::min(p3.y(), p4.y()))
+        {
+            return 0;
+        }
+        else
+        {
+            if (CrossProduct(p1 - p3, p4 - p3) * CrossProduct(p2 - p3, p4 - p3) <= 0 &&
+                CrossProduct(p3 - p2, p1 - p2) * CrossProduct(p4 - p2, p1 - p2) <= 0)
+            {
+                return 1;
+            }
+            return 0;
+        }
+    }
+    int IsInsidePolygon(const std::vector<Eigen::Vector2d> &polygon, const Eigen::Vector2d &point)
+    {
+        // Eigen::Vector2d p1, p2;
+        // int out;
+        // for (uint i = 0; i < polygon.size() - 1; ++i)
+        // {
+        //     p1 = polygon[i] - point;
+        //     p2 = polygon[i + 1] - point;
+        //     // p1.cross(p2);
+        // }
+        return 1;
+    }
 }

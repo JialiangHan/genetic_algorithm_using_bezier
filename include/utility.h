@@ -1,7 +1,7 @@
 /**
  * @file utility.h
  * @author Jialiang Han (hanjiali@umich.edu)
- * @brief include some type conversion function
+ * @brief include some type conversion function and some computational geometry
  * @version 0.1
  * @date 2021-12-26
  * 
@@ -40,6 +40,35 @@ namespace Utility
     Eigen::Vector3d ConvertVector2dToVector3d(const Eigen::Vector2d &vector_2d);
 
     float ConvertRadToDeg(const float &rad);
+    /**
+     * @brief check if p2 lines on p1-p2 
+     * 
+     * @param p1 
+     * @param p2 
+     * @param p3 
+     * @return true 
+     * @return false 
+     */
+    bool OnSegment(Eigen::Vector2d p1, Eigen::Vector2d p2, Eigen::Vector2d p3);
+    /**
+     * @brief determine if two segment(p1-p2, p3-p4) are intersected? 
+     * 
+     * @param p1 
+     * @param p2 
+     * @param p3 
+     * @param p4 
+     * @return int 
+     */
+    int IsIntersect(Eigen::Vector2d p1, Eigen::Vector2d p2, Eigen::Vector2d p3, Eigen::Vector2d p4);
+    /**
+     * @brief this is only work for vector2d, for 3d please cross in eigen
+     * 
+     * @param p1 
+     * @param p2 
+     * @return float 
+     */
+    float CrossProduct(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2);
+    int IsInsidePolygon(const std::vector<Eigen::Vector2d> &polygon, const Eigen::Vector2d &point);
 }
 
 #endif // UTILITY
