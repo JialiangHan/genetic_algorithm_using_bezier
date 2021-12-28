@@ -41,7 +41,7 @@ namespace CubicBezier
     private:
         void CalculateCoefficient(const float &t);
 
-        void CalculateControlPoints(int width, int height);
+        void CalculateControlPoints(const int &width, const int &height);
 
         void CalculateFirstOrderDerivativeCoefficient(const float &t);
 

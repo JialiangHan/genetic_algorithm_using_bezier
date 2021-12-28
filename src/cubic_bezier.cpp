@@ -69,7 +69,7 @@ namespace CubicBezier
         return out;
     }
 
-    void CubicBezier::CalculateControlPoints(int width, int height)
+    void CubicBezier::CalculateControlPoints(const int &width, const int &height)
     {
         control_points_vec_.clear();
         float start_angle = start_point_.z();
@@ -80,11 +80,7 @@ namespace CubicBezier
         direction.x() = std::cos(start_angle);
         direction.y() = std::sin(start_angle);
         std::vector<Eigen::Vector2d> polygon;
-        polygon.emplace_back(Eigen::Vector2d(0, 0));
-        polygon.emplace_back(Eigen::Vector2d(width, 0));
-        polygon.emplace_back(Eigen::Vector2d(width, height));
-        polygon.emplace_back(Eigen::Vector2d(0, height));
-        polygon.emplace_back(Eigen::Vector2d(0, 0));
+        polygon = Utility::CreatePolygon(width, height);
         DLOG(INFO) << " map width is " << width << " height is " << height;
         //t is some random number;
         int t = rand() % ((int)std::sqrt(width * width + height * height));

@@ -41,7 +41,7 @@ namespace Utility
 
     float ConvertRadToDeg(const float &rad);
     /**
-     * @brief check if p2 lines on p1-p2 
+     * @brief check if p3 lines on p1-p2
      * 
      * @param p1 
      * @param p2 
@@ -49,7 +49,16 @@ namespace Utility
      * @return true 
      * @return false 
      */
-    bool OnSegment(Eigen::Vector2d p1, Eigen::Vector2d p2, Eigen::Vector2d p3);
+    bool OnSegment(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2, const Eigen::Vector2d &p3);
+    /**
+     * @brief determine p3 is above or below segment p1-p2
+     * 
+     * @param p1 
+     * @param p2 
+     * @param p3 
+     * @return int 1 above and on segment, 0 below, 
+     */
+    int IsAboveSegment(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2, const Eigen::Vector2d &p3);
     /**
      * @brief determine if two segment(p1-p2, p3-p4) are intersected? 
      * 
@@ -59,7 +68,17 @@ namespace Utility
      * @param p4 
      * @return int 
      */
-    int IsIntersect(Eigen::Vector2d p1, Eigen::Vector2d p2, Eigen::Vector2d p3, Eigen::Vector2d p4);
+    int IsIntersect(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2, const Eigen::Vector2d &p3, const Eigen::Vector2d &p4);
+    /**
+     * @brief find intersection point between segment p1-p2 and segment p3-p4
+     * 
+     * @param p1 
+     * @param p2 
+     * @param p3 
+     * @param p4 
+     * @return Eigen::Vector2d 
+     */
+    Eigen::Vector2d FindIntersectionPoint(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2, const Eigen::Vector2d &p3, const Eigen::Vector2d &p4);
     /**
      * @brief this is only work for vector2d, for 3d please cross in eigen
      * 
@@ -68,7 +87,22 @@ namespace Utility
      * @return float 
      */
     float CrossProduct(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2);
+    /**
+     * @brief determine if a point is inside a polygon
+     * 
+     * @param polygon p0->p1->p2->p3->p0
+     * @param point 
+     * @return int 1 inside, 0 outside
+     */
     int IsInsidePolygon(const std::vector<Eigen::Vector2d> &polygon, const Eigen::Vector2d &point);
+    /**
+     * @brief Create a Polygon object, current is only for rectangle
+     * 
+     * @param width 
+     * @param height 
+     * @return std::vector<Eigen::Vector2d> 
+     */
+    std::vector<Eigen::Vector2d> CreatePolygon(const float &width, const float &height);
 }
 
 #endif // UTILITY
