@@ -221,11 +221,23 @@ void Planner::MakePlan()
         // std::vector<Eigen::Vector3d> path;
         // path = cubic_bezier_.ConvertCubicBezierToVector3d();
         piecewise_cubic_bezier_ = PiecewiseCubicBezier(start, goal, width, height);
-        std::vector<Eigen::Vector2d> control_points;
-        Eigen::Vector2d control_point;
-        control_point = Utility::ConvertVector3dToVector2d((start + goal) / 2);
-        control_points.emplace_back(control_point);
-        piecewise_cubic_bezier_.SetAnchorPoints(control_points);
+        std::vector<Eigen::Vector3d> anchor_points;
+        uint number_of_anchor_points = 3;
+        for (uint i = 0; i < number_of_anchor_points; ++i)
+        {
+            Eigen::Vector3d anchor_point;
+            if (anchor_points.size() == 0)
+            {
+                anchor_point = ((start + goal) / 2);
+            }
+            else
+            {
+                anchor_point = (anchor_points.back() + goal) / 2;
+            }
+            anchor_points.emplace_back(anchor_point);
+        }
+
+        piecewise_cubic_bezier_.SetAnchorPoints(anchor_points);
         std::vector<Eigen::Vector3d> path;
         path = piecewise_cubic_bezier_.ConvertPiecewiseCubicBezierToVector3d();
         // DLOG(INFO) << "path length is : " << path.size() << " first point is: " << path.front().x() << " " << path.front().y() << " last point is : " << path.back().x() << " " << path.back().y();

@@ -44,7 +44,7 @@ namespace PathEvaluator
          */
 
         void CallbackSetMap(const nav_msgs::OccupancyGridConstPtr &map);
-        void ConvertRosPathToVectorEigenVector3d(const nav_msgs::Path::ConstPtr &path, std::vector<Eigen::Vector3d> &node_3d_vec);
+
         /**
          * @brief calculate curvature for the path 
          * 

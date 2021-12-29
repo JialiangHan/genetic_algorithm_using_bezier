@@ -202,7 +202,7 @@ namespace PathEvaluator
         std::vector<Eigen::Vector3d> vector_3d_vec;
         Utility::ConvertRosPathToVectorVector3D(path, vector_3d_vec);
         //reverse path since path is from goal to start.
-        std::reverse(vector_3d_vec.begin(), vector_3d_vec.end());
+        // std::reverse(vector_3d_vec.begin(), vector_3d_vec.end());
         CalculateCurvature(vector_3d_vec, topic_name);
         CalculateSmoothness(vector_3d_vec, topic_name);
         CalculateClearance(vector_3d_vec, topic_name);

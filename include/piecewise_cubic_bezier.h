@@ -35,8 +35,9 @@ namespace GeneticAlgorithm
       goal_point_ = goal;
       map_width_ = width;
       map_height_ = height;
-      CalculateControlPoints();
-      CalculateCubicBezier();
+      // CalculateControlPoints();
+      // CalculatePointsVec();
+      // CalculateCubicBezier();
     };
 
     /**
@@ -49,10 +50,12 @@ namespace GeneticAlgorithm
 
     float GetAngleAt(const float &u);
 
-    void SetAnchorPoints(const std::vector<Eigen::Vector2d> &anchor_points_vec)
+    void SetAnchorPoints(const std::vector<Eigen::Vector3d> &anchor_points_vec)
     {
-      anchor_points_vec_ = anchor_points_vec;
+      anchor_points3d_vec_ = anchor_points_vec;
+      ConvertAnchorPoint3dTo2d();
       CalculateControlPoints();
+      CalculatePointsVec();
       CalculateCubicBezier();
     }
 
@@ -72,11 +75,15 @@ namespace GeneticAlgorithm
      * 
      */
     void CalculateControlPoints();
+
+    void CalculatePointsVec();
     /**
      * @brief calculate cubic bezier object using points_vec_
      * 
      */
     void CalculateCubicBezier();
+
+    void ConvertAnchorPoint3dTo2d();
 
   private:
     // int number_of_cubic_bezier_;
@@ -84,8 +91,14 @@ namespace GeneticAlgorithm
     // points list contains both free,fixed anchor points and control points
     std::vector<Eigen::Vector2d> points_vec_;
 
+    std::vector<Eigen::Vector2d> control_points_vec_;
+
     // list free anchor points(P), anchor points are the points which bezier curve pass through
-    std::vector<Eigen::Vector2d> anchor_points_vec_;
+    std::vector<Eigen::Vector3d> anchor_points3d_vec_;
+
+    std::vector<Eigen::Vector2d> anchor_points2d_vec_;
+
+    std::vector<Eigen::Vector2d> anchor_points_dir_vec_;
 
     Eigen::Vector3d start_point_;
     Eigen::Vector3d goal_point_;
