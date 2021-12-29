@@ -12,11 +12,14 @@ void PathPublisher::Clear()
   path_.poses.clear();
   path_nodes_.markers.clear();
   path_vehicles_.markers.clear();
+  path_points_.markers.clear();
   AddNode(node, 0);
   AddVehicle(node, 1);
+  AddPoint(Utility::ConvertVector3dToVector2d(node), 0);
   PublishPath();
   PublishPathNodes();
   PublishPathVehicles();
+  PublishPathPoints();
 }
 
 //###################################################
@@ -37,8 +40,17 @@ void PathPublisher::UpdatePath(const std::vector<Eigen::Vector3d> &nodePath)
     AddVehicle(nodePath[i], k);
     k++;
   }
+}
 
-  return;
+void PathPublisher::UpdatePoint(const std::vector<Eigen::Vector2d> &point_vec)
+{
+  path_.header.stamp = ros::Time::now();
+  int i = 0;
+  for (auto point : point_vec)
+  {
+    AddPoint(point, i);
+    i++;
+  }
 }
 // ___________
 // ADD SEGMENT
@@ -54,7 +66,40 @@ void PathPublisher::AddSegment(const Eigen::Vector3d &node)
   vertex.pose.orientation.w = 0;
   path_.poses.push_back(vertex);
 }
+// ________
+// ADD NODE
+void PathPublisher::AddPoint(const Eigen::Vector2d &node, const int &i)
+{
+  visualization_msgs::Marker pathNode;
 
+  pathNode.action = 0;
+
+  pathNode.header.frame_id = "path";
+  pathNode.header.stamp = ros::Time(0);
+  pathNode.id = i;
+  pathNode.type = visualization_msgs::Marker::SPHERE;
+  pathNode.scale.x = 0.5;
+  pathNode.scale.y = 0.5;
+  pathNode.scale.z = 0.5;
+  pathNode.color.a = 1.0;
+
+  // if (smoothed_)
+  // {
+  //   pathNode.color.r = params_.pink.red;
+  //   pathNode.color.g = params_.pink.green;
+  //   pathNode.color.b = params_.pink.blue;
+  // }
+  // else
+  // {
+  pathNode.color.r = params_.purple.red;
+  pathNode.color.g = params_.purple.green;
+  pathNode.color.b = params_.purple.blue;
+  // }
+
+  pathNode.pose.position.x = node.x();
+  pathNode.pose.position.y = node.y();
+  path_points_.markers.push_back(pathNode);
+}
 // ________
 // ADD NODE
 void PathPublisher::AddNode(const Eigen::Vector3d &node, int i)

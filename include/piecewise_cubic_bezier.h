@@ -68,14 +68,19 @@ namespace GeneticAlgorithm
 
     std::vector<Eigen::Vector3d> ConvertPiecewiseCubicBezierToVector3d();
 
+    std::vector<Eigen::Vector2d> GetPointsVec() { return points_vec_; };
+
   private:
     void CalculateLength();
     /**
-     * @brief calculate control points according to anchor points, put all points into points_vec_
+     * @brief calculate control points according to anchor points,
      * 
      */
     void CalculateControlPoints();
-
+    /**
+     * @brief put start,goal anchor points and control points into this vector
+     * 
+     */
     void CalculatePointsVec();
     /**
      * @brief calculate cubic bezier object using points_vec_

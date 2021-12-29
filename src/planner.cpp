@@ -222,7 +222,7 @@ void Planner::MakePlan()
         // path = cubic_bezier_.ConvertCubicBezierToVector3d();
         piecewise_cubic_bezier_ = PiecewiseCubicBezier(start, goal, width, height);
         std::vector<Eigen::Vector3d> anchor_points;
-        uint number_of_anchor_points = 3;
+        uint number_of_anchor_points = 0;
         for (uint i = 0; i < number_of_anchor_points; ++i)
         {
             Eigen::Vector3d anchor_point;
@@ -238,8 +238,8 @@ void Planner::MakePlan()
         }
 
         piecewise_cubic_bezier_.SetAnchorPoints(anchor_points);
-        std::vector<Eigen::Vector3d> path;
-        path = piecewise_cubic_bezier_.ConvertPiecewiseCubicBezierToVector3d();
+        std::vector<Eigen::Vector3d> path = piecewise_cubic_bezier_.ConvertPiecewiseCubicBezierToVector3d();
+        std::vector<Eigen::Vector2d> points = piecewise_cubic_bezier_.GetPointsVec();
         // DLOG(INFO) << "path length is : " << path.size() << " first point is: " << path.front().x() << " " << path.front().y() << " last point is : " << path.back().x() << " " << path.back().y();
         // CLEAR THE VISUALIZATION
         // visualization_ptr_->clear();
@@ -252,6 +252,7 @@ void Planner::MakePlan()
         // smoother_ptr_->TracePath(nSolution);
         // CREATE THE UPDATED PATH
         path_publisher_ptr_->UpdatePath(path);
+        path_publisher_ptr_->UpdatePoint(points);
         // SMOOTH THE PATH
         // smoother_ptr_->SmoothPath(voronoi_diagram_);
         // CREATE THE UPDATED PATH
@@ -265,6 +266,7 @@ void Planner::MakePlan()
         path_publisher_ptr_->PublishPath();
         path_publisher_ptr_->PublishPathNodes();
         path_publisher_ptr_->PublishPathVehicles();
+        path_publisher_ptr_->PublishPathPoints();
         // smoothed_path_ptr_->PublishPath();
         // smoothed_path_ptr_->PublishPathNodes();
         // smoothed_path_ptr_->PublishPathVehicles();
