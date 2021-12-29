@@ -53,12 +53,13 @@ namespace CubicBezier
         float GetAngleAt(const float &t);
 
         std::vector<Eigen::Vector2d> GetControlPoints() { return control_points_vec_; };
-
-        std::vector<Eigen::Vector2d> GetControlPointsAndAnchorPoints();
+        std::vector<Eigen::Vector2d> GetAnchorPoints() { return anchor_points_vec_; };
 
         float GetLength() { return length_; };
 
         std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d();
+
+        std::vector<Eigen::Vector2d> ConvertCubicBezierToVector2d();
 
     private:
         /**
@@ -66,9 +67,12 @@ namespace CubicBezier
          * 
          */
         void CalculateLength();
+
         void CalculateCoefficient(const float &t);
 
         void CalculateControlPoints();
+
+        void CalculateAnchorPoints();
 
         void CalculateFirstOrderDerivativeCoefficient(const float &t);
 
@@ -82,6 +86,11 @@ namespace CubicBezier
          * 
          */
         std::vector<Eigen::Vector2d> control_points_vec_;
+        /**
+         * @brief actually is start and goal points
+         * 
+         */
+        std::vector<Eigen::Vector2d> anchor_points_vec_;
 
         Eigen::Vector3d start_point_;
         Eigen::Vector3d goal_point_;

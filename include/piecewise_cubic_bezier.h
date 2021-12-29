@@ -2,8 +2,8 @@
  * @file piecewise_cubic_bezier.h
  * @author Jialiang Han
  * @brief this class generate a piecewise cubic bezier curve
- * @version 0.1
- * @date 2021-12-25
+ * @version 0.2
+ * @date 2021-12-29
  * 
  * @copyright Copyright (c) 2021
  * 
@@ -35,15 +35,12 @@ namespace GeneticAlgorithm
       goal_point_ = goal;
       map_width_ = width;
       map_height_ = height;
-      // CalculateControlPoints();
-      // CalculatePointsVec();
-      // CalculateCubicBezier();
     };
 
     /**
      * @brief get specific point on this bezier curve
      * 
-     * @param u 
+     * @param u is between [0,1]
      * @return Eigen::Vector2d 
      */
     Eigen::Vector2d GetValueAt(const float &u);
@@ -69,6 +66,10 @@ namespace GeneticAlgorithm
     std::vector<Eigen::Vector3d> ConvertPiecewiseCubicBezierToVector3d();
 
     std::vector<Eigen::Vector2d> GetPointsVec() { return points_vec_; };
+
+    std::vector<Eigen::Vector2d> GetAnchorPoints() { return anchor_points2d_vec_; };
+
+    std::vector<CubicBezier::CubicBezier> GetCubicBezierVector() { return cubic_bezier_vec_; };
 
   private:
     void CalculateLength();
@@ -98,7 +99,7 @@ namespace GeneticAlgorithm
 
     std::vector<Eigen::Vector2d> control_points_vec_;
 
-    // list free anchor points(P), anchor points are the points which bezier curve pass through
+    // list free anchor points(P), anchor points are the points which bezier curve pass through, not include start and goal
     std::vector<Eigen::Vector3d> anchor_points3d_vec_;
 
     std::vector<Eigen::Vector2d> anchor_points2d_vec_;

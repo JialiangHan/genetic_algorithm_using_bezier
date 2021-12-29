@@ -13,26 +13,73 @@
 
 namespace GeneticAlgorithm
 {
-    void CollisionDetection::SetMap(const nav_msgs::OccupancyGrid::ConstPtr &map) {}
 
     bool CollisionDetection::IsCollsion(const Eigen::Vector2d &point_2d)
     {
-        return true;
+        uint xi = (int)point_2d.x();
+        uint yi = (int)point_2d.y();
+        //ensure point is on the map;
+        if (xi >= 0 &&
+            xi < grid_->info.width &&
+            yi >= 0 &&
+            yi < grid_->info.width)
+        {
+            if (grid_->data[yi * grid_->info.width + xi])
+            {
+                DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is in collision!";
+                return true;
+            }
+        }
+        else
+        {
+            DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is outside map!";
+        }
+        DLOG(INFO) << "node is collision free.";
+        return false;
     }
 
-    bool CollisionDetection::IsCollsion(const Eigen::Vector3d point_3d)
-    {
-        return true;
-    }
-    //TODO need to make clear, these points are real points of curve or just control points?
     bool CollisionDetection::IsCollsion(const std::vector<Eigen::Vector2d> &point_2d_vec)
     {
-        return true;
-    }
-    //TODO need to make clear, these points are real points of curve or just control points?
-    bool CollisionDetection::IsCollsion(const std::vector<Eigen::Vector3d> &point_3d_vec)
-    {
-        return true;
+        for (auto point2d : point_2d_vec)
+        {
+            if (IsCollsion(point2d))
+            {
+                DLOG(INFO) << "vector is in collision.";
+                return true;
+            }
+        }
+        DLOG(INFO) << "vector is collision free.";
+        return false;
     }
 
+    bool CollisionDetection::IsCollsion(CubicBezier::CubicBezier &cubic_bezier)
+    {
+        std::vector<Eigen::Vector2d> anchor_points_vec = cubic_bezier.GetAnchorPoints();
+        if (IsCollsion(anchor_points_vec))
+        {
+            DLOG(INFO) << "anchor point is in collision.";
+            return true;
+        }
+        if (IsCollsion(cubic_bezier.ConvertCubicBezierToVector2d()))
+        {
+            DLOG(INFO) << "cubic bezier path is in collision.";
+            return true;
+        }
+        DLOG(INFO) << "cubic bezier is collision free.";
+        return false;
+    }
+
+    int CollisionDetection::FindCollsionIndex(PiecewiseCubicBezier &piecewise_cubic_bezier)
+    {
+        cubic_bezier_vec = piecewise_cubic_bezier.GetCubicBezierVector();
+        for (uint i = 0; i < cubic_bezier.size(); ++i)
+        {
+            if (IsCollsion(cubic_bezier_vec[i]))
+            {
+                DLOG(INFO) << i << "th cubic bezier is in collision.";
+                return i;
+            }
+        }
+        return -1;
+    }
 };

@@ -15,30 +15,6 @@
 #include <math.h>
 namespace CubicBezier
 {
-    std::vector<Eigen::Vector3d> CubicBezier::ConvertCubicBezierToVector3d()
-    {
-        std::vector<Eigen::Vector3d> out;
-        int i = 0;
-        for (i = 0; i < 100; ++i)
-        {
-            Eigen::Vector3d point3d;
-            Eigen::Vector2d point;
-            // DLOG(INFO) << " i/100 = " << i / 100.0;
-            point = GetValueAt(i / 100.0);
-            point3d = Utility::ConvertVector2dToVector3d(point);
-            point3d.z() = GetAngleAt(i / 100.0);
-            out.emplace_back(point3d);
-        }
-        return out;
-    }
-
-    void CubicBezier::CalculateLength()
-    {
-        for (uint i = 0; i < 100; ++i)
-        {
-            length_ += (GetValueAt((i + 1) / 100.0) - GetValueAt(i / 100.0)).norm();
-        }
-    }
 
     void CubicBezier::CalculateCoefficient(const float &t)
     {
@@ -155,20 +131,11 @@ namespace CubicBezier
         control_points_vec_.emplace_back(second_control_point);
     }
 
-    std::vector<Eigen::Vector2d> CubicBezier::GetControlPointsAndAnchorPoints()
+    void CubicBezier::CalculateAnchorPoints()
     {
-        std::vector<Eigen::Vector2d> out;
-        out.emplace_back(Utility::ConvertVector3dToVector2d(start_point_));
-        if (control_points_vec_.size() == 0)
-        {
-            CalculateControlPoints();
-        }
-        for (auto point : control_points_vec_)
-        {
-            out.emplace_back(point);
-        }
-        out.emplace_back(Utility::ConvertVector3dToVector2d(goal_point_));
-        return out;
+        anchor_points_vec_.clear();
+        anchor_points_vec_.emplace_back(Utility::ConvertVector3dToVector2d(start_point_));
+        anchor_points_vec_.emplace_back(Utility::ConvertVector3dToVector2d(goal_point_));
     }
 
     Eigen::Vector2d CubicBezier::GetValueAt(const float &t)
@@ -192,5 +159,42 @@ namespace CubicBezier
         Eigen::Vector2d derivative_value = GetFirstOrderDerivativeValueAt(t);
         float angle = std::atan2(derivative_value.y(), derivative_value.x()) + M_PI;
         return angle;
+    }
+    void CubicBezier::CalculateLength()
+    {
+        for (uint i = 0; i < 100; ++i)
+        {
+            length_ += (GetValueAt((i + 1) / 100.0) - GetValueAt(i / 100.0)).norm();
+        }
+    }
+    std::vector<Eigen::Vector3d> CubicBezier::ConvertCubicBezierToVector3d()
+    {
+        std::vector<Eigen::Vector3d> out;
+        int i = 0;
+        for (i = 0; i < 100; ++i)
+        {
+            Eigen::Vector3d point3d;
+            Eigen::Vector2d point;
+            // DLOG(INFO) << " i/100 = " << i / 100.0;
+            point = GetValueAt(i / 100.0);
+            point3d = Utility::ConvertVector2dToVector3d(point);
+            point3d.z() = GetAngleAt(i / 100.0);
+            out.emplace_back(point3d);
+        }
+        return out;
+    }
+
+    std::vector<Eigen::Vector2d> CubicBezier::ConvertCubicBezierToVector2d()
+    {
+        std::vector<Eigen::Vector2d> out;
+        int i = 0;
+        for (i = 0; i < 100; ++i)
+        {
+            Eigen::Vector2d point;
+            // DLOG(INFO) << " i/100 = " << i / 100.0;
+            point = GetValueAt(i / 100.0);
+            out.emplace_back(point);
+        }
+        return out;
     }
 }

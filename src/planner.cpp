@@ -222,7 +222,7 @@ void Planner::MakePlan()
         // path = cubic_bezier_.ConvertCubicBezierToVector3d();
         piecewise_cubic_bezier_ = PiecewiseCubicBezier(start, goal, width, height);
         std::vector<Eigen::Vector3d> anchor_points;
-        uint number_of_anchor_points = 0;
+        uint number_of_anchor_points = 2;
         for (uint i = 0; i < number_of_anchor_points; ++i)
         {
             Eigen::Vector3d anchor_point;

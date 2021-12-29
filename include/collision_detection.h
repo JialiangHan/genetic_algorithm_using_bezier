@@ -13,6 +13,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include "glog/logging.h"
 #include "gflags/gflags.h"
+
 namespace GeneticAlgorithm
 {
     class CollisionDetection
@@ -24,15 +25,27 @@ namespace GeneticAlgorithm
             params_ = param;
         }
 
-        void SetMap(const nav_msgs::OccupancyGrid::ConstPtr &map);
-
+        void SetMap(const nav_msgs::OccupancyGrid::ConstPtr &map) { grid_ = map; };
+        /**
+         * @brief determine if point 2d is collision with obstacle or not
+         * 
+         * @param point_2d 
+         * @return true collision
+         * @return false not collsion
+         */
         bool IsCollsion(const Eigen::Vector2d &point_2d);
 
-        bool IsCollsion(const Eigen::Vector3d point_3d);
-        //TODO need to make clear, these points are real points of curve or just control points?
         bool IsCollsion(const std::vector<Eigen::Vector2d> &point_2d_vec);
-        //TODO need to make clear, these points are real points of curve or just control points?
-        bool IsCollsion(const std::vector<Eigen::Vector3d> &point_3d_vec);
+
+        bool IsCollsion(CubicBezier::CubicBezier &cubic_bezier);
+
+        /**
+         * @brief find the index of cubic bezier in piecewise cubic bezier is first in collision
+         * 
+         * @param piecewise_cubic_bezier 
+         * @return int should be in [0,size of cubic bezier list], -1 means no collision
+         */
+        int FindCollsionIndex(PiecewiseCubicBezier &piecewise_cubic_bezier);
 
     private:
         ParameterCollisionDetection params_;

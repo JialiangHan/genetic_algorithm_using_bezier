@@ -267,17 +267,11 @@ namespace GeneticAlgorithm
     std::vector<Eigen::Vector3d> PiecewiseCubicBezier::ConvertPiecewiseCubicBezierToVector3d()
     {
         std::vector<Eigen::Vector3d> out;
-        int i;
-        int number_of_bezier = cubic_bezier_vec_.size();
-        for (i = 0; i < 100 * number_of_bezier; ++i)
+        for (auto bezier : cubic_bezier_vec_)
         {
-            Eigen::Vector3d point3d;
-            Eigen::Vector2d point;
-            // DLOG(INFO) << " i/100 = " << i / 100.0;
-            point = GetValueAt(i / 100.0 / number_of_bezier);
-            point3d = Utility::ConvertVector2dToVector3d(point);
-            point3d.z() = GetAngleAt(i / 100.0 / number_of_bezier);
-            out.emplace_back(point3d);
+            std::vector<Eigen::Vector3d> path;
+            path = bezier.ConvertCubicBezierToVector3d();
+            out.insert(out.end(), path.begin(), path.end());
         }
         return out;
     }
