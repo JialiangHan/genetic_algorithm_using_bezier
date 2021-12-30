@@ -16,7 +16,7 @@ namespace GeneticAlgorithm
 
     void PiecewiseCubicBezier::ConvertAnchorPoint3dTo2d()
     {
-        anchor_points2d_vec_.clear();
+        // anchor_points2d_vec_.clear();
         anchor_points_dir_vec_.clear();
         if (anchor_points3d_vec_.size() == 0)
         {
@@ -26,9 +26,9 @@ namespace GeneticAlgorithm
         {
             for (auto point3d : anchor_points3d_vec_)
             {
-                anchor_points2d_vec_.emplace_back(Utility::ConvertVector3dToVector2d(point3d));
+                // anchor_points2d_vec_.emplace_back(Utility::ConvertVector3dToVector2d(point3d));
                 float angle = point3d.z();
-                Eigen::Vector2d direction;
+                Eigen::Vector3d direction;
                 direction.x() = std::cos(angle);
                 direction.y() = std::sin(angle);
                 anchor_points_dir_vec_.emplace_back(direction);
@@ -157,9 +157,7 @@ namespace GeneticAlgorithm
     {
         points_vec_.clear();
 
-        Eigen::Vector2d start_2d = Utility::ConvertVector3dToVector2d(start_point_);
-        Eigen::Vector2d goal_2d = Utility::ConvertVector3dToVector2d(goal_point_);
-        points_vec_.emplace_back(start_2d);
+        points_vec_.emplace_back(start_point_);
 
         uint count = 0;
         uint anchor_point_index = 0;
@@ -170,11 +168,11 @@ namespace GeneticAlgorithm
             count++;
             if (count % 3 == 2)
             {
-                if (anchor_points2d_vec_.size() != 0 && anchor_point_index < anchor_points2d_vec_.size())
+                if (anchor_points3d_vec_.size() != 0 && anchor_point_index < anchor_points3d_vec_.size())
                 {
 
-                    Eigen::Vector2d anchor_point_2d = anchor_points2d_vec_[anchor_point_index];
-                    points_vec_.emplace_back(anchor_point_2d);
+                    Eigen::Vector3d anchor_point_3d = anchor_points3d_vec_[anchor_point_index];
+                    points_vec_.emplace_back(anchor_point_3d);
                     // DLOG(INFO) << "anchor point 2d is " << anchor_point_2d.x() << " " << anchor_point_2d.y();
                     // DLOG(INFO) << "anchor point index is " << anchor_point_index;
                     anchor_point_index++;
@@ -183,7 +181,7 @@ namespace GeneticAlgorithm
             }
         }
 
-        points_vec_.emplace_back(goal_2d);
+        points_vec_.emplace_back(goal_point_);
         // for (auto point : points_vec_)
         // {
         //     DLOG(INFO) << "points are " << point.x() << " " << point.y();
