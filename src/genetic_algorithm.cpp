@@ -12,6 +12,24 @@
 
 namespace GeneticAlgorithm
 {
+    int GeneticAlgorithm::PreCheck()
+    {
+        Chromosome empty_chromosome;
+        PiecewiseCubicBezier piecewise_cubic_bezier = GeneratePiecewiseCubicBezier(empty_chromosome);
+        if (collision_detection_ptr_->FindCollsionIndex(piecewise_cubic_bezier) < 0)
+        {
+            path_ = piecewise_cubic_bezier.ConvertPiecewiseCubicBezierToVector3d();
+            current_best_.first = empty_chromosome;
+            DLOG(INFO) << "cubic bezier path has been found!!";
+            return 1;
+        }
+        else
+        {
+            DLOG(INFO) << "cubic bezier is in  collision!";
+            return 0;
+        }
+    }
+
     Chromosome GeneticAlgorithm::GetPoints()
     {
         Chromosome out;
@@ -24,6 +42,12 @@ namespace GeneticAlgorithm
     {
         int h = 0;
         bool inner_flag = true, outer_flag = true;
+        if (PreCheck() == 1)
+        {
+            inner_flag = false;
+            outer_flag = false;
+        }
+
         while (outer_flag)
         {
             GenerateInitialPopulation();

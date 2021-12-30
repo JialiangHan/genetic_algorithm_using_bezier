@@ -69,6 +69,12 @@ namespace GeneticAlgorithm
       Chromosome GetPoints();
 
    private:
+      /**
+       * @brief check if there is a cubic bezier path connected from start to goal, if yes return this path.
+       * 
+       * @return int : 1, found path, 0 in collision
+       */
+      int PreCheck();
       void SelectAndCrossover();
       /**
        * @brief this is the main loop for GA
