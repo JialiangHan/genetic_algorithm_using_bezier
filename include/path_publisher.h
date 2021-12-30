@@ -56,7 +56,7 @@ namespace GeneticAlgorithm
   */
         void UpdatePath(const std::vector<Eigen::Vector3d> &nodePath);
 
-        void UpdatePoint(const std::vector<Eigen::Vector2d> &point_vec);
+        void UpdatePoint(const std::vector<Eigen::Vector3d> &point_vec);
         /*!
      \brief Adds a segment to the path
      \param node a 3D node
@@ -75,7 +75,7 @@ namespace GeneticAlgorithm
   */
         void AddVehicle(const Eigen::Vector3d &node, int i);
 
-        void AddPoint(const Eigen::Vector2d &node, const int &i);
+        void AddPoint(const Eigen::Vector3d &node, const int &i);
         // ______________
         // PUBLISH METHODS
 

@@ -75,6 +75,9 @@ namespace GeneticAlgorithm
     ros_param_name = "local_search_range_radius";
     GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->genetic_algorithm_params.local_search_range_radius);
 
+    ros_param_name = "local_search_range_angle";
+    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->genetic_algorithm_params.local_search_range_angle);
+
     ros_param_name = "h_s";
     GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->genetic_algorithm_params.h_s);
 
@@ -84,41 +87,39 @@ namespace GeneticAlgorithm
   void ParameterManager::LoadCollisionDetectionParams()
   {
     std::string ros_param_name;
-    std::string node_prefix = "/hybrid_astar/";
+    std::string node_prefix = "/genetic_algorithm_using_bezier/";
 
-    ros_param_name = "position_resolution";
-    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->collision_detection_params.position_resolution);
-    ros_param_name = "headings";
-    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->collision_detection_params.headings);
+    // ros_param_name = "position_resolution";
+    // GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->collision_detection_params.position_resolution);
+    // ros_param_name = "headings";
+    // GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->collision_detection_params.headings);
   }
   void ParameterManager::LoadPlannerParams()
   {
     std::string ros_param_name;
-    std::string node_prefix = "/hybrid_astar/";
+    std::string node_prefix = "/genetic_algorithm_using_bezier/";
 
-    ros_param_name = "headings";
-    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.headings);
-
+    // ros_param_name = "headings";
+    // GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.headings);
     ros_param_name = "cell_size";
     GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.cell_size);
-
     ros_param_name = "manual";
     GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.manual);
 
-    ros_param_name = "dubins_Lookup";
-    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.dubins_lookup);
+    // ros_param_name = "dubins_Lookup";
+    // GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.dubins_lookup);
 
-    ros_param_name = "control_point_1_x";
-    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.control_point_1_x);
+    // ros_param_name = "control_point_1_x";
+    // GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.control_point_1_x);
 
-    ros_param_name = "control_point_1_y";
-    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.control_point_1_y);
+    // ros_param_name = "control_point_1_y";
+    // GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.control_point_1_y);
 
-    ros_param_name = "control_point_2_x";
-    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.control_point_2_x);
+    // ros_param_name = "control_point_2_x";
+    // GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.control_point_2_x);
 
-    ros_param_name = "control_point_2_y";
-    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.control_point_2_y);
+    // ros_param_name = "control_point_2_y";
+    // GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->planner_params.control_point_2_y);
   }
   // void ParameterManager::LoadAlgorithmParams()
   // {
@@ -162,7 +163,7 @@ namespace GeneticAlgorithm
   void ParameterManager::LoadPathPublisherParams()
   {
     std::string ros_param_name;
-    std::string node_prefix = "/hybrid_astar/";
+    std::string node_prefix = "/genetic_algorithm_using_bezier/";
 
     ros_param_name = "cell_size";
     GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->path_publisher_params.cell_size);

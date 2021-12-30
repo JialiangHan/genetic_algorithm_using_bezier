@@ -12,7 +12,7 @@
 
 namespace GeneticAlgorithm
 {
-    Chromosome GetPoints()
+    Chromosome GeneticAlgorithm::GetPoints()
     {
         Chromosome out;
         PiecewiseCubicBezier
@@ -20,10 +20,10 @@ namespace GeneticAlgorithm
         out = piecewise_cubic_bezier.GetPointsVec();
         return out;
     }
-    void MainLoop()
+    void GeneticAlgorithm::MainLoop()
     {
         int h = 0;
-        bool inter_flag = true, outer_flag = true;
+        bool inner_flag = true, outer_flag = true;
         while (outer_flag)
         {
             GenerateInitialPopulation();
@@ -35,25 +35,29 @@ namespace GeneticAlgorithm
                 if (best_of_best_.second >= current_best_.second)
                 {
                     h++;
+                    DLOG(INFO) << "h has increased one, current h is " << h;
                 }
                 else
                 {
                     best_of_best_ = current_best_;
-                    if (h < params.h_s)
+                    if (h < params_.h_s)
                     {
+                        DLOG(INFO) << "h has been set to 0";
                         h = 0;
                     }
                 }
-                if (h > params.h_t)
+                if (h > params_.h_t)
                 {
                     PiecewiseCubicBezier piecewise_cubic_bezier = GeneratePiecewiseCubicBezier(current_best_.first);
-                    if (Utility::IsCollsion(piecewise_cubic_bezier))
+                    if (collision_detection_ptr_->FindCollsionIndex(piecewise_cubic_bezier) >= 0)
                     {
                         number_of_gene_in_chromosome_++;
                     }
                     else
                     {
                         path_ = piecewise_cubic_bezier.ConvertPiecewiseCubicBezierToVector3d();
+                        DLOG(INFO) << "path has been found!!";
+                        inner_flag = false;
                         outer_flag = false;
                     }
                 }
@@ -62,10 +66,10 @@ namespace GeneticAlgorithm
                     float roll;
                     for (auto chromosome : generation_)
                     {
-                        roll == ((double)rand() / (RAND_MAX));
-                        if (roll < (float)h / params.h_t)
+                        roll = ((double)rand() / (RAND_MAX));
+                        if (roll < (float)h / params_.h_t)
                         {
-                            if (h < params.h_s)
+                            if (h < params_.h_s)
                             {
                                 GlobalMutation(chromosome);
                             }
@@ -80,9 +84,9 @@ namespace GeneticAlgorithm
         }
     }
 
-    void SelectAndCrossover()
+    void GeneticAlgorithm::SelectAndCrossover()
     {
-        MatingPool mating_pool_ = GenerateMatingPool();
+        MatingPool mating_pool = GenerateMatingPool();
         generation_.clear();
         for (auto breeding_pair : mating_pool)
         {
@@ -91,18 +95,18 @@ namespace GeneticAlgorithm
     }
     Genotype GeneticAlgorithm::GenerateRandomGeno()
     {
-        int xi = rand() % grid->info.width;
-        int yi = rand() % grid->info.height;
+        int xi = rand() % grid_->info.width;
+        int yi = rand() % grid_->info.height;
         float theta = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (2 * M_PI)));
         Genotype out(xi, yi, theta);
         bool flag = true;
         while (flag)
         {
-            if (collision_detection_ptr->IsCollsion(out))
+            if (collision_detection_ptr_->IsCollsion(out))
             {
                 DLOG(INFO) << "random generated geno is in collision, regenerating...";
-                out.x() = rand() % grid->info.width;
-                out.y() = rand() % grid->info.height;
+                out.x() = rand() % grid_->info.width;
+                out.y() = rand() % grid_->info.height;
                 out.z() = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (2 * M_PI)));
             }
             else
@@ -113,17 +117,17 @@ namespace GeneticAlgorithm
         return out;
     }
 
-    PiecewiseCubicBezier GeneratePiecewiseCubicBezier(const Chromosome &chromosome)
+    PiecewiseCubicBezier GeneticAlgorithm::GeneratePiecewiseCubicBezier(const Chromosome &chromosome)
     {
         PiecewiseCubicBezier piecewise_cubic_bezier(start_, goal_);
         piecewise_cubic_bezier.SetAnchorPoints(chromosome);
         return piecewise_cubic_bezier;
     }
 
-    Chromosome GeneticAlgorithm::GenerateRandomChromosome(const int &number_of_genes)
+    Chromosome GeneticAlgorithm::GenerateRandomChromosome(const uint &number_of_genes)
     {
         Chromosome out;
-        while (out.size < number_of_genes)
+        while (out.size() < number_of_genes)
         {
             out.emplace_back(GenerateRandomGeno());
         }
@@ -131,11 +135,11 @@ namespace GeneticAlgorithm
         while (flag)
         {
             PiecewiseCubicBezier piecewise_cubic_bezier = GeneratePiecewiseCubicBezier(out);
-            if (collision_detection_ptr->IsCollsion(piecewise_cubic_bezier))
+            if (collision_detection_ptr_->FindCollsionIndex(piecewise_cubic_bezier) >= 0)
             {
                 DLOG(INFO) << "random generated chromosome is in collision, regenerating...";
                 out.clear();
-                while (out.size < number_of_genes)
+                while (out.size() < number_of_genes)
                 {
                     out.emplace_back(GenerateRandomGeno());
                 }
@@ -148,7 +152,7 @@ namespace GeneticAlgorithm
         return out;
     }
 
-    Population GeneticAlgorithm::GenerateRandomPopulation(const int &population_size)
+    Population GeneticAlgorithm::GenerateRandomPopulation(const uint &population_size)
     {
         Population out;
         while (out.size() < population_size)
@@ -168,7 +172,7 @@ namespace GeneticAlgorithm
         float fitness;
         PiecewiseCubicBezier piecewise_cubic_bezier = GeneratePiecewiseCubicBezier(chromosome);
         float path_length = piecewise_cubic_bezier.GetLength();
-        int number_of_times_in_collsion = collision_detection_ptr->GetTimesInCollision(piecewise_cubic_bezier);
+        int number_of_times_in_collsion = collision_detection_ptr_->GetTimesInCollision(piecewise_cubic_bezier);
         fitness = 1 / (path_length + params_.penalty_fitness * number_of_times_in_collsion);
         return fitness;
     }
@@ -176,11 +180,11 @@ namespace GeneticAlgorithm
     void GeneticAlgorithm::GenerateFitnessMap()
     {
         float current_fitness;
-        for (auto chromosome : generate_)
+        for (auto chromosome : generation_)
         {
             fitness_map_.clear();
             current_fitness = CalculateFitness(chromosome);
-            fitness_map.emplace(current_fitness, chromosome);
+            fitness_map_.emplace(current_fitness, chromosome);
             if (current_fitness >= current_best_.second)
             {
                 current_best_.first = chromosome;
@@ -219,7 +223,7 @@ namespace GeneticAlgorithm
     MatingPool GeneticAlgorithm::GenerateMatingPool()
     {
         MatingPool mating_pool;
-        while (mating_pool.size() < params.population_size)
+        while (mating_pool.size() < params_.population_size)
         {
 
             mating_pool.emplace_back(Select());
@@ -240,7 +244,8 @@ namespace GeneticAlgorithm
         }
         else if (collision_index_1 > collision_index_2)
         {
-            for (uint i = 0; i < collision_index_1; ++i)
+            uint i = 0;
+            for (; i < collision_index_1; ++i)
             {
                 out.emplace_back(chromosome_1[i]);
             }
@@ -251,7 +256,8 @@ namespace GeneticAlgorithm
         }
         else
         {
-            for (uint i = 0; i < collision_index_2; ++i)
+            uint i = 0;
+            for (; i < collision_index_2; ++i)
             {
                 out.emplace_back(chromosome_2[i]);
             }
@@ -265,7 +271,7 @@ namespace GeneticAlgorithm
 
     void GeneticAlgorithm::GlobalMutation(Chromosome &chromosome)
     {
-        Chromosome new_chromosome = GenerateRandomChromosome(const int &chromosome.size());
+        Chromosome new_chromosome = GenerateRandomChromosome(chromosome.size());
         chromosome = new_chromosome;
     }
 
@@ -273,10 +279,11 @@ namespace GeneticAlgorithm
     {
         for (auto gene : chromosome)
         {
-            out.x() + = (rand() % (params.local_search_range_radius * 200) - params.local_search_range_radius * 100) / 100.0;
-            out.y() + = (rand() % (params.local_search_range_radius * 200) - params.local_search_range_radius * 100) / 100.0;
-            out.z() += (rand() % (params.local_search_range_angle * 200) - params.local_search_range_angle * 100) / 100.0;
-            out.z() = Utility::RadNormalization(out.z());
+            gene.x() = gene.x() + (float(rand()) / float((RAND_MAX)) * params_.local_search_range_radius - 1 / 2 * params_.local_search_range_radius);
+            gene.y() = gene.y() + (float(rand()) / float((RAND_MAX)) * params_.local_search_range_radius - 1 / 2 * params_.local_search_range_radius);
+            gene.z() = gene.z() + (float(rand()) / float((RAND_MAX)) * params_.local_search_range_angle - 1 / 2 * params_.local_search_range_angle);
+
+            gene.z() = Utility::RadNormalization(gene.z());
         }
     }
 

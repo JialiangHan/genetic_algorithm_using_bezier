@@ -15,7 +15,7 @@ void PathPublisher::Clear()
   path_points_.markers.clear();
   AddNode(node, 0);
   AddVehicle(node, 1);
-  AddPoint(Utility::ConvertVector3dToVector2d(node), 0);
+  AddPoint(node, 0);
   PublishPath();
   PublishPathNodes();
   PublishPathVehicles();
@@ -42,7 +42,7 @@ void PathPublisher::UpdatePath(const std::vector<Eigen::Vector3d> &nodePath)
   }
 }
 
-void PathPublisher::UpdatePoint(const std::vector<Eigen::Vector2d> &point_vec)
+void PathPublisher::UpdatePoint(const std::vector<Eigen::Vector3d> &point_vec)
 {
   path_.header.stamp = ros::Time::now();
   int i = 0;
@@ -68,7 +68,7 @@ void PathPublisher::AddSegment(const Eigen::Vector3d &node)
 }
 // ________
 // ADD NODE
-void PathPublisher::AddPoint(const Eigen::Vector2d &node, const int &i)
+void PathPublisher::AddPoint(const Eigen::Vector3d &node, const int &i)
 {
   visualization_msgs::Marker pathNode;
 

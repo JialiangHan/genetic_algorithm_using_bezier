@@ -45,6 +45,8 @@ namespace GeneticAlgorithm
 
         bool IsCollsion(const std::vector<Eigen::Vector2d> &point_2d_vec);
 
+        bool IsCollsion(const std::vector<Eigen::Vector3d> &point_3d_vec);
+
         bool IsCollsion(CubicBezier::CubicBezier &cubic_bezier);
 
         /**
@@ -53,7 +55,7 @@ namespace GeneticAlgorithm
          * @param piecewise_cubic_bezier 
          * @return int should be in [0,size of cubic bezier list], -1 means no collision
          */
-        int FindCollsionIndex(PiecewiseCubicBezier &piecewise_cubic_bezier);
+        int FindCollsionIndex(const PiecewiseCubicBezier &piecewise_cubic_bezier);
         /**
          * @brief find out how many times a piecewise cubic bezier curve will encouter obstacle in the map.
          * 

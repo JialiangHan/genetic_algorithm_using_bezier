@@ -1,4 +1,5 @@
 #include "planner.h"
+#include <chrono>
 
 using namespace GeneticAlgorithm;
 //###################################################
@@ -204,7 +205,7 @@ void Planner::MakePlan()
 
         // ___________________________
         // START AND TIME THE PLANNING
-        ros::Time t0 = ros::Time::now();
+
         // Eigen::Vector2d p1(4.06, 15.67), p2(7.74, 11.88), p3(14.05, 13.54), p4(19.6, 12.77), p5(25.19, 12.00), p6(30.01, 8.79), p7(35.17, 9.88);
         // std::vector<Eigen::Vector2d> points_vec{p1, p2, p3, p4};
 
@@ -244,9 +245,17 @@ void Planner::MakePlan()
         // DLOG(INFO) << "path length is : " << path.size() << " first point is: " << path.front().x() << " " << path.front().y() << " last point is : " << path.back().x() << " " << path.back().y();
         // CLEAR THE VISUALIZATION
         // visualization_ptr_->clear();
+        auto t1 = std::chrono::high_resolution_clock::now();
+
         genetic_algorithm_ptr_->Initialize(start, goal, grid_);
         std::vector<Eigen::Vector3d> path = genetic_algorithm_ptr_->GetPath();
-        std::vector<Eigen::Vector3d> points = genetic_algorithm_ptr_.GetPoints();
+        std::vector<Eigen::Vector3d> points = genetic_algorithm_ptr_->GetPoints();
+
+        auto t2 = std::chrono::high_resolution_clock::now();
+
+        std::chrono::duration<double, std::milli> ms_double = t2 - t1;
+
+        DLOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz";
         // CLEAR THE PATH
         path_publisher_ptr_->Clear();
         // smoothed_path_ptr_->Clear();
@@ -261,9 +270,6 @@ void Planner::MakePlan()
         // smoother_ptr_->SmoothPath(voronoi_diagram_);
         // CREATE THE UPDATED PATH
         // smoothed_path_ptr_->UpdatePath(smoother_ptr_->GetPath());
-        ros::Time t1 = ros::Time::now();
-        ros::Duration d(t1 - t0);
-        DLOG(INFO) << "TIME in ms: " << d * 1000;
 
         // _________________________________
         // PUBLISH THE RESULTS OF THE SEARCH

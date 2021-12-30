@@ -76,8 +76,8 @@ namespace GeneticAlgorithm
        */
       void MainLoop();
       Genotype GenerateRandomGeno();
-      Chromosome GenerateRandomChromosome(const int &number_of_genes);
-      Population GenerateRandomPopulation(const int &population_size);
+      Chromosome GenerateRandomChromosome(const uint &number_of_genes);
+      Population GenerateRandomPopulation(const uint &population_size);
       PiecewiseCubicBezier GeneratePiecewiseCubicBezier(const Chromosome &chromosome);
       void GenerateInitialPopulation();
       /**

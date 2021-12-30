@@ -39,16 +39,16 @@ namespace GeneticAlgorithm
      * @brief get specific point on this bezier curve
      * 
      * @param u is between [0,1]
-     * @return Eigen::Vector2d 
+     * @return Eigen::Vector3d 
      */
-    Eigen::Vector2d GetValueAt(const float &u);
+    Eigen::Vector3d GetValueAt(const float &u);
 
     float GetAngleAt(const float &u);
 
     void SetAnchorPoints(const std::vector<Eigen::Vector3d> &anchor_points_vec)
     {
       anchor_points3d_vec_ = anchor_points_vec;
-      ConvertAnchorPoint3dTo2d();
+      GetAnchorPointDirection();
       CalculateControlPoints();
       CalculatePointsVec();
       CalculateCubicBezier();
@@ -67,11 +67,11 @@ namespace GeneticAlgorithm
 
     std::vector<Eigen::Vector3d> ConvertPiecewiseCubicBezierToVector3d();
 
-    std::vector<Eigen::Vector3d> GetPointsVec() { return points_vec_; };
+    std::vector<Eigen::Vector3d> GetPointsVec() const { return points_vec_; };
 
-    std::vector<Eigen::Vector3d> GetAnchorPoints() { return anchor_points2d_vec_; };
+    std::vector<Eigen::Vector3d> GetAnchorPoints() const { return anchor_points3d_vec_; };
 
-    std::vector<CubicBezier::CubicBezier> GetCubicBezierVector() { return cubic_bezier_vec_; };
+    std::vector<CubicBezier::CubicBezier> GetCubicBezierVector() const { return cubic_bezier_vec_; };
 
   private:
     void CalculateLength();
@@ -91,7 +91,7 @@ namespace GeneticAlgorithm
      */
     void CalculateCubicBezier();
 
-    void ConvertAnchorPoint3dTo2d();
+    void GetAnchorPointDirection();
 
   private:
     // int number_of_cubic_bezier_;

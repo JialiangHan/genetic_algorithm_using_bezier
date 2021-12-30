@@ -97,6 +97,7 @@ namespace Utility
      * @return int 1 inside, 0 outside
      */
     int IsInsidePolygon(const std::vector<Eigen::Vector2d> &polygon, const Eigen::Vector2d &point);
+    int IsInsidePolygon(const std::vector<Eigen::Vector2d> &polygon, const Eigen::Vector3d &point);
     /**
      * @brief Create a Polygon object, current is only for rectangle
      * 

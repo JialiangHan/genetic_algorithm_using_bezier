@@ -30,7 +30,7 @@ namespace CubicBezier
             map_height_ = height;
             CalculateControlPoints();
         };
-        CubicBezier(const std::vector<Eigen::Vector2d> &points_vec)
+        CubicBezier(const std::vector<Eigen::Vector3d> &points_vec)
         {
             if (points_vec.size() != 4)
             {
@@ -38,28 +38,28 @@ namespace CubicBezier
             }
             else
             {
-                start_point_ = Utility::ConvertVector2dToVector3d(points_vec[0]);
+                start_point_ = points_vec[0];
                 control_points_vec_.clear();
                 control_points_vec_.emplace_back(points_vec[1]);
                 control_points_vec_.emplace_back(points_vec[2]);
-                goal_point_ = Utility::ConvertVector2dToVector3d(points_vec[3]);
+                goal_point_ = points_vec[3];
             }
         }
 
-        void SetControlPoints(const std::vector<Eigen::Vector2d> &control_points) { control_points_vec_ = control_points; };
+        void SetControlPoints(const std::vector<Eigen::Vector3d> &control_points) { control_points_vec_ = control_points; };
 
-        Eigen::Vector2d GetValueAt(const float &t);
+        Eigen::Vector3d GetValueAt(const float &t);
 
         float GetAngleAt(const float &t);
 
-        std::vector<Eigen::Vector2d> GetControlPoints() { return control_points_vec_; };
-        std::vector<Eigen::Vector2d> GetAnchorPoints() { return anchor_points_vec_; };
+        std::vector<Eigen::Vector3d> GetControlPoints() { return control_points_vec_; };
+        std::vector<Eigen::Vector3d> GetAnchorPoints() { return anchor_points_vec_; };
 
         float GetLength() { return length_; };
 
         std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d();
 
-        std::vector<Eigen::Vector2d> ConvertCubicBezierToVector2d();
+        // std::vector<Eigen::Vector2d> ConvertCubicBezierToVector2d();
 
     private:
         /**
@@ -78,19 +78,19 @@ namespace CubicBezier
 
         void CalculateSecondOrderDerivativeCoefficient(const float &t);
 
-        Eigen::Vector2d GetFirstOrderDerivativeValueAt(const float &t);
+        Eigen::Vector3d GetFirstOrderDerivativeValueAt(const float &t);
 
     private:
         /**
          * @brief for a cubic bezier, control points are two
          * 
          */
-        std::vector<Eigen::Vector2d> control_points_vec_;
+        std::vector<Eigen::Vector3d> control_points_vec_;
         /**
          * @brief actually is start and goal points
          * 
          */
-        std::vector<Eigen::Vector2d> anchor_points_vec_;
+        std::vector<Eigen::Vector3d> anchor_points_vec_;
 
         Eigen::Vector3d start_point_;
         Eigen::Vector3d goal_point_;

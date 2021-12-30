@@ -247,7 +247,11 @@ namespace Utility
             return 1;
         }
     }
-
+    int IsInsidePolygon(const std::vector<Eigen::Vector2d> &polygon, const Eigen::Vector3d &point)
+    {
+        Eigen::Vector2d point_2d = Utility::ConvertVector3dToVector2d(point);
+        return IsInsidePolygon(polygon, point_2d);
+    }
     std::vector<Eigen::Vector2d> CreatePolygon(const float &width, const float &height)
     {
         std::vector<Eigen::Vector2d> polygon;

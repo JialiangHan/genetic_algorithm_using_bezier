@@ -1,17 +1,45 @@
+
+
+bloating : 0
+
+vehicle_width : 1.75
+
+vehicle_length : 2.65
+
+population_size : 20
+
+penalty_fitness : 50
+  # the range for local mutation, unit is [meter]
+local_search_range_radius : 2
+# /**
+#  * @brief the range for local mutation, unit is [rad],for angle, this value must small than 2*pi
+#  * 
+#  */
+local_search_range_angle: 1
+# position_resolution : 1
+
+# headings : 72
+
+manual : true
+
+# dubins_lookup : false
+
+cell_size : 1
+  
 #  population size of chromosome 
 population_size : 20
 #  penalty for fitness function
 penalty_fitness : 50
-  # the range for local mutation, unit is [meter]
-local_search_range_radius : 0.2
+
+
   # use to switch mutation mode 
 h_s : 5
   #  use to terminate revolution process
 h_t : 10
 
-control_point_1_x : 10
+# control_point_1_x : 10
 
-control_point_1_y : 5
-control_point_2_x : 40
+# control_point_1_y : 5
+# control_point_2_x : 40
 
-control_point_2_y : 5
+# control_point_2_y : 5

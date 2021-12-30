@@ -80,23 +80,18 @@ namespace GeneticAlgorithm
   {
     /// A flag for the mode (true = manual; false = dynamic). Manual for  map or dynamic for dynamic map. used in planner.cpp
     bool manual = true;
-    /*!
-   \var   bool dubinsLookup
-   \brief A flag to toggle the Dubin's heuristic via lookup, potentially speeding up the search by a lot
-   \todo not yet functional,used in planner.cpp
-*/
-    bool dubins_lookup = false;
+
     /// [m] --- The cell size of the 2D grid of the world,used in planner.cpp
     float cell_size = 1;
     /// [m] --- The number of discretizations in heading,used in planner.cpp
-    int headings = 72;
+    // int headings = 72;
 
-    int control_point_1_x = 10;
+    // int control_point_1_x = 10;
 
-    int control_point_1_y = 5;
-    int control_point_2_x = 40;
+    // int control_point_1_y = 5;
+    // int control_point_2_x = 40;
 
-    int control_point_2_y = 5;
+    // int control_point_2_y = 5;
   };
   struct ParameterContainer
   {

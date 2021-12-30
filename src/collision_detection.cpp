@@ -34,23 +34,16 @@ namespace GeneticAlgorithm
         {
             DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is outside map!";
         }
-        DLOG(INFO) << "node is collision free.";
+        // DLOG(INFO) << "node is collision free.";
         return false;
     }
+
     bool CollisionDetection::IsCollsion(const Eigen::Vector3d &point_3d)
     {
         Eigen::Vector2d point_2d = Utility::ConvertVector3dToVector2d(point_3d);
-        if (IsCollsion(point_2d))
-        {
-            DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is in collision!";
-            return true;
-        }
-        else
-        {
-            DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is collision free!";
-            return false;
-        }
+        return IsCollsion(point_2d);
     }
+
     bool CollisionDetection::IsCollsion(const std::vector<Eigen::Vector2d> &point_2d_vec)
     {
         for (auto point2d : point_2d_vec)
@@ -61,28 +54,43 @@ namespace GeneticAlgorithm
                 return true;
             }
         }
-        DLOG(INFO) << "vector is collision free.";
+        // DLOG(INFO) << "vector is collision free.";
+        return false;
+    }
+
+    bool CollisionDetection::IsCollsion(const std::vector<Eigen::Vector3d> &point_3d_vec)
+    {
+        for (auto point3d : point_3d_vec)
+        {
+            if (IsCollsion(point3d))
+            {
+                DLOG(INFO) << "vector is in collision.";
+                return true;
+            }
+        }
+        // DLOG(INFO) << "vector is collision free.";
         return false;
     }
 
     bool CollisionDetection::IsCollsion(CubicBezier::CubicBezier &cubic_bezier)
     {
-        std::vector<Eigen::Vector2d> anchor_points_vec = cubic_bezier.GetAnchorPoints();
+        std::vector<Eigen::Vector3d> anchor_points_vec = cubic_bezier.GetAnchorPoints();
         if (IsCollsion(anchor_points_vec))
         {
             DLOG(INFO) << "anchor point is in collision.";
             return true;
         }
-        if (IsCollsion(cubic_bezier.ConvertCubicBezierToVector2d()))
+        if (IsCollsion(cubic_bezier.ConvertCubicBezierToVector3d()))
         {
             DLOG(INFO) << "cubic bezier path is in collision.";
             return true;
         }
-        DLOG(INFO) << "cubic bezier is collision free.";
+        // DLOG(INFO) << "cubic bezier is collision free.";
         return false;
     }
+
     //TODO combine this function and the one below
-    int CollisionDetection::FindCollsionIndex(PiecewiseCubicBezier &piecewise_cubic_bezier)
+    int CollisionDetection::FindCollsionIndex(const PiecewiseCubicBezier &piecewise_cubic_bezier)
     {
         std::vector<CubicBezier::CubicBezier> cubic_bezier_vec = piecewise_cubic_bezier.GetCubicBezierVector();
         for (uint i = 0; i < cubic_bezier_vec.size(); ++i)

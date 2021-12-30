@@ -14,7 +14,7 @@
 namespace GeneticAlgorithm
 {
 
-    void PiecewiseCubicBezier::ConvertAnchorPoint3dTo2d()
+    void PiecewiseCubicBezier::GetAnchorPointDirection()
     {
         // anchor_points2d_vec_.clear();
         anchor_points_dir_vec_.clear();
@@ -41,53 +41,50 @@ namespace GeneticAlgorithm
         control_points_vec_.clear();
         float start_angle = start_point_.z();
         float goal_angle = goal_point_.z();
-        Eigen::Vector2d direction_start;
+        Eigen::Vector3d direction_start;
         direction_start.x() = std::cos(start_angle);
         direction_start.y() = std::sin(start_angle);
-        Eigen::Vector2d direction_goal;
+        Eigen::Vector3d direction_goal;
         direction_goal.x() = std::cos(goal_angle);
         direction_goal.y() = std::sin(goal_angle);
-        Eigen::Vector2d start_2d = Utility::ConvertVector3dToVector2d(start_point_);
-        Eigen::Vector2d goal_2d = Utility::ConvertVector3dToVector2d(goal_point_);
-        Eigen::Vector2d first_control_point;
-        Eigen::Vector2d last_control_point;
-        uint anchor_points_vec_size = anchor_points2d_vec_.size();
+        Eigen::Vector3d first_control_point, last_control_point;
+        uint anchor_points_vec_size = anchor_points3d_vec_.size();
         // DLOG(INFO) << "start is " << start_2d.x() << " " << start_2d.y();
-        DLOG(INFO) << "free anchor points size is " << anchor_points_vec_size << "; " << anchor_points_vec_size + 1 << " bezier!";
+        // DLOG(INFO) << "free anchor points size is " << anchor_points_vec_size << "; " << anchor_points_vec_size + 1 << " bezier!";
         float t_start, t_goal;
         if (anchor_points_vec_size == 0)
         {
             //use the way in paper
-            t_start = (goal_2d - start_2d).norm() / 3;
-            first_control_point = start_2d + direction_start * t_start;
-            t_goal = (goal_2d - start_2d).norm() / 3;
-            last_control_point = goal_2d - direction_goal * t_goal;
+            t_start = Utility::ConvertVector3dToVector2d((goal_point_ - start_point_)).norm() / 3;
+            first_control_point = start_point_ + direction_start * t_start;
+            t_goal = Utility::ConvertVector3dToVector2d((goal_point_ - start_point_)).norm() / 3;
+            last_control_point = goal_point_ - direction_goal * t_goal;
 
             control_points_vec_.emplace_back(first_control_point);
             control_points_vec_.emplace_back(last_control_point);
         }
         else if (anchor_points_vec_size == 1)
         {
-            Eigen::Vector2d anchor_point_2d = anchor_points2d_vec_.front();
+            Eigen::Vector3d anchor_point_3d = anchor_points3d_vec_.front();
 
-            t_start = (anchor_point_2d - start_2d).norm() / 3;
+            t_start = Utility::ConvertVector3dToVector2d((anchor_point_3d - start_point_)).norm() / 3;
 
-            first_control_point = start_2d + direction_start * t_start;
-            t_goal = (anchor_point_2d - goal_2d).norm() / 3;
+            first_control_point = start_point_ + direction_start * t_start;
+            t_goal = Utility::ConvertVector3dToVector2d((anchor_point_3d - goal_point_)).norm() / 3;
             control_points_vec_.emplace_back(first_control_point);
 
-            last_control_point = goal_2d - direction_goal * t_goal;
-            Eigen::Vector2d c2 = (first_control_point - last_control_point + 4 * anchor_point_2d) / 4;
+            last_control_point = goal_point_ - direction_goal * t_goal;
+            Eigen::Vector3d c2 = (first_control_point - last_control_point + 4 * anchor_point_3d) / 4;
 
             control_points_vec_.emplace_back(c2);
 
-            Eigen::Vector2d c3 = 2 * anchor_point_2d - c2;
+            Eigen::Vector3d c3 = 2 * anchor_point_3d - c2;
             control_points_vec_.emplace_back(c3);
 
             control_points_vec_.emplace_back(last_control_point);
             // DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
             // DLOG(INFO) << "second control point is " << c2.x() << " " << c2.y();
-            // DLOG(INFO) << "anchor  point is " << anchor_point_2d.x() << " " << anchor_point_2d.y();
+            // DLOG(INFO) << "anchor  point is " << anchor_point_3d.x() << " " << anchor_point_3d.y();
             // DLOG(INFO) << "c3 control point is " << c3.x() << " " << c3.y();
             // DLOG(INFO) << "c4 control point is " << last_control_point.x() << " " << last_control_point.y();
         }
@@ -96,18 +93,17 @@ namespace GeneticAlgorithm
         // DLOG(INFO) << "points vec size is " << points_vec_.size();
         else
         {
-
             //basically is Ax=b, x is the distance factor, its pre and succ control point is control point pre= anchor-distance_factor*direction.
-            Eigen::MatrixXd A = Eigen::MatrixXd::Zero(2 * anchor_points_vec_size, 2 * anchor_points_vec_size);
-            Eigen::VectorXd b(2 * anchor_points_vec_size);
+            Eigen::MatrixXd A = Eigen::MatrixXd::Zero(3 * anchor_points_vec_size, 3 * anchor_points_vec_size);
+            Eigen::VectorXd b(3 * anchor_points_vec_size);
             //calculate first and last control points
-            Eigen::Vector2d first_anchor_point_2d = anchor_points2d_vec_.front();
-            Eigen::Vector2d last_anchor_point_2d = anchor_points2d_vec_.back();
-            t_start = (first_anchor_point_2d - start_2d).norm() / 3;
-            first_control_point = start_2d + direction_start * t_start;
-            t_goal = (last_anchor_point_2d - goal_2d).norm() / 3;
+            Eigen::Vector3d first_anchor_point_3d = anchor_points3d_vec_.front();
+            Eigen::Vector3d last_anchor_point_3d = anchor_points3d_vec_.back();
+            t_start = Utility::ConvertVector3dToVector2d((first_anchor_point_3d - start_point_)).norm() / 3;
+            first_control_point = start_point_ + direction_start * t_start;
+            t_goal = Utility::ConvertVector3dToVector2d((last_anchor_point_3d - goal_point_)).norm() / 3;
             control_points_vec_.emplace_back(first_control_point);
-            last_control_point = goal_2d - direction_goal * t_goal;
+            last_control_point = goal_point_ - direction_goal * t_goal;
 
             for (uint i = 0; i < anchor_points_vec_size; ++i)
             {
@@ -115,37 +111,37 @@ namespace GeneticAlgorithm
                 if (i == 0)
                 {
                     //initialize A
-                    A.block<2, 1>(2 * i, 2 * i + 1) = anchor_points_dir_vec_[i + 1];
+                    A.block<3, 1>(3 * i, 3 * i + 1) = anchor_points_dir_vec_[i + 1];
                     //initialize b
-                    b.block<2, 1>(2 * i, 0) = anchor_points2d_vec_[i + 1] - first_control_point;
+                    b.block<3, 1>(3 * i, 0) = anchor_points3d_vec_[i + 1] - first_control_point;
                 }
                 // for last row
                 else if (i == anchor_points_vec_size - 1)
                 {
                     //initialize A
-                    A.block<2, 1>(2 * i, 2 * i - 1) = anchor_points_dir_vec_[i - 1];
+                    A.block<3, 1>(3 * i, 3 * i - 1) = anchor_points_dir_vec_[i - 1];
                     //initialize b
-                    b.block<2, 1>(2 * i, 0) = last_control_point - anchor_points2d_vec_[i - 1];
+                    b.block<3, 1>(3 * i, 0) = last_control_point - anchor_points3d_vec_[i - 1];
                 }
                 else
                 {
                     //initialize A
-                    A.block<2, 1>(2 * i, 2 * i + 1) = anchor_points_dir_vec_[i + 1];
-                    A.block<2, 1>(2 * i, 2 * i - 1) = anchor_points_dir_vec_[i - 1];
+                    A.block<3, 1>(3 * i, 3 * i + 1) = anchor_points_dir_vec_[i + 1];
+                    A.block<3, 1>(3 * i, 3 * i - 1) = anchor_points_dir_vec_[i - 1];
                     //initialize b
-                    b.block<2, 1>(2 * i, 0) = anchor_points2d_vec_[i + 1] - anchor_points2d_vec_[i - 1];
+                    b.block<3, 1>(3 * i, 0) = anchor_points3d_vec_[i + 1] - anchor_points3d_vec_[i - 1];
                 }
-                A.block<2, 1>(2 * i, 2 * i) = 4 * anchor_points_dir_vec_[i];
+                A.block<3, 1>(3 * i, 3 * i) = 4 * anchor_points_dir_vec_[i];
             }
-            Eigen::VectorXd distance_factor(2 * anchor_points_vec_size);
+            Eigen::VectorXd distance_factor(3 * anchor_points_vec_size);
             distance_factor = A.colPivHouseholderQr().solve(b);
 
             for (uint i = 0; i < anchor_points_vec_size; ++i)
             {
-                Eigen::Vector2d current_dir = anchor_points_dir_vec_[i];
+                Eigen::Vector3d current_dir = anchor_points_dir_vec_[i];
 
-                Eigen::Vector2d pre_control_point = anchor_points2d_vec_[i] - current_dir * distance_factor[2 * i];
-                Eigen::Vector2d succ_control_point = anchor_points2d_vec_[i] + current_dir * distance_factor[2 * i];
+                Eigen::Vector3d pre_control_point = anchor_points3d_vec_[i] - current_dir * distance_factor[3 * i];
+                Eigen::Vector3d succ_control_point = anchor_points3d_vec_[i] + current_dir * distance_factor[3 * i];
                 control_points_vec_.emplace_back(pre_control_point);
                 control_points_vec_.emplace_back(succ_control_point);
             }
@@ -173,7 +169,7 @@ namespace GeneticAlgorithm
 
                     Eigen::Vector3d anchor_point_3d = anchor_points3d_vec_[anchor_point_index];
                     points_vec_.emplace_back(anchor_point_3d);
-                    // DLOG(INFO) << "anchor point 2d is " << anchor_point_2d.x() << " " << anchor_point_2d.y();
+                    // DLOG(INFO) << "anchor point 2d is " << anchor_point_3d.x() << " " << anchor_point_3d.y();
                     // DLOG(INFO) << "anchor point index is " << anchor_point_index;
                     anchor_point_index++;
                     count++;
@@ -191,7 +187,7 @@ namespace GeneticAlgorithm
     void PiecewiseCubicBezier::CalculateCubicBezier()
     {
         cubic_bezier_vec_.clear();
-        std::vector<Eigen::Vector2d> points_lists;
+        std::vector<Eigen::Vector3d> points_lists;
         for (uint i = 0; i < points_vec_.size(); ++i)
         {
             points_lists.emplace_back(points_vec_[i]);
@@ -224,9 +220,9 @@ namespace GeneticAlgorithm
         return angle;
     }
 
-    Eigen::Vector2d PiecewiseCubicBezier::GetValueAt(const float &u)
+    Eigen::Vector3d PiecewiseCubicBezier::GetValueAt(const float &u)
     {
-        Eigen::Vector2d out;
+        Eigen::Vector3d out;
 
         int total_number_of_bezier = cubic_bezier_vec_.size();
         if (total_number_of_bezier == 0)
@@ -238,7 +234,6 @@ namespace GeneticAlgorithm
         else
         {
             int current_index_of_bezier;
-
             current_index_of_bezier = (int)std::floor(u * total_number_of_bezier);
             float current_factor = total_number_of_bezier * u - current_index_of_bezier;
             // DLOG(INFO) << "u is " << u << " total number of bezier is " << total_number_of_bezier << " current index of bezier is " << current_index_of_bezier << " current factor is " << current_factor;
