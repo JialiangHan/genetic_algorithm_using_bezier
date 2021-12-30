@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2021
  * 
  */
+#pragma once
 #include "parameter_manager.h"
 #include "piecewise_cubic_bezier.h"
 #include <nav_msgs/OccupancyGrid.h>
@@ -23,7 +24,12 @@ namespace GeneticAlgorithm
         CollisionDetection(const ParameterCollisionDetection &param)
         {
             params_ = param;
-        }
+        };
+
+        CollisionDetection(const nav_msgs::OccupancyGrid::ConstPtr &map)
+        {
+            SetMap(map);
+        };
 
         void SetMap(const nav_msgs::OccupancyGrid::ConstPtr &map) { grid_ = map; };
         /**
@@ -34,6 +40,8 @@ namespace GeneticAlgorithm
          * @return false not collsion
          */
         bool IsCollsion(const Eigen::Vector2d &point_2d);
+
+        bool IsCollsion(const Eigen::Vector3d &point_3d);
 
         bool IsCollsion(const std::vector<Eigen::Vector2d> &point_2d_vec);
 
@@ -46,6 +54,13 @@ namespace GeneticAlgorithm
          * @return int should be in [0,size of cubic bezier list], -1 means no collision
          */
         int FindCollsionIndex(PiecewiseCubicBezier &piecewise_cubic_bezier);
+        /**
+         * @brief find out how many times a piecewise cubic bezier curve will encouter obstacle in the map.
+         * 
+         * @param piecewise_cubic_bezier 
+         * @return int 
+         */
+        int GetTimesInCollision(PiecewiseCubicBezier &piecewise_cubic_bezier);
 
     private:
         ParameterCollisionDetection params_;

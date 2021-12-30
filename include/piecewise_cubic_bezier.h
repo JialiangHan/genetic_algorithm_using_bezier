@@ -29,12 +29,10 @@ namespace GeneticAlgorithm
      * 
      * @param control_points 
      */
-    PiecewiseCubicBezier(const Eigen::Vector3d &start, const Eigen::Vector3d &goal, int width, int height)
+    PiecewiseCubicBezier(const Eigen::Vector3d &start, const Eigen::Vector3d &goal)
     {
       start_point_ = start;
       goal_point_ = goal;
-      map_width_ = width;
-      map_height_ = height;
     };
 
     /**
@@ -61,13 +59,17 @@ namespace GeneticAlgorithm
      * 
      * @return float 
      */
-    float GetLength() { return length_; };
+    float GetLength()
+    {
+      CalculateLength();
+      return length_;
+    };
 
     std::vector<Eigen::Vector3d> ConvertPiecewiseCubicBezierToVector3d();
 
-    std::vector<Eigen::Vector2d> GetPointsVec() { return points_vec_; };
+    std::vector<Eigen::Vector3d> GetPointsVec() { return points_vec_; };
 
-    std::vector<Eigen::Vector2d> GetAnchorPoints() { return anchor_points2d_vec_; };
+    std::vector<Eigen::Vector3d> GetAnchorPoints() { return anchor_points2d_vec_; };
 
     std::vector<CubicBezier::CubicBezier> GetCubicBezierVector() { return cubic_bezier_vec_; };
 
@@ -95,16 +97,16 @@ namespace GeneticAlgorithm
     // int number_of_cubic_bezier_;
     std::vector<CubicBezier::CubicBezier> cubic_bezier_vec_;
     // points list contains both free,fixed anchor points and control points
-    std::vector<Eigen::Vector2d> points_vec_;
+    std::vector<Eigen::Vector3d> points_vec_;
 
-    std::vector<Eigen::Vector2d> control_points_vec_;
+    std::vector<Eigen::Vector3d> control_points_vec_;
 
     // list free anchor points(P), anchor points are the points which bezier curve pass through, not include start and goal
     std::vector<Eigen::Vector3d> anchor_points3d_vec_;
 
-    std::vector<Eigen::Vector2d> anchor_points2d_vec_;
+    // std::vector<Eigen::Vector3d> anchor_points2d_vec_;
 
-    std::vector<Eigen::Vector2d> anchor_points_dir_vec_;
+    std::vector<Eigen::Vector3d> anchor_points_dir_vec_;
 
     Eigen::Vector3d start_point_;
     Eigen::Vector3d goal_point_;
@@ -113,8 +115,5 @@ namespace GeneticAlgorithm
      * 
      */
     float length_ = 0;
-
-    float map_width_;
-    float map_height_;
   };
 }

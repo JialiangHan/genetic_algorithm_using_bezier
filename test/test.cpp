@@ -14,7 +14,32 @@
 #include "gflags/gflags.h"
 #include <eigen3/Eigen/Dense>
 #include "utility.h"
+#include "genetic_algorithm.h"
 
+TEST(Utility, DegNormalization)
+{
+    float t1 = 361, t2 = -359, t3 = 721, t4 = -719;
+    std::vector<float> one{t1, t2, t3, t4};
+    int expect, result;
+    for (auto number : one)
+    {
+        expect = 1.0;
+        result = Utility::DegNormalization(number);
+        EXPECT_FLOAT_EQ(expect, result);
+    }
+}
+TEST(Utility, RadNormalization)
+{
+    float t1 = 361, t2 = -359, t3 = 721, t4 = -719;
+    std::vector<float> one{t1, t2, t3, t4};
+    int expect, result;
+    for (auto number : one)
+    {
+        expect = Utility::ConvertDegToRad(1.0);
+        result = Utility::RadNormalization(Utility::ConvertDegToRad(number));
+        EXPECT_FLOAT_EQ(expect, result);
+    }
+}
 TEST(Utility, IsIntersect)
 {
     Eigen::Vector2d p1(0, 0), p2(60, 0), p3(60, 30), p4(0, 30), p5(23.686, 10.8453);
@@ -80,10 +105,5 @@ TEST(Utility, IsInsidePolygon)
         result = Utility::IsInsidePolygon(polygon, point);
         EXPECT_EQ(expect, result);
     }
-    // for (auto point : outside)
-    // {
-    //     expect = 0;
-    //     result = Utility::IsInsidePolygon(polygon, point);
-    //     EXPECT_EQ(expect, result);
-    // }
 }
+

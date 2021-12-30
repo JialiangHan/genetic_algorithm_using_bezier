@@ -37,7 +37,20 @@ namespace GeneticAlgorithm
         DLOG(INFO) << "node is collision free.";
         return false;
     }
-
+    bool CollisionDetection::IsCollsion(const Eigen::Vector3d &point_3d)
+    {
+        Eigen::Vector2d point_2d = Utility::ConvertVector3dToVector2d(point_3d);
+        if (IsCollsion(point_2d))
+        {
+            DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is in collision!";
+            return true;
+        }
+        else
+        {
+            DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is collision free!";
+            return false;
+        }
+    }
     bool CollisionDetection::IsCollsion(const std::vector<Eigen::Vector2d> &point_2d_vec)
     {
         for (auto point2d : point_2d_vec)
@@ -68,11 +81,11 @@ namespace GeneticAlgorithm
         DLOG(INFO) << "cubic bezier is collision free.";
         return false;
     }
-
+    //TODO combine this function and the one below
     int CollisionDetection::FindCollsionIndex(PiecewiseCubicBezier &piecewise_cubic_bezier)
     {
-        cubic_bezier_vec = piecewise_cubic_bezier.GetCubicBezierVector();
-        for (uint i = 0; i < cubic_bezier.size(); ++i)
+        std::vector<CubicBezier::CubicBezier> cubic_bezier_vec = piecewise_cubic_bezier.GetCubicBezierVector();
+        for (uint i = 0; i < cubic_bezier_vec.size(); ++i)
         {
             if (IsCollsion(cubic_bezier_vec[i]))
             {
@@ -81,5 +94,20 @@ namespace GeneticAlgorithm
             }
         }
         return -1;
+    }
+
+    int CollisionDetection::GetTimesInCollision(PiecewiseCubicBezier &piecewise_cubic_bezier)
+    {
+        int times = 0;
+        std::vector<CubicBezier::CubicBezier> cubic_bezier_vec = piecewise_cubic_bezier.GetCubicBezierVector();
+        for (uint i = 0; i < cubic_bezier_vec.size(); ++i)
+        {
+            if (IsCollsion(cubic_bezier_vec[i]))
+            {
+                DLOG(INFO) << i << "th cubic bezier is in collision.";
+                times++;
+            }
+        }
+        return times;
     }
 };

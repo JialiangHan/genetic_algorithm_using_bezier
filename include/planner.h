@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2021
  * 
  */
-
+#pragma once
 #include <ctime>
 
 #include <ros/ros.h>
@@ -99,5 +99,7 @@ namespace GeneticAlgorithm
       CubicBezier::CubicBezier cubic_bezier_;
 
       PiecewiseCubicBezier piecewise_cubic_bezier_;
+
+      std::shared_ptr<GeneticAlgorithm> genetic_algorithm_ptr_;
    };
 }

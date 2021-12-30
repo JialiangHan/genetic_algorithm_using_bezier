@@ -49,10 +49,16 @@ namespace GeneticAlgorithm
      */
     float penalty_fitness = 50;
     /**
-     * @brief the range for local mutation, unit is [meter]
+     * @brief the range for local mutation, unit is [meter],for x and y
      * 
      */
-    float local_search_range_radius = 0.2;
+    float local_search_range_radius = 2;
+
+    /**
+     * @brief the range for local mutation, unit is [rad],for angle, this value must small than 2*pi
+     * 
+     */
+    float local_search_range_angle = 0.2;
     /**
      * @brief use to switch mutation mode 
      * 

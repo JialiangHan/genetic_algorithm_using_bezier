@@ -13,6 +13,7 @@ Planner::Planner()
     collision_detection_ptr_.reset(new CollisionDetection(param_manager_->GetCollisionDetectionParams()));
     algorithm_ptr_.reset(new GeneticAlgorithm(param_manager_->GetGeneticAlgorithmParams()));
     path_publisher_ptr_.reset(new PathPublisher(param_manager_->GetPathPublisherParams()));
+    genetic_algorithm_ptr_.reset(new GeneticAlgorithm(param_manager_->GetGeneticAlgorithmParams()));
     // _________________
     // TOPICS TO PUBLISH
     pub_start_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/start", 1);
@@ -171,8 +172,8 @@ void Planner::MakePlan()
 
         // ___________________________
         // LISTS ALLOCATED ROW MAJOR ORDER
-        int width = grid_->info.width;
-        int height = grid_->info.height;
+        // uint width = grid_->info.width;
+        // uint height = grid_->info.height;
         // int depth = params_.headings;
         // int length = width * height * depth;
 
@@ -220,29 +221,32 @@ void Planner::MakePlan()
         // cubic_bezier_.SetControlPoints(control_points);
         // std::vector<Eigen::Vector3d> path;
         // path = cubic_bezier_.ConvertCubicBezierToVector3d();
-        piecewise_cubic_bezier_ = PiecewiseCubicBezier(start, goal, width, height);
-        std::vector<Eigen::Vector3d> anchor_points;
-        uint number_of_anchor_points = 2;
-        for (uint i = 0; i < number_of_anchor_points; ++i)
-        {
-            Eigen::Vector3d anchor_point;
-            if (anchor_points.size() == 0)
-            {
-                anchor_point = ((start + goal) / 2);
-            }
-            else
-            {
-                anchor_point = (anchor_points.back() + goal) / 2;
-            }
-            anchor_points.emplace_back(anchor_point);
-        }
+        // piecewise_cubic_bezier_ = PiecewiseCubicBezier(start, goal);
+        // std::vector<Eigen::Vector3d> anchor_points;
+        // uint number_of_anchor_points = 2;
+        // for (uint i = 0; i < number_of_anchor_points; ++i)
+        // {
+        //     Eigen::Vector3d anchor_point;
+        //     if (anchor_points.size() == 0)
+        //     {
+        //         anchor_point = ((start + goal) / 2);
+        //     }
+        //     else
+        //     {
+        //         anchor_point = (anchor_points.back() + goal) / 2;
+        //     }
+        //     anchor_points.emplace_back(anchor_point);
+        // }
 
-        piecewise_cubic_bezier_.SetAnchorPoints(anchor_points);
-        std::vector<Eigen::Vector3d> path = piecewise_cubic_bezier_.ConvertPiecewiseCubicBezierToVector3d();
-        std::vector<Eigen::Vector2d> points = piecewise_cubic_bezier_.GetPointsVec();
+        // piecewise_cubic_bezier_.SetAnchorPoints(anchor_points);
+        // std::vector<Eigen::Vector3d> path = piecewise_cubic_bezier_.ConvertPiecewiseCubicBezierToVector3d();
+        // std::vector<Eigen::Vector2d> points = piecewise_cubic_bezier_.GetPointsVec();
         // DLOG(INFO) << "path length is : " << path.size() << " first point is: " << path.front().x() << " " << path.front().y() << " last point is : " << path.back().x() << " " << path.back().y();
         // CLEAR THE VISUALIZATION
         // visualization_ptr_->clear();
+        genetic_algorithm_ptr_->Initialize(start, goal, grid_);
+        std::vector<Eigen::Vector3d> path = genetic_algorithm_ptr_->GetPath();
+        std::vector<Eigen::Vector3d> points = genetic_algorithm_ptr_.GetPoints();
         // CLEAR THE PATH
         path_publisher_ptr_->Clear();
         // smoothed_path_ptr_->Clear();

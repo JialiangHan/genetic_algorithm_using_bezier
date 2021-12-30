@@ -11,7 +11,12 @@ namespace Utility
         out.z() = 0;
         return out;
     }
-
+    float ConvertDegToRad(const float &deg)
+    {
+        float rad;
+        rad = deg / 360 * 2 * M_PI;
+        return rad;
+    }
     float ConvertRadToDeg(const float &rad)
     {
         float deg;

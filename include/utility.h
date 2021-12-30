@@ -39,6 +39,8 @@ namespace Utility
 
     Eigen::Vector3d ConvertVector2dToVector3d(const Eigen::Vector2d &vector_2d);
 
+    float ConvertDegToRad(const float &deg);
+
     float ConvertRadToDeg(const float &rad);
     /**
      * @brief check if p3 lines on p1-p2
