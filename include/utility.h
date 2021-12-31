@@ -22,6 +22,8 @@ namespace Utility
 
     void ConvertRosPathToVectorVector3D(const nav_msgs::Path::ConstPtr &path, std::vector<Eigen::Vector3d> &vector_3d_vec);
 
+    nav_msgs::Path ConvertVectorVector3DToRosPath(const std::vector<Eigen::Vector3d> &vector_3d_vec);
+
     Eigen::Vector2d ConvertIndexToEigenVector2d(const int &index, const int &map_width);
 
     float GetDistanceFromVector2dToVector3d(const Eigen::Vector3d &vector_3d, const Eigen::Vector2d &vector_2d);

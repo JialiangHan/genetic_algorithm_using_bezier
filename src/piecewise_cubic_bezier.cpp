@@ -20,7 +20,7 @@ namespace GeneticAlgorithm
         anchor_points_dir_vec_.clear();
         if (anchor_points3d_vec_.size() == 0)
         {
-            DLOG(WARNING) << "anchor points are zero!!!";
+            // DLOG(WARNING) << "anchor points are zero!!!";
         }
         else
         {

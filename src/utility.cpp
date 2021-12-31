@@ -2,7 +2,24 @@
 
 namespace Utility
 {
-
+    nav_msgs::Path ConvertVectorVector3DToRosPath(const std::vector<Eigen::Vector3d> &vector_3d_vec)
+    {
+        nav_msgs::Path out;
+        out.header.stamp = ros::Time::now();
+        for (const auto &vector3d : vector_3d_vec)
+        {
+            geometry_msgs::PoseStamped vertex;
+            vertex.pose.position.x = vector3d.x();
+            vertex.pose.position.y = vector3d.y();
+            vertex.pose.position.z = vector3d.z();
+            vertex.pose.orientation.x = 0;
+            vertex.pose.orientation.y = 0;
+            vertex.pose.orientation.z = 0;
+            vertex.pose.orientation.w = 0;
+            out.poses.push_back(vertex);
+        }
+        return out;
+    }
     Eigen::Vector3d ConvertVector2dToVector3d(const Eigen::Vector2d &vector_2d)
     {
         Eigen::Vector3d out;

@@ -17,6 +17,9 @@
 #include <cstdlib>
 #include <math.h>
 #include <unordered_map>
+#include <thread>
+#include <mutex>
+#include <visualization_msgs/MarkerArray.h>
 namespace GeneticAlgorithm
 {
    /**
@@ -48,7 +51,14 @@ namespace GeneticAlgorithm
       GeneticAlgorithm(const ParameterGeneticAlgorithm &param)
       {
          params_ = param;
+         std::string path_point_topic = "/points";
+         // _________________
+         // TOPICS TO PUBLISH
+         pub_best_path_ = nh_.advertise<nav_msgs::Path>("/path", 10);
+         pub_path_nodes_ = nh_.advertise<visualization_msgs::MarkerArray>(path_point_topic, 1);
+         pub_thread_.reset(new std::thread(&GeneticAlgorithm::PublishThread, this));
       };
+      ~GeneticAlgorithm();
       void Initialize(const Eigen::Vector3d &start, const Eigen::Vector3d &goal, const nav_msgs::OccupancyGrid::ConstPtr &map)
       {
          start_ = start;
@@ -57,7 +67,8 @@ namespace GeneticAlgorithm
          grid_ = map;
          current_best_.second = 0;
          best_of_best_.second = 0;
-         MainLoop();
+
+                MainLoop();
       };
 
       std::vector<Eigen::Vector3d> GetPath() { return path_; };
@@ -67,6 +78,8 @@ namespace GeneticAlgorithm
        * @return Chromosome 
        */
       Chromosome GetPoints();
+
+      void PublishThread();
 
    private:
       /**
@@ -132,7 +145,12 @@ namespace GeneticAlgorithm
 
       void CalculatePath(const Chromosome &chromosome);
 
+      int PublishCurrentBestPath();
+
+      int PublishCurrentPointsOfBestPath();
+
    private:
+      ros::NodeHandle nh_;
       Eigen::Vector3d start_;
       Eigen::Vector3d goal_;
       ParameterGeneticAlgorithm params_;
@@ -173,5 +191,13 @@ namespace GeneticAlgorithm
       std::vector<Eigen::Vector3d> path_;
 
       float fitness_avg_ = 0;
+
+      std::unique_ptr<std::thread> pub_thread_;
+
+      ros::Publisher pub_best_path_;
+
+      ros::Publisher pub_path_nodes_;
+
+      std::mutex path_access_;
    };
 }

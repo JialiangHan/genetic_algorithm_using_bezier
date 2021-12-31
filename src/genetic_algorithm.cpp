@@ -12,6 +12,11 @@
 
 namespace GeneticAlgorithm
 {
+    GeneticAlgorithm::~GeneticAlgorithm()
+    {
+        //detach our threads
+        pub_thread_->join();
+    };
     int GeneticAlgorithm::PreCheck()
     {
         DLOG(INFO) << "Enter PreCheck";
@@ -90,8 +95,9 @@ namespace GeneticAlgorithm
                 {
                     PiecewiseCubicBezier piecewise_cubic_bezier = GeneratePiecewiseCubicBezier(current_best_.first);
                     int collision_index = collision_detection_ptr_->FindCollsionIndex(piecewise_cubic_bezier);
-                    int times_collsion = collision_detection_ptr_->GetTimesInCollision(piecewise_cubic_bezier);
+                    // int times_collsion = collision_detection_ptr_->GetTimesInCollision(piecewise_cubic_bezier);
                     // DLOG(INFO) << "collision index of found path is " << collision_index << " number of time collision " << times_collsion;
+                    path_ = piecewise_cubic_bezier.ConvertPiecewiseCubicBezierToVector3d();
                     if (collision_index >= 0)
                     {
                         number_of_gene_in_chromosome_++;
@@ -100,7 +106,7 @@ namespace GeneticAlgorithm
                     }
                     else
                     {
-                        path_ = piecewise_cubic_bezier.ConvertPiecewiseCubicBezierToVector3d();
+
                         DLOG(INFO) << "path has been found!!";
                         inner_flag = false;
                         outer_flag = false;
@@ -365,5 +371,55 @@ namespace GeneticAlgorithm
     {
         PiecewiseCubicBezier piecewise_cubic_bezier = GeneratePiecewiseCubicBezier(chromosome);
         path_ = piecewise_cubic_bezier.ConvertPiecewiseCubicBezierToVector3d();
+    }
+    void GeneticAlgorithm::PublishThread()
+    {
+        ros::Rate r(1);
+        while (ros::ok())
+        {
+            PublishCurrentBestPath();
+            PublishCurrentPointsOfBestPath();
+        }
+    }
+    int GeneticAlgorithm::PublishCurrentPointsOfBestPath()
+    {
+        std::unique_lock<std::mutex> lock(path_access_);
+        visualization_msgs::Marker pathNode;
+        visualization_msgs::MarkerArray path_nodes;
+        int i = 0;
+        Chromosome point_vec = GetPoints();
+        for (auto point : point_vec)
+        {
+            pathNode.action = 0;
+
+            pathNode.header.frame_id = "path";
+            pathNode.header.stamp = ros::Time(0);
+            pathNode.id = i;
+            pathNode.type = visualization_msgs::Marker::SPHERE;
+            pathNode.scale.x = 0.5;
+            pathNode.scale.y = 0.5;
+            pathNode.scale.z = 0.5;
+            pathNode.color.a = 1.0;
+
+            pathNode.color.r = 1;
+            pathNode.color.g = 0;
+            pathNode.color.b = 0;
+
+            pathNode.pose.position.x = point.x();
+            pathNode.pose.position.y = point.y();
+            path_nodes.markers.push_back(pathNode);
+            i++;
+        }
+        pub_path_nodes_.publish(path_nodes);
+        return 1;
+    }
+    int GeneticAlgorithm::PublishCurrentBestPath()
+    {
+        std::unique_lock<std::mutex> lock(path_access_);
+        nav_msgs::Path best_path;
+        best_path = Utility::ConvertVectorVector3DToRosPath(path_);
+        best_path.header.frame_id = "path";
+        pub_best_path_.publish(best_path);
+        return 1;
     }
 }

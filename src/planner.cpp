@@ -213,8 +213,8 @@ void Planner::MakePlan()
         auto t1 = std::chrono::high_resolution_clock::now();
 
         genetic_algorithm_ptr_->Initialize(start, goal, grid_);
-        std::vector<Eigen::Vector3d> path = genetic_algorithm_ptr_->GetPath();
-        std::vector<Eigen::Vector3d> points = genetic_algorithm_ptr_->GetPoints();
+        // std::vector<Eigen::Vector3d> path = genetic_algorithm_ptr_->GetPath();
+        // std::vector<Eigen::Vector3d> points = genetic_algorithm_ptr_->GetPoints();
 
         auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -222,15 +222,15 @@ void Planner::MakePlan()
 
         DLOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz";
         // CLEAR THE PATH
-        path_publisher_ptr_->Clear();
+        // path_publisher_ptr_->Clear();
         // smoothed_path_ptr_->Clear();
         // FIND THE PATH
         // Node3D *nSolution = algorithm_ptr_->HybridAStar(nStart, nGoal, nodes3D, nodes2D, width, height, configuration_space_ptr_, dubins_lookup_table, visualization_ptr_);
         // TRACE THE PATH
         // smoother_ptr_->TracePath(nSolution);
         // CREATE THE UPDATED PATH
-        path_publisher_ptr_->UpdatePath(path);
-        path_publisher_ptr_->UpdatePoint(points);
+        // path_publisher_ptr_->UpdatePath(path);
+        // path_publisher_ptr_->UpdatePoint(points);
         // SMOOTH THE PATH
         // smoother_ptr_->SmoothPath(voronoi_diagram_);
         // CREATE THE UPDATED PATH
@@ -238,10 +238,10 @@ void Planner::MakePlan()
 
         // _________________________________
         // PUBLISH THE RESULTS OF THE SEARCH
-        path_publisher_ptr_->PublishPath();
-        path_publisher_ptr_->PublishPathNodes();
-        path_publisher_ptr_->PublishPathVehicles();
-        path_publisher_ptr_->PublishPathPoints();
+        // path_publisher_ptr_->PublishPath();
+        // path_publisher_ptr_->PublishPathNodes();
+        // path_publisher_ptr_->PublishPathVehicles();
+        // path_publisher_ptr_->PublishPathPoints();
         // smoothed_path_ptr_->PublishPath();
         // smoothed_path_ptr_->PublishPathNodes();
         // smoothed_path_ptr_->PublishPathVehicles();
