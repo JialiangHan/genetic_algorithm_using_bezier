@@ -13,6 +13,23 @@
 
 namespace GeneticAlgorithm
 {
+    void CollisionDetection::GenerateFreePointVec()
+    {
+        for (uint i = 0; i < grid_->data.size(); ++i)
+        {
+            if (grid_->data[i])
+            {
+                continue;
+            }
+            else
+            {
+                int x = i % grid_->info.width;
+                int y = i / grid_->info.height;
+                Eigen::Vector3d free_point(x, y, 0);
+                free_point_vec_.emplace_back(free_point);
+            }
+        }
+    }
 
     bool CollisionDetection::IsCollsion(const Eigen::Vector2d &point_2d)
     {
@@ -26,7 +43,7 @@ namespace GeneticAlgorithm
         {
             if (grid_->data[yi * grid_->info.width + xi])
             {
-                DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is in collision!";
+                // DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is in collision!";
                 return true;
             }
             // DLOG(INFO) << "node is collision free.";
@@ -34,7 +51,7 @@ namespace GeneticAlgorithm
         }
         else
         {
-            DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is outside map!";
+            // DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is outside map!";
             return true;
         }
     }
@@ -51,7 +68,7 @@ namespace GeneticAlgorithm
         {
             if (IsCollsion(point2d))
             {
-                DLOG(INFO) << "vector is in collision.";
+                // DLOG(INFO) << "vector is in collision.";
                 return true;
             }
         }
@@ -65,7 +82,7 @@ namespace GeneticAlgorithm
         {
             if (IsCollsion(point3d))
             {
-                DLOG(INFO) << "vector is in collision.";
+                // DLOG(INFO) << "vector is in collision.";
                 return true;
             }
         }
@@ -78,14 +95,18 @@ namespace GeneticAlgorithm
         std::vector<Eigen::Vector3d> anchor_points_vec = cubic_bezier.GetAnchorPoints();
         if (IsCollsion(anchor_points_vec))
         {
-            DLOG(INFO) << "anchor point is in collision.";
+            // DLOG(INFO) << "anchor point is in collision.";
             return true;
         }
-        if (IsCollsion(cubic_bezier.ConvertCubicBezierToVector3d()))
+        for (int t = 0; t < 100; ++t)
         {
-            DLOG(INFO) << "cubic bezier path is in collision.";
-            return true;
+            if (IsCollsion(cubic_bezier.GetValueAt(t / 100.0)))
+            {
+                // DLOG(INFO) << "cubic bezier path is in collision.";
+                return true;
+            }
         }
+
         // DLOG(INFO) << "cubic bezier is collision free.";
         return false;
     }
@@ -98,7 +119,7 @@ namespace GeneticAlgorithm
         {
             if (IsCollsion(cubic_bezier_vec[i]))
             {
-                DLOG(INFO) << i << "th cubic bezier is in collision.";
+                // DLOG(INFO) << i << "th cubic bezier is in collision.";
                 return i;
             }
         }
@@ -113,7 +134,7 @@ namespace GeneticAlgorithm
         {
             if (IsCollsion(cubic_bezier_vec[i]))
             {
-                DLOG(INFO) << i << "th cubic bezier is in collision.";
+                // DLOG(INFO) << i << "th cubic bezier is in collision.";
                 times++;
             }
         }

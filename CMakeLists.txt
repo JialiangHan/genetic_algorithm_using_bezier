@@ -90,8 +90,8 @@ set(SOURCES
 ## Declare a catkin package
 catkin_package()
 
-add_executable(tf_broadcaster src/tf_broadcaster.cpp   )
-target_link_libraries(tf_broadcaster ${catkin_LIBRARIES} glog::glog)
+add_executable(tf_broadcaster_ga src/tf_broadcaster.cpp   )
+target_link_libraries(tf_broadcaster_ga ${catkin_LIBRARIES} glog::glog)
 # guard against in-source builds
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
@@ -105,12 +105,12 @@ target_link_libraries(genetic_algorithm_using_bezier
                     glog::glog 
                         ${GFLAGS_LIBRARY} 
                     ) 
-add_executable(node_path_evaluator 
+add_executable(node_path_evaluator_ga
             src/node_path_evaluator.cpp 
             ${SOURCES}
             ${HEADERS}
             )
-target_link_libraries(node_path_evaluator 
+target_link_libraries(node_path_evaluator_ga
                         ${PYTHON_LIBRARIES}
                         ${catkin_LIBRARIES} 
                         ${OMPL_LIBRARIES}

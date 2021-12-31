@@ -1,21 +1,17 @@
 
-
 bloating : 0
 
 vehicle_width : 1.75
 
 vehicle_length : 2.65
 
-population_size : 20
-
-penalty_fitness : 50
   # the range for local mutation, unit is [meter]
-local_search_range_radius : 2
+local_search_range_radius : 0.5
 # /**
 #  * @brief the range for local mutation, unit is [rad],for angle, this value must small than 2*pi
 #  * 
 #  */
-local_search_range_angle: 1
+local_search_range_angle: 0.5
 # position_resolution : 1
 
 # headings : 72
@@ -27,10 +23,9 @@ manual : true
 cell_size : 1
   
 #  population size of chromosome 
-population_size : 20
+population_size : 10
 #  penalty for fitness function
 penalty_fitness : 50
-
 
   # use to switch mutation mode 
 h_s : 5

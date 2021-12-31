@@ -29,6 +29,7 @@ namespace CubicBezier
             map_width_ = width;
             map_height_ = height;
             CalculateControlPoints();
+            CalculateLength();
         };
         CubicBezier(const std::vector<Eigen::Vector3d> &points_vec)
         {
@@ -44,6 +45,7 @@ namespace CubicBezier
                 control_points_vec_.emplace_back(points_vec[2]);
                 goal_point_ = points_vec[3];
             }
+            CalculateLength();
         }
 
         void SetControlPoints(const std::vector<Eigen::Vector3d> &control_points) { control_points_vec_ = control_points; };

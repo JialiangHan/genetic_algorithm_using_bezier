@@ -29,6 +29,7 @@ namespace GeneticAlgorithm
         CollisionDetection(const nav_msgs::OccupancyGrid::ConstPtr &map)
         {
             SetMap(map);
+            GenerateFreePointVec();
         };
 
         void SetMap(const nav_msgs::OccupancyGrid::ConstPtr &map) { grid_ = map; };
@@ -64,7 +65,17 @@ namespace GeneticAlgorithm
          */
         int GetTimesInCollision(PiecewiseCubicBezier &piecewise_cubic_bezier);
 
+        std::vector<Eigen::Vector3d> GetFreePointVec() const { return free_point_vec_; };
+
     private:
+        void GenerateFreePointVec();
+
+    private:
+        /**
+         * @brief this map is to store all collision free node on the grid_; only x,y are stored. 
+         * 
+         */
+        std::vector<Eigen::Vector3d> free_point_vec_;
         ParameterCollisionDetection params_;
         /// A pointer to the grid_ the planner runs on
         nav_msgs::OccupancyGrid::ConstPtr grid_;

@@ -208,44 +208,7 @@ void Planner::MakePlan()
         // ___________________________
         // START AND TIME THE PLANNING
 
-        // Eigen::Vector2d p1(4.06, 15.67), p2(7.74, 11.88), p3(14.05, 13.54), p4(19.6, 12.77), p5(25.19, 12.00), p6(30.01, 8.79), p7(35.17, 9.88);
-        // std::vector<Eigen::Vector2d> points_vec{p1, p2, p3, p4};
-
-        // cubic_bezier_ = CubicBezier::CubicBezier(points_vec);
-        // cubic_bezier_ = CubicBezier::CubicBezier(start, goal, width, height);
-        // std::vector<Eigen::Vector2d> control_points;
-        // Eigen::Vector2d control_point;
-        // control_point.x() = params_.control_point_1_x;
-        // control_point.y() = params_.control_point_1_y;
-        // control_points.emplace_back(control_point);
-        // control_point.x() = params_.control_point_2_x;
-        // control_point.y() = params_.control_point_2_y;
-        // control_points.emplace_back(control_point);
-        // cubic_bezier_.SetControlPoints(control_points);
-        // std::vector<Eigen::Vector3d> path;
-        // path = cubic_bezier_.ConvertCubicBezierToVector3d();
-        // piecewise_cubic_bezier_ = PiecewiseCubicBezier(start, goal);
-        // std::vector<Eigen::Vector3d> anchor_points;
-        // uint number_of_anchor_points = 2;
-        // for (uint i = 0; i < number_of_anchor_points; ++i)
-        // {
-        //     Eigen::Vector3d anchor_point;
-        //     if (anchor_points.size() == 0)
-        //     {
-        //         anchor_point = ((start + goal) / 2);
-        //     }
-        //     else
-        //     {
-        //         anchor_point = (anchor_points.back() + goal) / 2;
-        //     }
-        //     anchor_points.emplace_back(anchor_point);
-        // }
-
-        // piecewise_cubic_bezier_.SetAnchorPoints(anchor_points);
-        // std::vector<Eigen::Vector3d> path = piecewise_cubic_bezier_.ConvertPiecewiseCubicBezierToVector3d();
-        // std::vector<Eigen::Vector2d> points = piecewise_cubic_bezier_.GetPointsVec();
-        // DLOG(INFO) << "path length is : " << path.size() << " first point is: " << path.front().x() << " " << path.front().y() << " last point is : " << path.back().x() << " " << path.back().y();
-        // CLEAR THE VISUALIZATION
+               // CLEAR THE VISUALIZATION
         // visualization_ptr_->clear();
         auto t1 = std::chrono::high_resolution_clock::now();
 

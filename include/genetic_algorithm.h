@@ -171,5 +171,7 @@ namespace GeneticAlgorithm
       nav_msgs::OccupancyGrid::ConstPtr grid_;
 
       std::vector<Eigen::Vector3d> path_;
+
+      float fitness_avg_ = 0;
    };
 }

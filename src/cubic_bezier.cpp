@@ -162,12 +162,15 @@ namespace CubicBezier
     {
         std::vector<Eigen::Vector3d> out;
         uint i = 0;
-        for (i = 0; i < 100; ++i)
+        uint size = GetLength() / 0.5;
+        // DLOG(INFO) << "path size is " << size;
+        for (i = 0; i < size + 1; ++i)
         {
             Eigen::Vector3d point3d;
-            // DLOG(INFO) << " i/100 = " << i / 100.0;
-            point3d = GetValueAt(i / 100.0);
-            point3d.z() = GetAngleAt(i / 100.0);
+            // DLOG(INFO) << " i/size = " << (float)i / size;
+            point3d = GetValueAt((float)i / size);
+            point3d.z() = GetAngleAt((float)i / size);
+            // DLOG(INFO) << "point3d is " << point3d.x() << " " << point3d.y() << " " << point3d.z();
             out.emplace_back(point3d);
         }
         return out;
