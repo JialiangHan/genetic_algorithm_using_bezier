@@ -49,7 +49,7 @@ namespace GeneticAlgorithm
         direction_goal.y() = std::sin(goal_angle);
         Eigen::Vector3d first_control_point, last_control_point;
         uint anchor_points_vec_size = anchor_points3d_vec_.size();
-        // DLOG(INFO) << "start is " << start_2d.x() << " " << start_2d.y();
+
         // DLOG(INFO) << "free anchor points size is " << anchor_points_vec_size << "; " << anchor_points_vec_size + 1 << " bezier!";
         float t_start, t_goal;
         if (anchor_points_vec_size == 0)
@@ -62,6 +62,7 @@ namespace GeneticAlgorithm
 
             control_points_vec_.emplace_back(first_control_point);
             control_points_vec_.emplace_back(last_control_point);
+            // DLOG(INFO) << "start is " << start_point_.x() << " " << start_point_.y() << " angle " << Utility::ConvertRadToDeg(start_point_.z()) << " first control point is " << first_control_point.x() << " " << first_control_point.y() << " t_start is " << t_start << " direction start is " << direction_start.x() << " " << direction_start.y() << " " << direction_start.z();
         }
         else if (anchor_points_vec_size == 1)
         {

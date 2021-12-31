@@ -192,6 +192,36 @@ namespace PathEvaluator
         }
         return 1;
     }
+
+    int PathEvaluator::CalculateSteeringAngle(const std::vector<Eigen::Vector3d> &path, const std::string &topic_name)
+    {
+        if (path.size() < 1)
+        {
+            DLOG(WARNING) << "In CalculateSteeringAngle: path does not have enough points!!!";
+            return 0;
+        }
+        // for clearance, node2d is enough, here clearance is the distance for current point to nearest obstacle.
+        std::vector<float> steering_angle_vec;
+        for (uint i = 0; i < path.size() - 1; ++i)
+        {
+            float steering_angle = path[i + 1].z() - path[i].z();
+            steering_angle = Utility::DegNormalization(Utility::ConvertRadToDeg(steering_angle));
+
+            steering_angle_vec.emplace_back(steering_angle);
+        }
+        if (steering_angle_map_.count(topic_name) > 0)
+        {
+            steering_angle_map_.at(topic_name).clear();
+            steering_angle_map_.at(topic_name) = steering_angle_vec;
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is already in clearance map, clear vector and put new curvature into vector.";
+        }
+        else
+        {
+            steering_angle_map_.insert({topic_name, steering_angle_vec});
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is not in the clearance map, insert into the map.";
+        }
+        return 1;
+    }
     void PathEvaluator::CallbackSetMap(const nav_msgs::OccupancyGrid::ConstPtr &map)
     {
         map_ = map;
@@ -201,75 +231,112 @@ namespace PathEvaluator
     {
         std::vector<Eigen::Vector3d> vector_3d_vec;
         Utility::ConvertRosPathToVectorVector3D(path, vector_3d_vec);
+        DLOG(INFO) << "path size is " << vector_3d_vec.size();
         //reverse path since path is from goal to start.
         // std::reverse(vector_3d_vec.begin(), vector_3d_vec.end());
         CalculateCurvature(vector_3d_vec, topic_name);
         CalculateSmoothness(vector_3d_vec, topic_name);
         CalculateClearance(vector_3d_vec, topic_name);
+        CalculateSteeringAngle(vector_3d_vec, topic_name);
+        CalculateMetricMap();
+        Plot();
+    }
+
+    int PathEvaluator::CalculateMetricMap()
+    {
+        metric_map_.clear();
+        std::string metric_name = "clearance";
+        if (metric_map_.count(metric_name) > 0)
+        {
+            metric_map_.at(metric_name).clear();
+            metric_map_.at(metric_name) = clearance_map_;
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is already in clearance map, clear vector and put new curvature into vector.";
+        }
+        else
+        {
+            metric_map_.insert({metric_name, clearance_map_});
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is not in the clearance map, insert into the map.";
+        }
+        metric_name = "curvature";
+        if (metric_map_.count(metric_name) > 0)
+        {
+            metric_map_.at(metric_name).clear();
+            metric_map_.at(metric_name) = curvature_map_;
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is already in clearance map, clear vector and put new curvature into vector.";
+        }
+        else
+        {
+            metric_map_.insert({metric_name, curvature_map_});
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is not in the clearance map, insert into the map.";
+        }
+        metric_name = "smoothness";
+        if (metric_map_.count(metric_name) > 0)
+        {
+            metric_map_.at(metric_name).clear();
+            metric_map_.at(metric_name) = smoothness_map_;
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is already in clearance map, clear vector and put new curvature into vector.";
+        }
+        else
+        {
+            metric_map_.insert({metric_name, smoothness_map_});
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is not in the clearance map, insert into the map.";
+        }
+        metric_name = "steering_angle";
+        if (metric_map_.count(metric_name) > 0)
+        {
+            metric_map_.at(metric_name).clear();
+            metric_map_.at(metric_name) = steering_angle_map_;
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is already in clearance map, clear vector and put new curvature into vector.";
+        }
+        else
+        {
+            metric_map_.insert({metric_name, steering_angle_map_});
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is not in the clearance map, insert into the map.";
+        }
+
+        return 1;
     }
 
     void PathEvaluator::Plot()
     {
         matplotlibcpp::ion();
         matplotlibcpp::clf();
-        matplotlibcpp::subplot(2, 2, 1);
-        for (const auto &curvature_vec : curvature_map_)
+        int metric_size = metric_map_.size();
+        int index = 1, row = 2, column = 2;
+        while (1)
         {
-            if (curvature_vec.first == "/path")
+            if (row * column >= metric_size)
             {
-                matplotlibcpp::plot(curvature_vec.second, {{"label", "raw path"}});
+                for (const auto &map : metric_map_)
+                {
+                    matplotlibcpp::subplot(row, column, index);
+                    for (const auto &pair : map.second)
+                    {
+                        if (pair.first == "/path")
+                        {
+                            matplotlibcpp::plot(pair.second, {{"label", "raw path"}});
+                        }
+                        else
+                        {
+                            matplotlibcpp::plot(pair.second, {{"label", "smoothed path"}});
+                        }
+
+                        matplotlibcpp::legend({{"loc", "upper right"}});
+                        // DLOG(INFO) << "Plot curvature for topic: " << curvature_vec.first;
+                    }
+                    matplotlibcpp::title(map.first);
+                    matplotlibcpp::ylabel(map.first);
+                    // matplotlibcpp::ylim(0, 1);
+                    matplotlibcpp::grid(true);
+                    index++;
+                }
+                matplotlibcpp::pause(0.1);
+                return;
             }
             else
             {
-                matplotlibcpp::plot(curvature_vec.second, {{"label", "smoothed path"}});
+                column++;
             }
-
-            matplotlibcpp::legend({{"loc", "upper right"}});
-            // DLOG(INFO) << "Plot curvature for topic: " << curvature_vec.first;
         }
-        matplotlibcpp::title("curvature");
-        matplotlibcpp::ylabel("curvature");
-        matplotlibcpp::ylim(0, 1);
-        matplotlibcpp::grid(true);
-
-        matplotlibcpp::subplot(2, 2, 2);
-        for (const auto &smoothness_vec : smoothness_map_)
-        {
-            if (smoothness_vec.first == "/path")
-            {
-                matplotlibcpp::plot(smoothness_vec.second, {{"label", "raw path"}});
-            }
-            else
-            {
-                matplotlibcpp::plot(smoothness_vec.second, {{"label", "smoothed path"}});
-            }
-            // DLOG(INFO) << "Plot smoothness for topic: " << smoothness_vec.first;
-            matplotlibcpp::legend({{"loc", "upper right"}});
-        }
-        matplotlibcpp::title("smoothness");
-        matplotlibcpp::ylabel("smoothness");
-        matplotlibcpp::ylim(0, 1);
-        matplotlibcpp::grid(true);
-
-        matplotlibcpp::subplot(2, 2, 3);
-        for (const auto &clearance_vec : clearance_map_)
-        {
-            if (clearance_vec.first == "/path")
-            {
-                matplotlibcpp::plot(clearance_vec.second, {{"label", "raw path"}});
-            }
-            else
-            {
-                matplotlibcpp::plot(clearance_vec.second, {{"label", "smoothed path"}});
-            }
-            matplotlibcpp::legend({{"loc", "upper right"}});
-            // DLOG(INFO) << "Plot clearance for topic: " << clearance_vec.first;
-        }
-        matplotlibcpp::title("clearance");
-        matplotlibcpp::ylabel("clearance");
-        matplotlibcpp::ylim(0, 10);
-        matplotlibcpp::grid(true);
-
-        matplotlibcpp::pause(0.1);
     }
 }

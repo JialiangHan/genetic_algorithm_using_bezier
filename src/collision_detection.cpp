@@ -29,13 +29,14 @@ namespace GeneticAlgorithm
                 DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is in collision!";
                 return true;
             }
+            // DLOG(INFO) << "node is collision free.";
+            return false;
         }
         else
         {
             DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is outside map!";
+            return true;
         }
-        // DLOG(INFO) << "node is collision free.";
-        return false;
     }
 
     bool CollisionDetection::IsCollsion(const Eigen::Vector3d &point_3d)

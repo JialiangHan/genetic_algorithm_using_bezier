@@ -186,6 +186,7 @@ void Planner::MakePlan()
         // set theta to a value (0,2PI]
         t = Utility::RadNormalization(t);
         const Eigen::Vector3d goal(x, y, t);
+        // DLOG(INFO) << "goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
         // __________
         // DEBUG GOAL
         //    const Node3D nGoal(155.349, 36.1969, 0.7615936, 0, 0, nullptr);
@@ -197,6 +198,7 @@ void Planner::MakePlan()
         t = tf::getYaw(start_.pose.pose.orientation);
         // set theta to a value (0,2PI]
         t = Utility::RadNormalization(t);
+        // DLOG(INFO) << "start x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
 
         const Eigen::Vector3d start(x, y, t);
         // ___________

@@ -31,7 +31,6 @@ int main(int argc, char **argv)
 
     while (ros::ok())
     {
-        path_evaluator.Plot();
         ros::spinOnce();
     }
 

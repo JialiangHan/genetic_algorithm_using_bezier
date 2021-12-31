@@ -59,7 +59,7 @@ void PathPublisher::AddSegment(const Eigen::Vector3d &node)
   geometry_msgs::PoseStamped vertex;
   vertex.pose.position.x = node.x() * params_.cell_size;
   vertex.pose.position.y = node.y() * params_.cell_size;
-  vertex.pose.position.z = 0;
+  vertex.pose.position.z = node.z() * params_.cell_size;
   vertex.pose.orientation.x = 0;
   vertex.pose.orientation.y = 0;
   vertex.pose.orientation.z = 0;

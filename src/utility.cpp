@@ -70,6 +70,10 @@ namespace Utility
         {
             out += 360;
         }
+        if (out > 180)
+        {
+            out = out - 360;
+        }
         return out;
     }
 
@@ -80,6 +84,10 @@ namespace Utility
         if (out < 0)
         {
             out += 2.f * M_PI;
+        }
+        if (out > M_PI)
+        {
+            out = out - 2.0f * M_PI;
         }
         return out;
     }

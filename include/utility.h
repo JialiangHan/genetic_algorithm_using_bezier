@@ -25,8 +25,9 @@ namespace Utility
     Eigen::Vector2d ConvertIndexToEigenVector2d(const int &index, const int &map_width);
 
     float GetDistanceFromVector2dToVector3d(const Eigen::Vector3d &vector_3d, const Eigen::Vector2d &vector_2d);
+
     /**
-     * @brief convert angle in deg into [0,360)
+     * @brief convert angle in deg into [-PI,Pi)
      * 
      * @param deg 
      * @return float 

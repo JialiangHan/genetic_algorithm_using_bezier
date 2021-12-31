@@ -35,6 +35,15 @@ namespace PathEvaluator
             sub_path_ = nh_.subscribe<nav_msgs::Path>(path_topic, 1, boost::bind(&PathEvaluator::CallbackPath, this, _1, path_topic));
             sub_smoothed_path_ = nh_.subscribe<nav_msgs::Path>(smoothed_path_topic, 1, boost::bind(&PathEvaluator::CallbackPath, this, _1, smoothed_path_topic));
         };
+
+        /**
+         * @brief plot all the metrics for the path.
+         * 
+         * @return int 
+         */
+        void Plot();
+
+    private:
         void CallbackPath(const nav_msgs::Path::ConstPtr &path, const std::string &topic_name);
         /**
          * @brief as name suggest, this function convert a ROS message path to a vector of node3d
@@ -56,12 +65,10 @@ namespace PathEvaluator
         int CalculateClearance(const std::vector<Eigen::Vector3d> &path, const std::string &topic_name);
 
         int CalculateSmoothness(const std::vector<Eigen::Vector3d> &path, const std::string &topic_name);
-        /**
-         * @brief plot all the metrics for the path.
-         * 
-         * @return int 
-         */
-        void Plot();
+
+        int CalculateSteeringAngle(const std::vector<Eigen::Vector3d> &path, const std::string &topic_name);
+
+        int CalculateMetricMap();
 
     private:
         ros::NodeHandle nh_;
@@ -74,7 +81,7 @@ namespace PathEvaluator
 
         nav_msgs::OccupancyGridConstPtr map_;
         /**
-         * @brief key is topic name for all three maps; 
+         * @brief key is topic name for all four maps; 
          * 
          */
         std::unordered_map<std::string, std::vector<float>> clearance_map_;
@@ -82,6 +89,13 @@ namespace PathEvaluator
         std::unordered_map<std::string, std::vector<float>> curvature_map_;
 
         std::unordered_map<std::string, std::vector<float>> smoothness_map_;
+
+        std::unordered_map<std::string, std::vector<float>> steering_angle_map_;
+        /**
+         * @brief key is metric name, value is above map
+         * 
+         */
+        std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float>>> metric_map_;
 
         // /some kind of map is need for the clearacne
     };

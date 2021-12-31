@@ -247,7 +247,7 @@ namespace GeneticAlgorithm
     MatingPool GeneticAlgorithm::GenerateMatingPool()
     {
         MatingPool mating_pool;
-        while (mating_pool.size() < params_.population_size)
+        while (mating_pool.size() < (uint)params_.population_size)
         {
 
             mating_pool.emplace_back(Select());
@@ -268,24 +268,24 @@ namespace GeneticAlgorithm
         }
         else if (collision_index_1 > collision_index_2)
         {
-            uint i = 0;
+            int i = 0;
             for (; i < collision_index_1; ++i)
             {
                 out.emplace_back(chromosome_1[i]);
             }
-            for (; i < chromosome_2.size(); ++i)
+            for (; (uint)i < chromosome_2.size(); ++i)
             {
                 out.emplace_back(chromosome_2[i]);
             }
         }
         else
         {
-            uint i = 0;
+            int i = 0;
             for (; i < collision_index_2; ++i)
             {
                 out.emplace_back(chromosome_2[i]);
             }
-            for (; i < chromosome_1.size(); ++i)
+            for (; (uint)i < chromosome_1.size(); ++i)
             {
                 out.emplace_back(chromosome_1[i]);
             }

@@ -52,10 +52,10 @@ namespace CubicBezier
 
         float GetAngleAt(const float &t);
 
-        std::vector<Eigen::Vector3d> GetControlPoints() { return control_points_vec_; };
-        std::vector<Eigen::Vector3d> GetAnchorPoints() { return anchor_points_vec_; };
+        std::vector<Eigen::Vector3d> GetControlPoints() const { return control_points_vec_; };
+        std::vector<Eigen::Vector3d> GetAnchorPoints() const { return anchor_points_vec_; };
 
-        float GetLength() { return length_; };
+        float GetLength() const { return length_; };
 
         std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d();
 

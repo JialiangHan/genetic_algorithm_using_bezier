@@ -8,7 +8,6 @@ Panels:
         - /Status1
         - /Path1
         - /MarkerArray1
-        - /MarkerArray1/Status1
       Splitter Ratio: 0.5
     Tree Height: 719
   - Class: rviz/Selection
@@ -156,7 +155,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 1.6749999523162842
+      Angle: 0
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -166,10 +165,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 11.009395599365234
+      Scale: 34.193511962890625
       Target Frame: <Fixed Frame>
-      X: 35.93074417114258
-      Y: 7.040290355682373
+      X: 10
+      Y: 0
     Saved: ~
 Window Geometry:
   Displays:
