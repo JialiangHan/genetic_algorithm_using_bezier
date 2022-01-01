@@ -21,7 +21,7 @@ TEST(Utility, DegNormalization)
     float t1 = 361, t2 = -359, t3 = 721, t4 = -719;
     std::vector<float> one{t1, t2, t3, t4};
     int expect, result;
-    for (auto number : one)
+    for (const auto &number : one)
     {
         expect = 1.0;
         result = Utility::DegNormalization(number);
@@ -33,7 +33,7 @@ TEST(Utility, RadNormalization)
     float t1 = 361, t2 = -359, t3 = 721, t4 = -719;
     std::vector<float> one{t1, t2, t3, t4};
     int expect, result;
-    for (auto number : one)
+    for (const auto &number : one)
     {
         expect = Utility::ConvertDegToRad(1.0);
         result = Utility::RadNormalization(Utility::ConvertDegToRad(number));
@@ -47,7 +47,7 @@ TEST(Utility, IsIntersect)
     std::vector<Eigen::Vector2d> intersect{p5};
     // std::vector<Eigen::Vector2d> outside{p5, p7, p8};
     int expect, result;
-    for (auto point : intersect)
+    for (const auto &point : intersect)
     {
         expect = 1;
         Eigen::Vector2d p9(10000, point.y());
@@ -70,7 +70,7 @@ TEST(Utility, OnSegment)
     std::vector<Eigen::Vector2d> polygon{p1, p2, p3, p4, p1};
     std::vector<Eigen::Vector2d> outside{p5, p7, p8};
     bool expect, result;
-    for (auto point : outside)
+    for (const auto &point : outside)
     {
         expect = false;
         for (uint i = 0; i < polygon.size() - 1; ++i)
@@ -99,7 +99,7 @@ TEST(Utility, IsInsidePolygon)
     std::vector<Eigen::Vector2d> inside{p5};
     // std::vector<Eigen::Vector2d> outside{p5, p7, p8};
     int expect, result;
-    for (auto point : inside)
+    for (const auto &point : inside)
     {
         expect = 1;
         result = Utility::IsInsidePolygon(polygon, point);

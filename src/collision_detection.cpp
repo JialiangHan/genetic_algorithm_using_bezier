@@ -64,7 +64,7 @@ namespace GeneticAlgorithm
 
     bool CollisionDetection::IsCollsion(const std::vector<Eigen::Vector2d> &point_2d_vec)
     {
-        for (auto point2d : point_2d_vec)
+        for (const auto &point2d : point_2d_vec)
         {
             if (IsCollsion(point2d))
             {
@@ -78,7 +78,7 @@ namespace GeneticAlgorithm
 
     bool CollisionDetection::IsCollsion(const std::vector<Eigen::Vector3d> &point_3d_vec)
     {
-        for (auto point3d : point_3d_vec)
+        for (const auto &point3d : point_3d_vec)
         {
             if (IsCollsion(point3d))
             {

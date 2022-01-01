@@ -24,7 +24,7 @@ namespace GeneticAlgorithm
         }
         else
         {
-            for (auto point3d : anchor_points3d_vec_)
+            for (const auto &point3d : anchor_points3d_vec_)
             {
                 // anchor_points2d_vec_.emplace_back(Utility::ConvertVector3dToVector2d(point3d));
                 float angle = point3d.z();
@@ -179,7 +179,7 @@ namespace GeneticAlgorithm
         }
 
         points_vec_.emplace_back(goal_point_);
-        // for (auto point : points_vec_)
+        // for(const auto& point : points_vec_)
         // {
         //     DLOG(INFO) << "points are " << point.x() << " " << point.y();
         // }
@@ -251,7 +251,7 @@ namespace GeneticAlgorithm
         }
         else
         {
-            for (auto cubic_bezier : cubic_bezier_vec_)
+            for (const auto &cubic_bezier : cubic_bezier_vec_)
             {
                 length_ += cubic_bezier.GetLength();
             }
@@ -261,7 +261,7 @@ namespace GeneticAlgorithm
     std::vector<Eigen::Vector3d> PiecewiseCubicBezier::ConvertPiecewiseCubicBezierToVector3d()
     {
         std::vector<Eigen::Vector3d> out;
-        for (auto bezier : cubic_bezier_vec_)
+        for (auto &bezier : cubic_bezier_vec_)
         {
             std::vector<Eigen::Vector3d> path;
             path = bezier.ConvertCubicBezierToVector3d();

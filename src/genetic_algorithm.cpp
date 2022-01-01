@@ -115,7 +115,7 @@ namespace GeneticAlgorithm
                 else
                 {
                     float roll;
-                    for (auto chromosome : generation_)
+                    for (auto &chromosome : generation_)
                     {
                         if (chromosome == current_best_.first)
                         {
@@ -127,7 +127,8 @@ namespace GeneticAlgorithm
                         {
                             if (h < params_.h_s)
                             {
-                                // DLOG(INFO) << "Global mutation";
+                                DLOG(INFO) << "Global mutation, before:";
+
                                 GlobalMutation(chromosome);
                             }
                             else
@@ -149,7 +150,7 @@ namespace GeneticAlgorithm
     {
         MatingPool mating_pool = GenerateMatingPool();
         generation_.clear();
-        for (auto breeding_pair : mating_pool)
+        for (const auto &breeding_pair : mating_pool)
         {
             if (number_of_gene_in_chromosome_ == 1)
             {
@@ -253,7 +254,7 @@ namespace GeneticAlgorithm
     {
         float current_fitness;
         fitness_map_.clear();
-        for (auto chromosome : generation_)
+        for (const auto &chromosome : generation_)
         {
             current_fitness = CalculateFitness(chromosome);
             fitness_map_.emplace(current_fitness, chromosome);
@@ -270,7 +271,7 @@ namespace GeneticAlgorithm
         probability_map_.clear();
         float total_fitness = 0;
         float accumulated_fitness = 0;
-        for (auto chromosome_pair : fitness_map_)
+        for (const auto &chromosome_pair : fitness_map_)
         {
             total_fitness += chromosome_pair.first;
         }
@@ -282,7 +283,7 @@ namespace GeneticAlgorithm
         DLOG(INFO) << "current avg fitness is " << total_fitness / fitness_map_.size();
         fitness_avg_ = total_fitness / fitness_map_.size();
 
-        for (auto chromosome_pair : fitness_map_)
+        for (const auto &chromosome_pair : fitness_map_)
         {
             accumulated_fitness += chromosome_pair.first;
             probability_map_.emplace(accumulated_fitness / total_fitness, chromosome_pair.second);
@@ -357,7 +358,7 @@ namespace GeneticAlgorithm
 
     void GeneticAlgorithm::LocalMutation(Chromosome &chromosome)
     {
-        for (auto gene : chromosome)
+        for (auto &gene : chromosome)
         {
             gene.x() = gene.x() + (float(rand()) / float((RAND_MAX)) * params_.local_search_range_radius - 1 / 2 * params_.local_search_range_radius);
             gene.y() = gene.y() + (float(rand()) / float((RAND_MAX)) * params_.local_search_range_radius - 1 / 2 * params_.local_search_range_radius);
@@ -388,7 +389,7 @@ namespace GeneticAlgorithm
         visualization_msgs::MarkerArray path_nodes;
         int i = 0;
         Chromosome point_vec = GetPoints();
-        for (auto point : point_vec)
+        for (const auto &point : point_vec)
         {
             pathNode.action = 0;
 

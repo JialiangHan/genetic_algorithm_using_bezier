@@ -46,7 +46,7 @@ void PathPublisher::UpdatePoint(const std::vector<Eigen::Vector3d> &point_vec)
 {
   path_.header.stamp = ros::Time::now();
   int i = 0;
-  for (auto point : point_vec)
+  for (const auto &point : point_vec)
   {
     AddPoint(point, i);
     i++;
