@@ -15,61 +15,85 @@
 #include <math.h>
 namespace CubicBezier
 {
-
-    void CubicBezier::CalculateCoefficient(const float &t)
+    Eigen::Vector4d CubicBezier::CalculateCoefficient(const float &t)
     {
-        coefficient_.clear();
-        float coefficient;
-        coefficient = std::pow((1 - t), 3);
-        coefficient_.emplace_back(coefficient);
-        coefficient = 3 * t * std::pow(1 - t, 2);
-        coefficient_.emplace_back(coefficient);
-        coefficient = 3 * std::pow(t, 2) * (1 - t);
-        coefficient_.emplace_back(coefficient);
-        coefficient = std::pow(t, 3);
-        coefficient_.emplace_back(coefficient);
+        Eigen::Vector4d out;
+
+        for (int i = 0; i < out.size(); ++i)
+        {
+            out[i] = std::pow(t, i);
+            DLOG(INFO) << i << "th element in coefficient matrix is " << out[i];
+        }
+        return out;
     }
 
-    void CubicBezier::CalculateFirstOrderDerivativeCoefficient(const float &t)
+    // void CubicBezier::CalculateCoefficient(const float &t)
+    // {
+    //     coefficient_.clear();
+    //     float coefficient;
+    //     coefficient = std::pow((1 - t), 3);
+    //     coefficient_.emplace_back(coefficient);
+    //     coefficient = 3 * t * std::pow(1 - t, 2);
+    //     coefficient_.emplace_back(coefficient);
+    //     coefficient = 3 * std::pow(t, 2) * (1 - t);
+    //     coefficient_.emplace_back(coefficient);
+    //     coefficient = std::pow(t, 3);
+    //     coefficient_.emplace_back(coefficient);
+    // }
+    Eigen::Vector4d CubicBezier::CalculateFirstOrderDerivativeCoefficient(const float &t)
     {
-        first_order_derivative_coefficient_.clear();
-        float coefficient;
-        coefficient = -3 * std::pow((1 - t), 2);
-        first_order_derivative_coefficient_.emplace_back(coefficient);
-        coefficient = 3 * std::pow(1 - t, 2) - 6 * t * (1 - t);
-        first_order_derivative_coefficient_.emplace_back(coefficient);
-        coefficient = 6 * t * (1 - t) - 3 * std::pow(t, 2);
-        first_order_derivative_coefficient_.emplace_back(coefficient);
-        coefficient = 3 * std::pow(t, 2);
-        first_order_derivative_coefficient_.emplace_back(coefficient);
-    }
+        Eigen::Vector4d out;
 
-    void CubicBezier::CalculateSecondOrderDerivativeCoefficient(const float &t)
-    {
-        second_order_derivative_coefficient_.clear();
-        float coefficient;
-        coefficient = 6 * std::pow((1 - t), 1);
-        second_order_derivative_coefficient_.emplace_back(coefficient);
-        coefficient = -6 * std::pow(1 - t, 1) - 6 * (1 - t) + 6 * t;
-        second_order_derivative_coefficient_.emplace_back(coefficient);
-        coefficient = 6 * (1 - t) - 6 * t - 6 * std::pow(t, 1);
-        second_order_derivative_coefficient_.emplace_back(coefficient);
-        coefficient = 6 * std::pow(t, 1);
-        second_order_derivative_coefficient_.emplace_back(coefficient);
+        for (int i = 0; i < out.size(); ++i)
+        {
+            out[i] = i * (i - 1 < 0 ? 0 : std::pow(t, i - 1));
+            DLOG(INFO) << i << "th element in first order derivation coefficient matrix is " << out[i];
+        }
+        return out;
     }
+    // void CubicBezier::CalculateFirstOrderDerivativeCoefficient(const float &t)
+    // {
+    //     first_order_derivative_coefficient_.clear();
+    //     float coefficient;
+    //     coefficient = -3 * std::pow((1 - t), 2);
+    //     first_order_derivative_coefficient_.emplace_back(coefficient);
+    //     coefficient = 3 * std::pow(1 - t, 2) - 6 * t * (1 - t);
+    //     first_order_derivative_coefficient_.emplace_back(coefficient);
+    //     coefficient = 6 * t * (1 - t) - 3 * std::pow(t, 2);
+    //     first_order_derivative_coefficient_.emplace_back(coefficient);
+    //     coefficient = 3 * std::pow(t, 2);
+    //     first_order_derivative_coefficient_.emplace_back(coefficient);
+    // }
+
+    // void CubicBezier::CalculateSecondOrderDerivativeCoefficient(const float &t)
+    // {
+    //     second_order_derivative_coefficient_.clear();
+    //     float coefficient;
+    //     coefficient = 6 * std::pow((1 - t), 1);
+    //     second_order_derivative_coefficient_.emplace_back(coefficient);
+    //     coefficient = -6 * std::pow(1 - t, 1) - 6 * (1 - t) + 6 * t;
+    //     second_order_derivative_coefficient_.emplace_back(coefficient);
+    //     coefficient = 6 * (1 - t) - 6 * t - 6 * std::pow(t, 1);
+    //     second_order_derivative_coefficient_.emplace_back(coefficient);
+    //     coefficient = 6 * std::pow(t, 1);
+    //     second_order_derivative_coefficient_.emplace_back(coefficient);
+    // }
 
     Eigen::Vector3d CubicBezier::GetFirstOrderDerivativeValueAt(const float &t)
     {
         Eigen::Vector3d out;
 
-        CalculateFirstOrderDerivativeCoefficient(t);
+        out = geometrical_constraint_matrix_ * basis_matrix_ * CalculateFirstOrderDerivativeCoefficient(t);
 
-        out = first_order_derivative_coefficient_[0] * start_point_ + first_order_derivative_coefficient_[1] * control_points_vec_[0] + first_order_derivative_coefficient_[2] * control_points_vec_[1] + first_order_derivative_coefficient_[3] * goal_point_;
+        // CalculateFirstOrderDerivativeCoefficient(t);
+
+        // out = first_order_derivative_coefficient_[0] * start_point_ + first_order_derivative_coefficient_[1] * control_points_vec_[0] + first_order_derivative_coefficient_[2] * control_points_vec_[1] + first_order_derivative_coefficient_[3] * goal_point_;
         return out;
     }
 
     void CubicBezier::CalculateControlPoints()
     {
+
         control_points_vec_.clear();
         float start_angle = start_point_.z();
         float goal_angle = goal_point_.z();
@@ -123,24 +147,29 @@ namespace CubicBezier
         }
         control_points_vec_.emplace_back(first_control_point);
         control_points_vec_.emplace_back(second_control_point);
+
+        geometrical_constraint_matrix_.block<3, 1>(0, 0) = start_point_;
+        geometrical_constraint_matrix_.block<3, 1>(0, 1) = first_control_point;
+        geometrical_constraint_matrix_.block<3, 1>(0, 2) = second_control_point;
+        geometrical_constraint_matrix_.block<3, 1>(0, 3) = goal_point_;
     }
 
-    void CubicBezier::CalculateAnchorPoints()
-    {
-        anchor_points_vec_.clear();
-        anchor_points_vec_.emplace_back(start_point_);
-        anchor_points_vec_.emplace_back(goal_point_);
-    }
+    // void CubicBezier::CalculateAnchorPoints()
+    // {
+    //     anchor_points_vec_.clear();
+    //     anchor_points_vec_.emplace_back(start_point_);
+    //     anchor_points_vec_.emplace_back(goal_point_);
+    // }
 
     Eigen::Vector3d CubicBezier::GetValueAt(const float &t)
     {
         Eigen::Vector3d out;
+        out = geometrical_constraint_matrix_ * basis_matrix_ * CalculateCoefficient(t);
+        // CalculateCoefficient(t);
 
-        CalculateCoefficient(t);
+        // DLOG_IF(WARNING, coefficient_.size() != 4) << " coefficient size is not four!!! ";
 
-        DLOG_IF(WARNING, coefficient_.size() != 4) << " coefficient size is not four!!! ";
-
-        out = coefficient_[0] * start_point_ + coefficient_[1] * control_points_vec_[0] + coefficient_[2] * control_points_vec_[1] + coefficient_[3] * goal_point_;
+        // out = coefficient_[0] * start_point_ + coefficient_[1] * control_points_vec_[0] + coefficient_[2] * control_points_vec_[1] + coefficient_[3] * goal_point_;
         // DLOG(INFO) << "cubic bezier value at : " << t << " is : " << out.x() << " " << out.y();
         return out;
     }
@@ -148,7 +177,7 @@ namespace CubicBezier
     float CubicBezier::GetAngleAt(const float &t)
     {
         Eigen::Vector3d derivative_value = GetFirstOrderDerivativeValueAt(t);
-        float angle = std::atan2(derivative_value.y(), derivative_value.x()) + M_PI;
+        float angle = std::atan2(derivative_value.y(), derivative_value.x());
         return angle;
     }
     void CubicBezier::CalculateLength()

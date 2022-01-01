@@ -21,9 +21,19 @@ namespace CubicBezier
     class CubicBezier
     {
     public:
-        CubicBezier(){};
+        CubicBezier()
+        {
+            basis_matrix_ << 1, -3, 3, -1,
+                0, 3, -6, 3,
+                0, 0, 3, -3,
+                0, 0, 0, 1;
+        };
         CubicBezier(const Eigen::Vector3d &start, const Eigen::Vector3d &goal, int width, int height)
         {
+            basis_matrix_ << 1, -3, 3, -1,
+                0, 3, -6, 3,
+                0, 0, 3, -3,
+                0, 0, 0, 1;
             start_point_ = start;
             goal_point_ = goal;
             map_width_ = width;
@@ -33,6 +43,10 @@ namespace CubicBezier
         };
         CubicBezier(const std::vector<Eigen::Vector3d> &points_vec)
         {
+            basis_matrix_ << 1, -3, 3, -1,
+                0, 3, -6, 3,
+                0, 0, 3, -3,
+                0, 0, 0, 1;
             if (points_vec.size() != 4)
             {
                 DLOG(WARNING) << "points_vec size is not correct!!!";
@@ -70,19 +84,31 @@ namespace CubicBezier
          */
         void CalculateLength();
 
-        void CalculateCoefficient(const float &t);
+        // void CalculateCoefficient(const float &t);
+
+        Eigen::Vector4d CalculateCoefficient(const float &t);
+
+        Eigen::Vector4d CalculateFirstOrderDerivativeCoefficient(const float &t);
 
         void CalculateControlPoints();
 
-        void CalculateAnchorPoints();
+        // void CalculateAnchorPoints();
 
-        void CalculateFirstOrderDerivativeCoefficient(const float &t);
+        // void CalculateFirstOrderDerivativeCoefficient(const float &t);
 
-        void CalculateSecondOrderDerivativeCoefficient(const float &t);
+        // void CalculateSecondOrderDerivativeCoefficient(const float &t);
 
         Eigen::Vector3d GetFirstOrderDerivativeValueAt(const float &t);
 
     private:
+        /**
+         * @brief this is matrix form of anchor and control points
+         * row is 3 due to eigen vector3d, column is 4 due to this is a cubic bezier
+         */
+        Eigen::Matrix<double, 3, 4> geometrical_constraint_matrix_;
+
+        Eigen::Matrix<double, 4, 4> basis_matrix_;
+
         /**
          * @brief for a cubic bezier, control points are two
          * 
@@ -100,11 +126,11 @@ namespace CubicBezier
          * @brief length is four including start and goal points 
          * 
          */
-        std::vector<float> coefficient_;
+        // std::vector<float> coefficient_;
 
-        std::vector<float> first_order_derivative_coefficient_;
+        // std::vector<float> first_order_derivative_coefficient_;
 
-        std::vector<float> second_order_derivative_coefficient_;
+        // std::vector<float> second_order_derivative_coefficient_;
 
         float length_ = 0;
 
