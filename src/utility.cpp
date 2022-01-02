@@ -28,15 +28,15 @@ namespace Utility
         out.z() = 0;
         return out;
     }
-    float ConvertDegToRad(const float &deg)
+    double ConvertDegToRad(const double &deg)
     {
-        float rad;
+        double rad;
         rad = deg / 360 * 2 * M_PI;
         return rad;
     }
-    float ConvertRadToDeg(const float &rad)
+    double ConvertRadToDeg(const double &rad)
     {
-        float deg;
+        double deg;
         deg = rad / 2 / M_PI * 360;
         return deg;
     }
@@ -70,18 +70,18 @@ namespace Utility
         return out;
     }
 
-    float GetDistanceFromVector2dToVector3d(const Eigen::Vector3d &vector_3d, const Eigen::Vector2d &vector_2d)
+    double GetDistanceFromVector2dToVector3d(const Eigen::Vector3d &vector_3d, const Eigen::Vector2d &vector_2d)
     {
-        float distance;
-        float delta_x = vector_2d.x() - vector_3d.x();
-        float delta_y = vector_2d.y() - vector_3d.y();
+        double distance;
+        double delta_x = vector_2d.x() - vector_3d.x();
+        double delta_y = vector_2d.y() - vector_3d.y();
         distance = sqrt(delta_x * delta_x + delta_y * delta_y);
         return distance;
     }
 
-    float DegNormalization(const float &t)
+    double DegNormalization(const double &t)
     {
-        float out;
+        double out;
         out = fmod(t, 360);
         if (out < 0)
         {
@@ -94,9 +94,9 @@ namespace Utility
         return out;
     }
 
-    float RadNormalization(const float &rad)
+    double RadNormalization(const double &rad)
     {
-        float out;
+        double out;
         out = fmod(rad, 2.f * M_PI);
         if (out < 0)
         {
@@ -129,9 +129,9 @@ namespace Utility
         }
     }
 
-    float CrossProduct(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2)
+    double CrossProduct(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2)
     {
-        float out;
+        double out;
         out = p1.x() * p2.y() - p2.x() * p1.y();
         // DLOG(INFO) << "result is " << out;
         return out;
@@ -170,7 +170,7 @@ namespace Utility
         else
         {
             Eigen::Vector2d dir_1 = p2 - p1, dir_2 = p4 - p3;
-            float t;
+            double t;
             t = CrossProduct(p3 - p1, dir_2) / CrossProduct(dir_1, dir_2);
             out = p1 + t * dir_1;
         }
@@ -209,8 +209,8 @@ namespace Utility
             }
             else
             {
-                float k = (p2 - p1).y() / (p2 - p1).x();
-                float b = p1.y() - k * p1.x();
+                double k = (p2 - p1).y() / (p2 - p1).x();
+                double b = p1.y() - k * p1.x();
                 if (k * p3.x() + b - p3.y() < 0)
                 {
                     return above;
@@ -277,7 +277,7 @@ namespace Utility
         Eigen::Vector2d point_2d = Utility::ConvertVector3dToVector2d(point);
         return IsInsidePolygon(polygon, point_2d);
     }
-    std::vector<Eigen::Vector2d> CreatePolygon(const float &width, const float &height)
+    std::vector<Eigen::Vector2d> CreatePolygon(const double &width, const double &height)
     {
         std::vector<Eigen::Vector2d> polygon;
         polygon.emplace_back(Eigen::Vector2d(0, 0));

@@ -27,7 +27,7 @@ namespace GeneticAlgorithm
             for (const auto &point3d : anchor_points3d_vec_)
             {
                 // anchor_points2d_vec_.emplace_back(Utility::ConvertVector3dToVector2d(point3d));
-                float angle = point3d.z();
+                double angle = point3d.z();
                 Eigen::Vector3d direction;
                 direction.x() = std::cos(angle);
                 direction.y() = std::sin(angle);
@@ -39,8 +39,8 @@ namespace GeneticAlgorithm
     void PiecewiseCubicBezier::CalculateControlPoints()
     {
         control_points_vec_.clear();
-        float start_angle = start_point_.z();
-        float goal_angle = goal_point_.z();
+        double start_angle = start_point_.z();
+        double goal_angle = goal_point_.z();
         Eigen::Vector3d direction_start;
         direction_start.x() = std::cos(start_angle);
         direction_start.y() = std::sin(start_angle);
@@ -51,7 +51,7 @@ namespace GeneticAlgorithm
         uint anchor_points_vec_size = anchor_points3d_vec_.size();
 
         // DLOG(INFO) << "free anchor points size is " << anchor_points_vec_size << "; " << anchor_points_vec_size + 1 << " bezier!";
-        float t_start, t_goal;
+        double t_start, t_goal;
         if (anchor_points_vec_size == 0)
         {
             //use the way in paper
@@ -213,9 +213,9 @@ namespace GeneticAlgorithm
         // DLOG(INFO) << "size cubic bezier vec is " << cubic_bezier_vec_.size();
     }
 
-    float PiecewiseCubicBezier::GetAngleAt(const float &u)
+    double PiecewiseCubicBezier::GetAngleAt(const double &u)
     {
-        float angle;
+        double angle;
         int total_number_of_bezier = cubic_bezier_vec_.size();
         if (total_number_of_bezier == 0)
         {
@@ -226,13 +226,13 @@ namespace GeneticAlgorithm
         {
             int current_index_of_bezier;
             current_index_of_bezier = (int)std::floor(u * total_number_of_bezier);
-            float current_factor = total_number_of_bezier * u - current_index_of_bezier;
+            double current_factor = total_number_of_bezier * u - current_index_of_bezier;
             angle = cubic_bezier_vec_[current_index_of_bezier].GetAngleAt(current_factor);
         }
         return angle;
     }
 
-    Eigen::Vector3d PiecewiseCubicBezier::GetValueAt(const float &u)
+    Eigen::Vector3d PiecewiseCubicBezier::GetValueAt(const double &u)
     {
         Eigen::Vector3d out;
 
@@ -247,7 +247,7 @@ namespace GeneticAlgorithm
         {
             int current_index_of_bezier;
             current_index_of_bezier = (int)std::floor(u * total_number_of_bezier);
-            float current_factor = total_number_of_bezier * u - current_index_of_bezier;
+            double current_factor = total_number_of_bezier * u - current_index_of_bezier;
             // DLOG(INFO) << "u is " << u << " total number of bezier is " << total_number_of_bezier << " current index of bezier is " << current_index_of_bezier << " current factor is " << current_factor;
             out = cubic_bezier_vec_[current_index_of_bezier].GetValueAt(current_factor);
         }
@@ -271,6 +271,46 @@ namespace GeneticAlgorithm
             }
             // DLOG(INFO) << "length is " << length_;
         }
+    }
+    double PiecewiseCubicBezier::GetCurvatureAt(const double &u)
+    {
+        double out;
+
+        int total_number_of_bezier = cubic_bezier_vec_.size();
+        if (total_number_of_bezier == 0)
+        {
+            DLOG(INFO) << "No bezier, Please calculate first";
+            out = -10000;
+        }
+        else
+        {
+            int current_index_of_bezier;
+            current_index_of_bezier = (int)std::floor(u * total_number_of_bezier);
+            double current_factor = total_number_of_bezier * u - current_index_of_bezier;
+            // DLOG(INFO) << "u is " << u << " total number of bezier is " << total_number_of_bezier << " current index of bezier is " << current_index_of_bezier << " current factor is " << current_factor;
+            out = cubic_bezier_vec_[current_index_of_bezier].GetCurvatureAt(current_factor);
+        }
+        return out;
+    }
+
+    double PiecewiseCubicBezier::GetTotalCurvature()
+    {
+        double total_curvature = 0;
+        if (cubic_bezier_vec_.size() == 0)
+        {
+            length_ = 0;
+            DLOG(INFO) << "length is 0 due to no cubic bezier;";
+        }
+        else
+        {
+            for (auto &cubic_bezier : cubic_bezier_vec_)
+            {
+                // DLOG(INFO) << "cubic bezier length is " << cubic_bezier_length;
+                total_curvature += cubic_bezier.GetTotalCurvature();
+            }
+            // DLOG(INFO) << "length is " << length_;
+        }
+        return total_curvature;
     }
 
     std::vector<Eigen::Vector3d> PiecewiseCubicBezier::ConvertPiecewiseCubicBezierToVector3d(const int &number_of_points)

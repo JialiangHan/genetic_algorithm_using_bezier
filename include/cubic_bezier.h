@@ -50,7 +50,7 @@ namespace CubicBezier
                 0, 0, 0, 1;
             if (point_matrix.rows() != 3 || point_matrix.cols() != 4)
             {
-                DLOG(WARNING) << "points_vec size is not correct!!!";
+                // DLOG(WARNING) << "points_vec size is not correct!!!";
             }
             else
             {
@@ -60,18 +60,22 @@ namespace CubicBezier
             CalculateAnchorPoints();
         }
 
-              Eigen::Vector3d GetValueAt(const float &t);
+        Eigen::Vector3d GetValueAt(const double &t);
 
-        float GetAngleAt(const float &t);
+        double GetAngleAt(const double &t);
 
         // std::vector<Eigen::Vector3d> GetControlPoints() const { return control_points_vec_; };
         std::vector<Eigen::Vector3d> GetAnchorPoints() const { return anchor_points_vec_; };
 
-        float GetLength()
+        double GetLength()
         {
             CalculateLength();
             return length_;
         };
+
+        double GetCurvatureAt(const double &t);
+
+        double GetTotalCurvature();
 
         std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d(const int &number_of_points);
 
@@ -82,15 +86,19 @@ namespace CubicBezier
          */
         void CalculateLength();
 
-        Eigen::Vector4d CalculateCoefficient(const float &t);
+        Eigen::Vector4d CalculateCoefficient(const double &t);
 
-        Eigen::Vector4d CalculateFirstOrderDerivativeCoefficient(const float &t);
+        Eigen::Vector4d CalculateFirstOrderDerivativeCoefficient(const double &t);
+
+        Eigen::Vector4d CalculateSecondOrderDerivativeCoefficient(const double &t);
 
         void CalculateControlPoints();
 
         void CalculateAnchorPoints();
 
-        Eigen::Vector3d GetFirstOrderDerivativeValueAt(const float &t);
+        Eigen::Vector3d GetFirstOrderDerivativeValueAt(const double &t);
+
+        Eigen::Vector3d GetSecondOrderDerivativeValueAt(const double &t);
 
     private:
         /**
@@ -110,10 +118,10 @@ namespace CubicBezier
         Eigen::Vector3d start_point_;
         Eigen::Vector3d goal_point_;
 
-        float length_ = 0;
+        double length_ = 0;
 
-        float map_width_;
-        float map_height_;
+        double map_width_;
+        double map_height_;
         /**
          * @brief determine how to calculate control points, random or use the way in paper
          * 

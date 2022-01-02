@@ -26,25 +26,25 @@ namespace Utility
 
     Eigen::Vector2d ConvertIndexToEigenVector2d(const int &index, const int &map_width);
 
-    float GetDistanceFromVector2dToVector3d(const Eigen::Vector3d &vector_3d, const Eigen::Vector2d &vector_2d);
+    double GetDistanceFromVector2dToVector3d(const Eigen::Vector3d &vector_3d, const Eigen::Vector2d &vector_2d);
 
     /**
      * @brief convert angle in deg into [-PI,Pi)
      * 
      * @param deg 
-     * @return float 
+     * @return double 
      */
-    float DegNormalization(const float &deg);
+    double DegNormalization(const double &deg);
 
-    float RadNormalization(const float &rad);
+    double RadNormalization(const double &rad);
 
     Eigen::Vector2d ConvertVector3dToVector2d(const Eigen::Vector3d &vector_3d);
 
     Eigen::Vector3d ConvertVector2dToVector3d(const Eigen::Vector2d &vector_2d);
 
-    float ConvertDegToRad(const float &deg);
+    double ConvertDegToRad(const double &deg);
 
-    float ConvertRadToDeg(const float &rad);
+    double ConvertRadToDeg(const double &rad);
     /**
      * @brief check if p3 lines on p1-p2
      * 
@@ -89,9 +89,9 @@ namespace Utility
      * 
      * @param p1 
      * @param p2 
-     * @return float 
+     * @return double 
      */
-    float CrossProduct(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2);
+    double CrossProduct(const Eigen::Vector2d &p1, const Eigen::Vector2d &p2);
     /**
      * @brief determine if a point is inside a polygon
      * 
@@ -108,7 +108,7 @@ namespace Utility
      * @param height 
      * @return std::vector<Eigen::Vector2d> 
      */
-    std::vector<Eigen::Vector2d> CreatePolygon(const float &width, const float &height);
+    std::vector<Eigen::Vector2d> CreatePolygon(const double &width, const double &height);
 }
 
 #endif // UTILITY

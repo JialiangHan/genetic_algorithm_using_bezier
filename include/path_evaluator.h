@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include "glog/logging.h"
 #include "gflags/gflags.h"
-
+#include "genetic_algorithm_using_bezier/FitnessMsgVec.h"
 namespace PathEvaluator
 {
     class PathEvaluator
@@ -28,6 +28,7 @@ namespace PathEvaluator
         {
             sub_map_ = nh_.subscribe("/map", 1, &PathEvaluator::CallbackSetMap, this);
             sub_path_ = nh_.subscribe<nav_msgs::Path>(path_topic, 1, boost::bind(&PathEvaluator::CallbackPath, this, _1, path_topic));
+            sub_fitness_ = nh_.subscribe<genetic_algorithm_using_bezier::FitnessMsgVec>("/fitness", 1, &PathEvaluator::CallbackFitness, this);
         };
         PathEvaluator(const std::string &path_topic, const std::string &smoothed_path_topic)
         {
@@ -44,6 +45,7 @@ namespace PathEvaluator
         void Plot();
 
     private:
+        void CallbackFitness(const genetic_algorithm_using_bezier::FitnessMsgVecConstPtr &fitness_vec);
         void CallbackPath(const nav_msgs::Path::ConstPtr &path, const std::string &topic_name);
         /**
          * @brief as name suggest, this function convert a ROS message path to a vector of node3d
@@ -58,7 +60,7 @@ namespace PathEvaluator
          * @brief calculate curvature for the path 
          * 
          * @param path got from planner
-         * @return std::vector<float> 
+         * @return std::vector<double> 
          */
         int CalculateCurvature(const std::vector<Eigen::Vector3d> &path, const std::string &topic_name);
 
@@ -79,23 +81,27 @@ namespace PathEvaluator
 
         ros::Subscriber sub_map_;
 
+        ros::Subscriber sub_fitness_;
+
         nav_msgs::OccupancyGridConstPtr map_;
         /**
          * @brief key is topic name for all four maps; 
          * 
          */
-        std::unordered_map<std::string, std::vector<float>> clearance_map_;
+        std::unordered_map<std::string, std::vector<double>> clearance_map_;
 
-        std::unordered_map<std::string, std::vector<float>> curvature_map_;
+        std::unordered_map<std::string, std::vector<double>> curvature_map_;
 
-        std::unordered_map<std::string, std::vector<float>> smoothness_map_;
+        std::unordered_map<std::string, std::vector<double>> smoothness_map_;
 
-        std::unordered_map<std::string, std::vector<float>> steering_angle_map_;
+        std::unordered_map<std::string, std::vector<double>> steering_angle_map_;
+
+        std::unordered_map<std::string, std::vector<double>> fitness_map_;
         /**
          * @brief key is metric name, value is above map
          * 
          */
-        std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float>>> metric_map_;
+        std::unordered_map<std::string, std::unordered_map<std::string, std::vector<double>>> metric_map_;
 
         // /some kind of map is need for the clearacne
     };

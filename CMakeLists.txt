@@ -9,8 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
     rospy
     std_msgs
     tf
-    steering_functions
     roslaunch
+    message_generation
     )
 roslaunch_add_file_check(launch)
 find_package(PythonLibs REQUIRED)
@@ -86,9 +86,22 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/utility.cpp
     )
 
+
 # add_library(GAB ${SOURCES} ${HEADERS} )
+
+
+add_message_files(
+  FILES
+    FitnessMsgVec.msg
+)
+generate_messages(
+    DEPENDENCIES
+    std_msgs
+)
 ## Declare a catkin package
-catkin_package()
+catkin_package(
+    CATKIN_DEPENDS message_runtime
+)
 
 add_executable(tf_broadcaster_ga src/tf_broadcaster.cpp   )
 target_link_libraries(tf_broadcaster_ga ${catkin_LIBRARIES} glog::glog)
@@ -104,7 +117,9 @@ target_link_libraries(genetic_algorithm_using_bezier
                     ${OMPL_LIBRARIES} 
                     glog::glog 
                         ${GFLAGS_LIBRARY} 
+                      
                     ) 
+add_dependencies(genetic_algorithm_using_bezier genetic_algorithm_using_bezier_generate_messages_cpp)
 add_executable(node_path_evaluator_ga
             src/node_path_evaluator.cpp 
             ${SOURCES}
@@ -117,7 +132,7 @@ target_link_libraries(node_path_evaluator_ga
                         glog::glog 
                         ${GFLAGS_LIBRARY} 
 )
-
+add_dependencies(node_path_evaluator_ga genetic_algorithm_using_bezier_generate_messages_cpp)
 add_executable(node_test 
             test/test.cpp 
             ${SOURCES}

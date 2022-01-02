@@ -15,6 +15,7 @@ namespace GeneticAlgorithm
 {
     void CollisionDetection::GenerateFreePointVec()
     {
+        free_point_vec_.clear();
         for (uint i = 0; i < grid_->data.size(); ++i)
         {
             if (grid_->data[i])
@@ -33,14 +34,15 @@ namespace GeneticAlgorithm
 
     bool CollisionDetection::IsCollsion(const Eigen::Vector2d &point_2d)
     {
-        uint xi = (int)point_2d.x();
-        uint yi = (int)point_2d.y();
+
         //ensure point is on the map;
-        if (xi >= 0 &&
-            xi < grid_->info.width &&
-            yi >= 0 &&
-            yi < grid_->info.width)
+        if (point_2d.x() >= 0 &&
+            point_2d.x() < grid_->info.width &&
+            point_2d.y() >= 0 &&
+            point_2d.y() < grid_->info.height)
         {
+            uint xi = (int)point_2d.x();
+            uint yi = (int)point_2d.y();
             if (grid_->data[yi * grid_->info.width + xi])
             {
                 // DLOG(INFO) << "point: " << point_2d.x() << " " << point_2d.y() << " is in collision!";
@@ -92,7 +94,9 @@ namespace GeneticAlgorithm
 
     bool CollisionDetection::IsCollsion(CubicBezier::CubicBezier &cubic_bezier)
     {
+
         std::vector<Eigen::Vector3d> anchor_points_vec = cubic_bezier.GetAnchorPoints();
+        // DLOG(INFO) << "collision for anchor points " << IsCollsion(anchor_points_vec);
         if (IsCollsion(anchor_points_vec))
         {
             // DLOG(INFO) << "anchor point is in collision.";
@@ -100,6 +104,8 @@ namespace GeneticAlgorithm
         }
         for (int t = 0; t < 100; ++t)
         {
+            // DLOG(INFO) << "cubic bezier value at " << t / 100.0 << " is " << cubic_bezier.GetValueAt(t / 100.0) << " is in collision " << IsCollsion(cubic_bezier.GetValueAt(t / 100.0));
+
             if (IsCollsion(cubic_bezier.GetValueAt(t / 100.0)))
             {
                 // DLOG(INFO) << "cubic bezier path is in collision.";
@@ -114,12 +120,14 @@ namespace GeneticAlgorithm
     int CollisionDetection::FindCollsionIndex(PiecewiseCubicBezier piecewise_cubic_bezier)
     {
         std::vector<CubicBezier::CubicBezier> cubic_bezier_vec = piecewise_cubic_bezier.GetCubicBezierVector();
-        DLOG(INFO) << "size of cubic bezier vec is " << cubic_bezier_vec.size();
+        // DLOG(INFO) << "size of cubic bezier vec is " << cubic_bezier_vec.size();
         for (uint i = 0; i < cubic_bezier_vec.size(); ++i)
         {
-            if (IsCollsion(cubic_bezier_vec[i]))
+            bool collision = IsCollsion(cubic_bezier_vec[i]);
+            // DLOG(INFO) << "collision for " << i << "th cubic bezier is " << collision;
+            if (collision)
             {
-                DLOG(INFO) << i << "th cubic bezier is in collision.";
+                // DLOG(INFO) << i << "th cubic bezier is in collision.";
                 return i;
             }
         }

@@ -16,10 +16,12 @@
 #include "collision_detection.h"
 #include <cstdlib>
 #include <math.h>
-#include <unordered_map>
+#include "genetic_algorithm_using_bezier/FitnessMsgVec.h"
 #include <thread>
 #include <mutex>
 #include <visualization_msgs/MarkerArray.h>
+#include <algorithm>
+#include <random>
 namespace GeneticAlgorithm
 {
    /**
@@ -56,6 +58,7 @@ namespace GeneticAlgorithm
          // TOPICS TO PUBLISH
          pub_best_path_ = nh_.advertise<nav_msgs::Path>("/path", 10);
          pub_path_nodes_ = nh_.advertise<visualization_msgs::MarkerArray>(path_point_topic, 1);
+         pub_fitness_ = nh_.advertise<genetic_algorithm_using_bezier::FitnessMsgVec>("/fitness", 10);
          pub_thread_.reset(new std::thread(&GeneticAlgorithm::PublishThread, this));
       };
       ~GeneticAlgorithm();
@@ -82,6 +85,7 @@ namespace GeneticAlgorithm
       void PublishThread();
 
    private:
+      void GenerateFreePointMap();
       /**
        * @brief check if there is a cubic bezier path connected from start to goal, if yes return this path.
        * 
@@ -94,20 +98,20 @@ namespace GeneticAlgorithm
        * 
        */
       void MainLoop();
-      Genotype GenerateRandomGeno();
+      Genotype GenerateRandomGeno(const int &digit);
       Chromosome GenerateRandomChromosome(const uint &number_of_genes);
       Population GenerateRandomPopulation(const uint &population_size);
       PiecewiseCubicBezier GeneratePiecewiseCubicBezier(const Chromosome &chromosome);
       void GenerateInitialPopulation();
       /**
        * @brief Calculate fitness value of a path,
-             * equation is f(x)=1/(L(path)+p*q)
+             * equation is f(x)=1/(L(path)+p*q+total_curvature)
              * L(path): path length
              * p: penalty
              * q: number of times path encouters obstacle
        * 
        * @param chromosome 
-       * @return float 
+       * @return double 
        */
       double CalculateFitness(const Chromosome &chromosome);
       void GenerateFitnessMap();
@@ -149,25 +153,23 @@ namespace GeneticAlgorithm
 
       int PublishCurrentPointsOfBestPath();
 
+      int PublishFitness();
+
    private:
       ros::NodeHandle nh_;
       Eigen::Vector3d start_;
       Eigen::Vector3d goal_;
       ParameterGeneticAlgorithm params_;
 
-      std::pair<Chromosome, float> best_of_best_;
+      std::pair<Chromosome, double> best_of_best_;
 
-      std::pair<Chromosome, float> current_best_;
+      std::pair<Chromosome, double> current_best_;
+
       /**
-       * @brief number of generations which f(best of best)>= f(x best)
+       * @brief this map is for random generate genotype,size is free points * discrete angle*number_of gene in chromosome
        * 
        */
-      int h_;
-      /**
-       * @brief number of free anchor points(genes) in chromosome, this number must greater than 1. 
-       * 
-       */
-      int number_of_gene_in_chromosome_ = 2;
+      std::vector<std::vector<Eigen::Vector3d>> free_points_map_;
       /**
        * @brief current generation, a vector of chromosome 
        * 
@@ -190,7 +192,7 @@ namespace GeneticAlgorithm
 
       std::vector<Eigen::Vector3d> path_;
 
-      float fitness_avg_ = 0;
+      double fitness_avg_ = 0;
 
       std::unique_ptr<std::thread> pub_thread_;
 
@@ -198,6 +200,13 @@ namespace GeneticAlgorithm
 
       ros::Publisher pub_path_nodes_;
 
+      ros::Publisher pub_fitness_;
+
       std::mutex path_access_;
+      /**
+       * @brief only for visualization purpose, this vec store all best fitness value for current generation
+       * 
+       */
+      std::vector<double> fitness_vec_;
    };
 }

@@ -41,9 +41,12 @@ namespace GeneticAlgorithm
      * @param u is between [0,1]
      * @return Eigen::Vector3d 
      */
-    Eigen::Vector3d GetValueAt(const float &u);
+    Eigen::Vector3d GetValueAt(const double &u);
 
-    float GetAngleAt(const float &u);
+    double GetAngleAt(const double &u);
+    double GetCurvatureAt(const double &t);
+
+    double GetTotalCurvature();
 
     void SetAnchorPoints(const std::vector<Eigen::Vector3d> &anchor_points_vec)
     {
@@ -56,9 +59,9 @@ namespace GeneticAlgorithm
     /**
      * @brief Get the Length of bezier curve
      * 
-     * @return float 
+     * @return double 
      */
-    float GetLength()
+    double GetLength()
     {
       CalculateCubicBezier();
       CalculateLength();
@@ -118,6 +121,6 @@ namespace GeneticAlgorithm
      * @brief curve length
      * 
      */
-    float length_ = 0;
+    double length_ = 0;
   };
 }

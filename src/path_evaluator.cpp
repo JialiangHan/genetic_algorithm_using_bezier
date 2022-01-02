@@ -20,12 +20,12 @@ namespace PathEvaluator
     {
         if (path.size() < 3)
         {
-            DLOG(WARNING) << "In CalculateCurvature: path does not have enough points!!!";
+            // DLOG(WARNING) << "In CalculateCurvature: path does not have enough points!!!";
             return 0;
         }
 
-        std::vector<float> curvature_vec;
-        float curvature;
+        std::vector<double> curvature_vec;
+        double curvature;
         // DLOG(INFO) << "In CalculateCurvature: " << topic_name << " path size is :" << path.size();
 
         // use three points to calculate curvature;
@@ -39,7 +39,7 @@ namespace PathEvaluator
             Eigen::Vector2d xs(path[i + 2].x(), path[i + 2].y());
             if (xp == xi || xi == xs)
             {
-                DLOG(WARNING) << "In CalculateCurvature: some points are equal, skip these points for curvature calculation!!";
+                // DLOG(WARNING) << "In CalculateCurvature: some points are equal, skip these points for curvature calculation!!";
                 continue;
             }
             // DLOG(INFO) << "xs x is :" << xs(0,0) << "y is: " << xs.y();
@@ -108,8 +108,8 @@ namespace PathEvaluator
         }
         // smoothness = (deltax(i+1)-delta(xi))^2
         // deltax(i+1)= x(i+1)-x(i), the same for deltaxi
-        std::vector<float> smoothness_vec;
-        float smoothness;
+        std::vector<double> smoothness_vec;
+        double smoothness;
         for (uint i = 0; i < path.size() - 2; ++i)
         {
             //get three points from path
@@ -150,8 +150,8 @@ namespace PathEvaluator
         }
         // for clearance, node2d is enough, here clearance is the distance for current point to nearest obstacle.
         // TODO: maybe in future, we can change that to distance from vehicle to nearest obstacle.
-        std::vector<float> clearance_vec;
-        float clearance = INFINITY;
+        std::vector<double> clearance_vec;
+        double clearance = INFINITY;
         int map_width = map_->info.width;
         int map_height = map_->info.height;
         for (const auto &vector_3d : path)
@@ -162,7 +162,7 @@ namespace PathEvaluator
                 if (map_->data[index])
                 {
                     Eigen::Vector2d obstacle_2d = Utility::ConvertIndexToEigenVector2d(index, map_width);
-                    float distance = Utility::GetDistanceFromVector2dToVector3d(vector_3d, obstacle_2d);
+                    double distance = Utility::GetDistanceFromVector2dToVector3d(vector_3d, obstacle_2d);
                     if (distance < clearance)
                     {
                         clearance = distance;
@@ -201,10 +201,10 @@ namespace PathEvaluator
             return 0;
         }
         // for clearance, node2d is enough, here clearance is the distance for current point to nearest obstacle.
-        std::vector<float> steering_angle_vec;
+        std::vector<double> steering_angle_vec;
         for (uint i = 0; i < path.size() - 1; ++i)
         {
-            float steering_angle = path[i + 1].z() - path[i].z();
+            double steering_angle = path[i + 1].z() - path[i].z();
             steering_angle = Utility::DegNormalization(Utility::ConvertRadToDeg(steering_angle));
 
             steering_angle_vec.emplace_back(steering_angle);
@@ -225,6 +225,22 @@ namespace PathEvaluator
     void PathEvaluator::CallbackSetMap(const nav_msgs::OccupancyGrid::ConstPtr &map)
     {
         map_ = map;
+    }
+
+    void PathEvaluator::CallbackFitness(const genetic_algorithm_using_bezier::FitnessMsgVecConstPtr &fitness_vec)
+    {
+        std::string topic_name = "fitness";
+        if (fitness_map_.count(topic_name) > 0)
+        {
+            fitness_map_.at(topic_name).clear();
+            fitness_map_.at(topic_name) = fitness_vec->fitness_vec;
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is already in clearance map, clear vector and put new curvature into vector.";
+        }
+        else
+        {
+            fitness_map_.insert({topic_name, fitness_vec->fitness_vec});
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is not in the clearance map, insert into the map.";
+        }
     }
 
     void PathEvaluator::CallbackPath(const nav_msgs::Path::ConstPtr &path, const std::string &topic_name)
@@ -294,13 +310,26 @@ namespace PathEvaluator
             // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is not in the clearance map, insert into the map.";
         }
 
+        metric_name = "fitness";
+        if (metric_map_.count(metric_name) > 0)
+        {
+            metric_map_.at(metric_name).clear();
+            metric_map_.at(metric_name) = fitness_map_;
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is already in clearance map, clear vector and put new curvature into vector.";
+        }
+        else
+        {
+            metric_map_.insert({metric_name, fitness_map_});
+            // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is not in the clearance map, insert into the map.";
+        }
+
         return 1;
     }
 
     void PathEvaluator::Plot()
     {
         matplotlibcpp::ion();
-        matplotlibcpp::clf();
+
         int metric_size = metric_map_.size();
         int index = 1, row = 2, column = 2;
         while (1)
@@ -314,14 +343,22 @@ namespace PathEvaluator
                     {
                         if (pair.first == "/path")
                         {
-                            matplotlibcpp::plot(pair.second, {{"label", "raw path"}});
+                            if (pair.second.size() != 0)
+                            {
+                                matplotlibcpp::cla();
+                                matplotlibcpp::plot(pair.second, {{"label", "raw path"}});
+                            }
                         }
                         else
                         {
-                            matplotlibcpp::plot(pair.second, {{"label", "smoothed path"}});
+                            if (pair.second.size() != 0)
+                            {
+                                matplotlibcpp::cla();
+                                matplotlibcpp::plot(pair.second, {{"label", "smoothed path"}});
+                            }
                         }
 
-                        matplotlibcpp::legend({{"loc", "upper right"}});
+                        // matplotlibcpp::legend({{"loc", "upper right"}});
                         // DLOG(INFO) << "Plot curvature for topic: " << curvature_vec.first;
                     }
                     matplotlibcpp::title(map.first);

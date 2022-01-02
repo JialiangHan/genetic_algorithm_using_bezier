@@ -6,7 +6,7 @@ namespace GeneticAlgorithm
   struct ParameterPathPublisher
   {
     /// [m] --- The cell size of the 2D grid of the world,used in planner.cpp
-    float cell_size = 1;
+    double cell_size = 1;
     // #********************** vehicle parameters *****************
 
     /// [m] --- Uniformly adds a padding around the vehicle
@@ -28,18 +28,18 @@ namespace GeneticAlgorithm
      * @brief penalty for fitness function
      * 
      */
-    float penalty_fitness = 50;
+    double penalty_fitness = 50;
     /**
      * @brief the range for local mutation, unit is [meter],for x and y
      * 
      */
-    float local_search_range_radius = 2;
+    double local_search_range_radius = 2;
 
     /**
      * @brief the range for local mutation, unit is [rad],for angle, this value must small than 2*pi
      * 
      */
-    float local_search_range_angle = 0.2;
+    double local_search_range_angle = 0.2;
     /**
      * @brief use to switch mutation mode 
      * 
@@ -52,11 +52,13 @@ namespace GeneticAlgorithm
     int h_t = 10;
 
     int number_of_points = 50;
+
+    int number_of_gene_in_chromosome = 1;
   };
 
   struct ParameterCollisionDetection
   {
-    float position_resolution = 1;
+    double position_resolution = 1;
     int headings = 72;
   };
   struct ParameterPlanner
@@ -65,7 +67,7 @@ namespace GeneticAlgorithm
     bool manual = true;
 
     /// [m] --- The cell size of the 2D grid of the world,used in planner.cpp
-    float cell_size = 1;
+    double cell_size = 1;
   };
   struct ParameterContainer
   {

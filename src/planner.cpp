@@ -74,9 +74,9 @@ void Planner::SetMap(const nav_msgs::OccupancyGrid::Ptr &map)
 //###################################################
 void Planner::SetStart(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &initial)
 {
-    float x = initial->pose.pose.position.x / params_.cell_size;
-    float y = initial->pose.pose.position.y / params_.cell_size;
-    float t = tf::getYaw(initial->pose.pose.orientation);
+    double x = initial->pose.pose.position.x / params_.cell_size;
+    double y = initial->pose.pose.position.y / params_.cell_size;
+    double t = tf::getYaw(initial->pose.pose.orientation);
     // publish the start without covariance for rviz
     geometry_msgs::PoseStamped startN;
     startN.pose.position = initial->pose.pose.position;
@@ -111,9 +111,9 @@ void Planner::SetStart(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr 
 void Planner::SetGoal(const geometry_msgs::PoseStamped::ConstPtr &end)
 {
     // retrieving goal position
-    float x = end->pose.position.x / params_.cell_size;
-    float y = end->pose.position.y / params_.cell_size;
-    float t = tf::getYaw(end->pose.orientation);
+    double x = end->pose.position.x / params_.cell_size;
+    double y = end->pose.position.y / params_.cell_size;
+    double t = tf::getYaw(end->pose.orientation);
 
     DLOG(INFO) << "I am seeing a new goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
 
@@ -151,9 +151,9 @@ void Planner::MakePlan()
 
         // ________________________
         // retrieving goal position
-        float x = goal_.pose.position.x / params_.cell_size;
-        float y = goal_.pose.position.y / params_.cell_size;
-        float t = tf::getYaw(goal_.pose.orientation);
+        double x = goal_.pose.position.x / params_.cell_size;
+        double y = goal_.pose.position.y / params_.cell_size;
+        double t = tf::getYaw(goal_.pose.orientation);
         // set theta to a value (0,2PI]
         t = Utility::RadNormalization(t);
         const Eigen::Vector3d goal(x, y, t);
@@ -203,8 +203,8 @@ void Planner::MakePlan()
             auto t1 = std::chrono::high_resolution_clock::now();
 
             genetic_algorithm_ptr_->Initialize(start, goal, grid_);
-            path = genetic_algorithm_ptr_->GetPath();
-            points = genetic_algorithm_ptr_->GetPoints();
+            // path = genetic_algorithm_ptr_->GetPath();
+            // points = genetic_algorithm_ptr_->GetPoints();
 
             auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -213,14 +213,14 @@ void Planner::MakePlan()
             DLOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz";
         }
         // CLEAR THE PATH
-        path_publisher_ptr_->Clear();
-        // CREATE THE UPDATED PATH
-        path_publisher_ptr_->UpdatePath(path);
-        path_publisher_ptr_->UpdatePoint(points);
-        // _________________________________
-        // PUBLISH THE RESULTS OF THE SEARCH
-        path_publisher_ptr_->PublishPath();
-        path_publisher_ptr_->PublishPathPoints();
+        // path_publisher_ptr_->Clear();
+        // // CREATE THE UPDATED PATH
+        // path_publisher_ptr_->UpdatePath(path);
+        // path_publisher_ptr_->UpdatePoint(points);
+        // // _________________________________
+        // // PUBLISH THE RESULTS OF THE SEARCH
+        // path_publisher_ptr_->PublishPath();
+        // path_publisher_ptr_->PublishPathPoints();
 
         valid_start_ = false;
         valid_goal_ = false;

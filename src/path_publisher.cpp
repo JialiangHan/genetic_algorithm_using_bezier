@@ -77,7 +77,7 @@ void PathPublisher::AddPoint(const Eigen::Vector3d &node, const int &i)
   pathNode.header.stamp = ros::Time(0);
   pathNode.id = i;
   pathNode.type = visualization_msgs::Marker::SPHERE;
-  float scale = 0.2;
+  double scale = 0.2;
   pathNode.scale.x = scale;
   pathNode.scale.y = scale;
   pathNode.scale.z = scale;

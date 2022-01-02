@@ -15,7 +15,7 @@
 #include <math.h>
 namespace CubicBezier
 {
-    Eigen::Vector4d CubicBezier::CalculateCoefficient(const float &t)
+    Eigen::Vector4d CubicBezier::CalculateCoefficient(const double &t)
     {
         Eigen::Vector4d out;
 
@@ -27,7 +27,7 @@ namespace CubicBezier
         return out;
     }
 
-    Eigen::Vector4d CubicBezier::CalculateFirstOrderDerivativeCoefficient(const float &t)
+    Eigen::Vector4d CubicBezier::CalculateFirstOrderDerivativeCoefficient(const double &t)
     {
         Eigen::Vector4d out;
 
@@ -39,12 +39,32 @@ namespace CubicBezier
         }
         return out;
     }
+    Eigen::Vector4d CubicBezier::CalculateSecondOrderDerivativeCoefficient(const double &t)
+    {
+        Eigen::Vector4d out;
 
-    Eigen::Vector3d CubicBezier::GetFirstOrderDerivativeValueAt(const float &t)
+        for (int i = 0; i < out.size(); ++i)
+        {
+            out[i] = i * (i - 1) * (i - 2 < 0 ? 0 : std::pow(t, i - 2));
+            // DLOG(INFO) << "t: " << t << " i-1 " << i - 1 << " std::pow(t, i - 1)" << (std::pow(t, i - 1));
+            // DLOG(INFO) << i << "th element in first order derivation coefficient matrix is " << out[i];
+        }
+        return out;
+    }
+    Eigen::Vector3d CubicBezier::GetFirstOrderDerivativeValueAt(const double &t)
     {
         Eigen::Vector3d out;
         // DLOG(INFO) << "t " << t;
-        out = geometrical_constraint_matrix_ * basis_matrix_ * CalculateFirstOrderDerivativeCoefficient(t);
+        Eigen::Vector4d coefficient = CalculateFirstOrderDerivativeCoefficient(t);
+        out = geometrical_constraint_matrix_ * basis_matrix_ * coefficient;
+        // DLOG_IF(INFO, out.x() == 0 && out.y() == 0) << "first order derivative coefficient is " << coefficient[0] << " " << coefficient[1] << " " << coefficient[2] << " " << coefficient[3];
+        return out;
+    }
+    Eigen::Vector3d CubicBezier::GetSecondOrderDerivativeValueAt(const double &t)
+    {
+        Eigen::Vector3d out;
+        // DLOG(INFO) << "t " << t;
+        out = geometrical_constraint_matrix_ * basis_matrix_ * CalculateSecondOrderDerivativeCoefficient(t);
 
         return out;
     }
@@ -53,8 +73,8 @@ namespace CubicBezier
     {
 
         // control_points_vec_.clear();
-        float start_angle = start_point_.z();
-        float goal_angle = goal_point_.z();
+        double start_angle = start_point_.z();
+        double goal_angle = goal_point_.z();
         Eigen::Vector3d first_control_point, second_control_point, direction;
         direction.x() = std::cos(start_angle);
         direction.y() = std::sin(start_angle);
@@ -97,7 +117,7 @@ namespace CubicBezier
         { //use the way in paper
             direction.x() = std::cos(start_angle);
             direction.y() = std::sin(start_angle);
-            float t = (Utility::ConvertVector3dToVector2d(goal_point_ - start_point_)).norm() / 3;
+            double t = (Utility::ConvertVector3dToVector2d(goal_point_ - start_point_)).norm() / 3;
             first_control_point = start_point_ + direction * t;
             direction.x() = std::cos(goal_angle);
             direction.y() = std::sin(goal_angle);
@@ -119,7 +139,7 @@ namespace CubicBezier
         anchor_points_vec_.emplace_back(goal_point_);
     }
 
-    Eigen::Vector3d CubicBezier::GetValueAt(const float &t)
+    Eigen::Vector3d CubicBezier::GetValueAt(const double &t)
     {
         Eigen::Vector3d out;
         out = geometrical_constraint_matrix_ * basis_matrix_ * CalculateCoefficient(t);
@@ -127,11 +147,11 @@ namespace CubicBezier
         return out;
     }
 
-    float CubicBezier::GetAngleAt(const float &t)
+    double CubicBezier::GetAngleAt(const double &t)
     {
         // DLOG(INFO) << "t " << t;
         Eigen::Vector3d derivative_value = GetFirstOrderDerivativeValueAt(t);
-        float angle = std::atan2(derivative_value.y(), derivative_value.x());
+        double angle = std::atan2(derivative_value.y(), derivative_value.x());
         return angle;
     }
     void CubicBezier::CalculateLength()
@@ -154,12 +174,42 @@ namespace CubicBezier
         for (i = 0; i < size + 1; ++i)
         {
             Eigen::Vector3d point3d;
-            // DLOG(INFO) << " i/size = " << (float)i / size;
-            point3d = GetValueAt((float)i / size);
-            point3d.z() = GetAngleAt((float)i / size);
+            // DLOG(INFO) << " i/size = " << (double)i / size;
+            point3d = GetValueAt((double)i / size);
+            point3d.z() = GetAngleAt((double)i / size);
             // DLOG(INFO) << "point3d is " << point3d.x() << " " << point3d.y() << " " << point3d.z();
             out.emplace_back(point3d);
         }
         return out;
+    }
+
+    double CubicBezier::GetTotalCurvature()
+    {
+        double total_curvature = 0;
+        // DLOG(INFO) << "In calculateLength()";
+        for (uint i = 0; i < 100; ++i)
+        {
+            total_curvature += GetCurvatureAt(i / 100.0);
+        }
+        // DLOG(INFO) << "total curvature is " << total_curvature;
+        return total_curvature;
+    }
+
+    double CubicBezier::GetCurvatureAt(const double &t)
+    {
+        double curvature = 0;
+        Eigen::Vector2d first_order_derivative = Utility::ConvertVector3dToVector2d(GetFirstOrderDerivativeValueAt(t));
+        Eigen::Vector2d second_order_derivative = Utility::ConvertVector3dToVector2d(GetSecondOrderDerivativeValueAt(t));
+        if (first_order_derivative.norm() != 0)
+        {
+            curvature = std::abs(Utility::CrossProduct(first_order_derivative, second_order_derivative)) / std::pow(first_order_derivative.norm(), 3);
+        }
+        else
+        {
+            curvature = 100000;
+        }
+
+        DLOG_IF(INFO, std::isnan(curvature)) << "curvature at " << t << " is " << curvature << " its first derivative norm is " << first_order_derivative.norm() << " first derivative is " << first_order_derivative.x() << " " << first_order_derivative.y();
+        return curvature;
     }
 }

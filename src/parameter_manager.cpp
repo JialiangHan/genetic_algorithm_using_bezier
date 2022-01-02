@@ -69,6 +69,8 @@ namespace GeneticAlgorithm
     GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->genetic_algorithm_params.h_t);
     ros_param_name = "number_of_points";
     GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->genetic_algorithm_params.number_of_points);
+    ros_param_name = "number_of_gene_in_chromosome";
+    GetSingleParam(node_prefix + ros_param_name, param_container_ptr_->genetic_algorithm_params.number_of_gene_in_chromosome);
   }
   void ParameterManager::LoadCollisionDetectionParams()
   {

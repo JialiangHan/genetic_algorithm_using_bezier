@@ -18,8 +18,8 @@
 
 TEST(Utility, DegNormalization)
 {
-    float t1 = 361, t2 = -359, t3 = 721, t4 = -719;
-    std::vector<float> one{t1, t2, t3, t4};
+    double t1 = 361, t2 = -359, t3 = 721, t4 = -719;
+    std::vector<double> one{t1, t2, t3, t4};
     int expect, result;
     for (const auto &number : one)
     {
@@ -30,8 +30,8 @@ TEST(Utility, DegNormalization)
 }
 TEST(Utility, RadNormalization)
 {
-    float t1 = 361, t2 = -359, t3 = 721, t4 = -719;
-    std::vector<float> one{t1, t2, t3, t4};
+    double t1 = 361, t2 = -359, t3 = 721, t4 = -719;
+    std::vector<double> one{t1, t2, t3, t4};
     int expect, result;
     for (const auto &number : one)
     {
