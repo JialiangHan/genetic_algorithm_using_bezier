@@ -15,25 +15,6 @@ namespace GeneticAlgorithm
     double vehicle_width = 1.75;
     /// [m] --- The length of the vehicle
     double vehicle_length = 2.65;
-    struct color
-    {
-      /// the red portion of the color
-      float red;
-      /// the green portion of the color
-      float green;
-      /// the blue portion of the color
-      float blue;
-    };
-    /// A definition for a color used for visualization
-    color teal = {102.f / 255.f, 217.f / 255.f, 239.f / 255.f};
-    /// A definition for a color used for visualization
-    color green = {166.f / 255.f, 226.f / 255.f, 46.f / 255.f};
-    /// A definition for a color used for visualization
-    color orange = {253.f / 255.f, 151.f / 255.f, 31.f / 255.f};
-    /// A definition for a color used for visualization
-    color pink = {249.f / 255.f, 38.f / 255.f, 114.f / 255.f};
-    /// A definition for a color used for visualization
-    color purple = {174.f / 255.f, 129.f / 255.f, 255.f / 255.f};
   };
   //this struct contains some used parameters in collisiondetection class
   struct ParameterGeneticAlgorithm
@@ -69,6 +50,8 @@ namespace GeneticAlgorithm
      * 
      */
     int h_t = 10;
+
+    int number_of_points = 50;
   };
 
   struct ParameterCollisionDetection
@@ -83,15 +66,6 @@ namespace GeneticAlgorithm
 
     /// [m] --- The cell size of the 2D grid of the world,used in planner.cpp
     float cell_size = 1;
-    /// [m] --- The number of discretizations in heading,used in planner.cpp
-    // int headings = 72;
-
-    // int control_point_1_x = 10;
-
-    // int control_point_1_y = 5;
-    // int control_point_2_x = 40;
-
-    // int control_point_2_y = 5;
   };
   struct ParameterContainer
   {

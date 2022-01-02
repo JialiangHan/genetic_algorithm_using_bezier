@@ -96,7 +96,7 @@ namespace GeneticAlgorithm
 
       std::shared_ptr<PathPublisher> path_publisher_ptr_;
 
-      CubicBezier::CubicBezier cubic_bezier_;
+      // CubicBezier::CubicBezier cubic_bezier_;
 
       PiecewiseCubicBezier piecewise_cubic_bezier_;
 

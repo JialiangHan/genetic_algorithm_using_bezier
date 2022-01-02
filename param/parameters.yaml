@@ -1,4 +1,5 @@
-
+# number of points in one cubic bezier
+number_of_points: 100
 bloating : 0
 
 vehicle_width : 1.75
@@ -25,16 +26,10 @@ cell_size : 1
 #  population size of chromosome 
 population_size : 10
 #  penalty for fitness function
-penalty_fitness : 50
+penalty_fitness : 70
 
   # use to switch mutation mode 
-h_s : 5
+h_s : 10
   #  use to terminate revolution process
-h_t : 10
+h_t : 20
 
-# control_point_1_x : 10
-
-# control_point_1_y : 5
-# control_point_2_x : 40
-
-# control_point_2_y : 5

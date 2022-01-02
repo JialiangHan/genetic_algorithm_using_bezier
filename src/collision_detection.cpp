@@ -106,20 +106,20 @@ namespace GeneticAlgorithm
                 return true;
             }
         }
-
         // DLOG(INFO) << "cubic bezier is collision free.";
         return false;
     }
 
     //TODO combine this function and the one below
-    int CollisionDetection::FindCollsionIndex(const PiecewiseCubicBezier &piecewise_cubic_bezier)
+    int CollisionDetection::FindCollsionIndex(PiecewiseCubicBezier piecewise_cubic_bezier)
     {
         std::vector<CubicBezier::CubicBezier> cubic_bezier_vec = piecewise_cubic_bezier.GetCubicBezierVector();
+        DLOG(INFO) << "size of cubic bezier vec is " << cubic_bezier_vec.size();
         for (uint i = 0; i < cubic_bezier_vec.size(); ++i)
         {
             if (IsCollsion(cubic_bezier_vec[i]))
             {
-                // DLOG(INFO) << i << "th cubic bezier is in collision.";
+                DLOG(INFO) << i << "th cubic bezier is in collision.";
                 return i;
             }
         }

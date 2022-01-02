@@ -68,7 +68,7 @@ namespace GeneticAlgorithm
          current_best_.second = 0;
          best_of_best_.second = 0;
 
-                MainLoop();
+         MainLoop();
       };
 
       std::vector<Eigen::Vector3d> GetPath() { return path_; };
@@ -109,7 +109,7 @@ namespace GeneticAlgorithm
        * @param chromosome 
        * @return float 
        */
-      float CalculateFitness(const Chromosome &chromosome);
+      double CalculateFitness(const Chromosome &chromosome);
       void GenerateFitnessMap();
       void GenerateProbabilityMap();
 
@@ -167,7 +167,7 @@ namespace GeneticAlgorithm
        * @brief number of free anchor points(genes) in chromosome, this number must greater than 1. 
        * 
        */
-      int number_of_gene_in_chromosome_ = 1;
+      int number_of_gene_in_chromosome_ = 2;
       /**
        * @brief current generation, a vector of chromosome 
        * 
@@ -177,12 +177,12 @@ namespace GeneticAlgorithm
        * @brief key is  fitness value ,value is chromosome
        * 
        */
-      std::unordered_map<float, Chromosome> fitness_map_;
+      std::vector<std::pair<double, Chromosome>> fitness_map_;
       /**
        * @brief key is chromosome, value is accumulated fitness value/(total fitness ), this map is for selection purposes
        * 
        */
-      std::map<float, Chromosome> probability_map_;
+      std::map<double, Chromosome> probability_map_;
 
       std::shared_ptr<CollisionDetection> collision_detection_ptr_;
 

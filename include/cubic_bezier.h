@@ -38,44 +38,42 @@ namespace CubicBezier
             goal_point_ = goal;
             map_width_ = width;
             map_height_ = height;
-            CalculateControlPoints();
-            CalculateLength();
+            // CalculateControlPoints();
+            // CalculateLength();
+            CalculateAnchorPoints();
         };
-        CubicBezier(const std::vector<Eigen::Vector3d> &points_vec)
+        CubicBezier(const Eigen::Matrix<double, 3, 4> &point_matrix)
         {
             basis_matrix_ << 1, -3, 3, -1,
                 0, 3, -6, 3,
                 0, 0, 3, -3,
                 0, 0, 0, 1;
-            if (points_vec.size() != 4)
+            if (point_matrix.rows() != 3 || point_matrix.cols() != 4)
             {
                 DLOG(WARNING) << "points_vec size is not correct!!!";
             }
             else
             {
-                start_point_ = points_vec[0];
-                control_points_vec_.clear();
-                control_points_vec_.emplace_back(points_vec[1]);
-                control_points_vec_.emplace_back(points_vec[2]);
-                goal_point_ = points_vec[3];
-            }
-            CalculateLength();
+                geometrical_constraint_matrix_ = point_matrix;
+             }
+            // CalculateLength();
+            CalculateAnchorPoints();
         }
 
-        void SetControlPoints(const std::vector<Eigen::Vector3d> &control_points) { control_points_vec_ = control_points; };
-
-        Eigen::Vector3d GetValueAt(const float &t);
+              Eigen::Vector3d GetValueAt(const float &t);
 
         float GetAngleAt(const float &t);
 
-        std::vector<Eigen::Vector3d> GetControlPoints() const { return control_points_vec_; };
+        // std::vector<Eigen::Vector3d> GetControlPoints() const { return control_points_vec_; };
         std::vector<Eigen::Vector3d> GetAnchorPoints() const { return anchor_points_vec_; };
 
-        float GetLength() const { return length_; };
+        float GetLength()
+        {
+            CalculateLength();
+            return length_;
+        };
 
-        std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d();
-
-        // std::vector<Eigen::Vector2d> ConvertCubicBezierToVector2d();
+        std::vector<Eigen::Vector3d> ConvertCubicBezierToVector3d(const int &number_of_points);
 
     private:
         /**
@@ -84,19 +82,13 @@ namespace CubicBezier
          */
         void CalculateLength();
 
-        // void CalculateCoefficient(const float &t);
-
         Eigen::Vector4d CalculateCoefficient(const float &t);
 
         Eigen::Vector4d CalculateFirstOrderDerivativeCoefficient(const float &t);
 
         void CalculateControlPoints();
 
-        // void CalculateAnchorPoints();
-
-        // void CalculateFirstOrderDerivativeCoefficient(const float &t);
-
-        // void CalculateSecondOrderDerivativeCoefficient(const float &t);
+        void CalculateAnchorPoints();
 
         Eigen::Vector3d GetFirstOrderDerivativeValueAt(const float &t);
 
@@ -110,11 +102,6 @@ namespace CubicBezier
         Eigen::Matrix<double, 4, 4> basis_matrix_;
 
         /**
-         * @brief for a cubic bezier, control points are two
-         * 
-         */
-        std::vector<Eigen::Vector3d> control_points_vec_;
-        /**
          * @brief actually is start and goal points
          * 
          */
@@ -122,15 +109,6 @@ namespace CubicBezier
 
         Eigen::Vector3d start_point_;
         Eigen::Vector3d goal_point_;
-        /**
-         * @brief length is four including start and goal points 
-         * 
-         */
-        // std::vector<float> coefficient_;
-
-        // std::vector<float> first_order_derivative_coefficient_;
-
-        // std::vector<float> second_order_derivative_coefficient_;
 
         float length_ = 0;
 

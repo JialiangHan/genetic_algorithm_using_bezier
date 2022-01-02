@@ -43,35 +43,7 @@ void Planner::SetMap(const nav_msgs::OccupancyGrid::Ptr &map)
 
     grid_ = map;
 
-    // collision_detection_ptr_->SetMap(map);
-    //create array for Voronoi diagram
-    //  ros::Time t0 = ros::Time::now();
-    // int height = map->info.height;
-    // int width = map->info.width;
-    // bool **binMap;
-    // binMap = new bool *[width];
-
-    // for (int x = 0; x < width; x++)
-    // {
-    //   binMap[x] = new bool[height];
-    // }
-
-    // for (int x = 0; x < width; ++x)
-    // {
-    //   for (int y = 0; y < height; ++y)
-    //   {
-    //     binMap[x][y] = map->data[y * width + x] ? true : false;
-    //   }
-    // }
-
-    // voronoi_diagram_.initializeMap(width, height, binMap);
-    // voronoi_diagram_.update();
-    // voronoi_diagram_.visualize();
-    //  ros::Time t1 = ros::Time::now();
-    //  ros::Duration d(t1 - t0);
-    //  DLOG(INFO) << "created Voronoi Diagram in ms: " << d * 1000 ;
-
-    // plan if the switch is not set to manual and a transform is available
+        // plan if the switch is not set to manual and a transform is available
     if (!params_.manual && listener_.canTransform("/map", ros::Time(0), "/base_link", ros::Time(0), "/map", nullptr))
     {
 
@@ -173,10 +145,9 @@ void Planner::MakePlan()
 
         // ___________________________
         // LISTS ALLOCATED ROW MAJOR ORDER
-        // uint width = grid_->info.width;
-        // uint height = grid_->info.height;
-        // int depth = params_.headings;
-        // int length = width * height * depth;
+        uint width = grid_->info.width;
+        uint height = grid_->info.height;
+        DLOG(INFO) << "map size is " << width << " * " << height;
 
         // ________________________
         // retrieving goal position
@@ -187,9 +158,6 @@ void Planner::MakePlan()
         t = Utility::RadNormalization(t);
         const Eigen::Vector3d goal(x, y, t);
         // DLOG(INFO) << "goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
-        // __________
-        // DEBUG GOAL
-        //    const Node3D nGoal(155.349, 36.1969, 0.7615936, 0, 0, nullptr);
 
         // _________________________
         // retrieving start position
@@ -201,53 +169,59 @@ void Planner::MakePlan()
         // DLOG(INFO) << "start x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
 
         const Eigen::Vector3d start(x, y, t);
-        // ___________
-        // DEBUG START
-        //    Node3D nStart(108.291, 30.1081, 0, 0, 0, nullptr);
+        std::vector<Eigen::Vector3d> path, points;
+        //check piecewise cubic bezier
+        bool check_piecewise_cubic_bezier = false;
+        if (check_piecewise_cubic_bezier == true)
+        {
+            piecewise_cubic_bezier_ = PiecewiseCubicBezier(start, goal);
+            std::vector<Eigen::Vector3d> anchor_points;
+            uint number_of_anchor_points = 10;
+            for (uint i = 0; i < number_of_anchor_points; ++i)
+            {
+                Eigen::Vector3d anchor_point;
+                if (anchor_points.size() == 0)
+                {
+                    anchor_point = ((start + goal) / 2);
+                }
+                else
+                {
+                    anchor_point = (anchor_points.back() + goal) / 2;
+                }
+                anchor_points.emplace_back(anchor_point);
+            }
 
+            piecewise_cubic_bezier_.SetAnchorPoints(anchor_points);
+            path = piecewise_cubic_bezier_.ConvertPiecewiseCubicBezierToVector3d(100);
+            points = piecewise_cubic_bezier_.GetPointsVec();
+        }
         // ___________________________
         // START AND TIME THE PLANNING
+        bool use_ga = true;
+        if (use_ga == true)
+        {
+            auto t1 = std::chrono::high_resolution_clock::now();
 
-               // CLEAR THE VISUALIZATION
-        // visualization_ptr_->clear();
-        auto t1 = std::chrono::high_resolution_clock::now();
+            genetic_algorithm_ptr_->Initialize(start, goal, grid_);
+            path = genetic_algorithm_ptr_->GetPath();
+            points = genetic_algorithm_ptr_->GetPoints();
 
-        genetic_algorithm_ptr_->Initialize(start, goal, grid_);
-        // std::vector<Eigen::Vector3d> path = genetic_algorithm_ptr_->GetPath();
-        // std::vector<Eigen::Vector3d> points = genetic_algorithm_ptr_->GetPoints();
+            auto t2 = std::chrono::high_resolution_clock::now();
 
-        auto t2 = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double, std::milli> ms_double = t2 - t1;
 
-        std::chrono::duration<double, std::milli> ms_double = t2 - t1;
-
-        DLOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz";
+            DLOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz";
+        }
         // CLEAR THE PATH
-        // path_publisher_ptr_->Clear();
-        // smoothed_path_ptr_->Clear();
-        // FIND THE PATH
-        // Node3D *nSolution = algorithm_ptr_->HybridAStar(nStart, nGoal, nodes3D, nodes2D, width, height, configuration_space_ptr_, dubins_lookup_table, visualization_ptr_);
-        // TRACE THE PATH
-        // smoother_ptr_->TracePath(nSolution);
+        path_publisher_ptr_->Clear();
         // CREATE THE UPDATED PATH
-        // path_publisher_ptr_->UpdatePath(path);
-        // path_publisher_ptr_->UpdatePoint(points);
-        // SMOOTH THE PATH
-        // smoother_ptr_->SmoothPath(voronoi_diagram_);
-        // CREATE THE UPDATED PATH
-        // smoothed_path_ptr_->UpdatePath(smoother_ptr_->GetPath());
-
+        path_publisher_ptr_->UpdatePath(path);
+        path_publisher_ptr_->UpdatePoint(points);
         // _________________________________
         // PUBLISH THE RESULTS OF THE SEARCH
-        // path_publisher_ptr_->PublishPath();
-        // path_publisher_ptr_->PublishPathNodes();
-        // path_publisher_ptr_->PublishPathVehicles();
-        // path_publisher_ptr_->PublishPathPoints();
-        // smoothed_path_ptr_->PublishPath();
-        // smoothed_path_ptr_->PublishPathNodes();
-        // smoothed_path_ptr_->PublishPathVehicles();
-        // visualization_ptr_->publishNode3DCosts(nodes3D, width, height, depth);
-        // visualization_ptr_->publishNode2DCosts(nodes2D, width, height);
-        //set these two flag to false when finished planning to avoid unwanted planning
+        path_publisher_ptr_->PublishPath();
+        path_publisher_ptr_->PublishPathPoints();
+
         valid_start_ = false;
         valid_goal_ = false;
     }

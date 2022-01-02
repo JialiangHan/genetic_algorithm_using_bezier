@@ -36,17 +36,13 @@ namespace GeneticAlgorithm
         {
             params_ = params;
             std::string path_topic = "/path";
-            std::string path_nodes_topic = "/pathNodes";
-            std::string path_vehicle_topic = "/pathVehicle";
             std::string path_point_topic = "/points";
             // _________________
             // TOPICS TO PUBLISH
-            pub_path_ = nh_.advertise<nav_msgs::Path>(path_topic, 1);
-            pub_path_nodes_ = nh_.advertise<visualization_msgs::MarkerArray>(path_nodes_topic, 1);
-            pub_path_vehicles_ = nh_.advertise<visualization_msgs::MarkerArray>(path_vehicle_topic, 1);
-            pub_path_point_ = nh_.advertise<visualization_msgs::MarkerArray>(path_point_topic, 1);
-            // CONFIGURE THE CONTAINER
-            path_.header.frame_id = "path";
+                   pub_path_ = nh_.advertise<nav_msgs::Path>(path_topic, 1);
+                   pub_path_point_ = nh_.advertise<visualization_msgs::MarkerArray>(path_point_topic, 1);
+                   // CONFIGURE THE CONTAINER
+                   path_.header.frame_id = "path";
         }
 
         /*!
@@ -62,18 +58,6 @@ namespace GeneticAlgorithm
      \param node a 3D node
   */
         void AddSegment(const Eigen::Vector3d &node);
-        /*!
-     \brief Adds a node to the path
-     \param node a 3D node
-     \param i a parameter for counting the number of nodes
-  */
-        void AddNode(const Eigen::Vector3d &node, int i);
-        /*!
-     \brief Adds a vehicle shape to the path
-     \param node a 3D node
-     \param i a parameter for counting the number of nodes
-  */
-        void AddVehicle(const Eigen::Vector3d &node, int i);
 
         void AddPoint(const Eigen::Vector3d &node, const int &i);
         // ______________
@@ -84,9 +68,6 @@ namespace GeneticAlgorithm
         /// Publishes the path
         void PublishPath() { pub_path_.publish(path_); }
         /// Publishes the nodes of the path
-        void PublishPathNodes() { pub_path_nodes_.publish(path_nodes_); }
-        /// Publishes the vehicle along the path
-        void PublishPathVehicles() { pub_path_vehicles_.publish(path_vehicles_); }
 
         void PublishPathPoints() { pub_path_point_.publish(path_points_); }
 
@@ -95,18 +76,13 @@ namespace GeneticAlgorithm
         ros::NodeHandle nh_;
         /// Publisher for the path as a spline
         ros::Publisher pub_path_;
-        /// Publisher for the nodes on the path
-        ros::Publisher pub_path_nodes_;
+
         // publisher for all points from bezier
         ros::Publisher pub_path_point_;
-        /// Publisher for the vehicle along the path
-        ros::Publisher pub_path_vehicles_;
+
         /// Path data structure for visualization
         nav_msgs::Path path_;
-        /// Nodes data structure for visualization
-        visualization_msgs::MarkerArray path_nodes_;
-        /// Vehicle data structure for visualization
-        visualization_msgs::MarkerArray path_vehicles_;
+
         ParameterPathPublisher params_;
         visualization_msgs::MarkerArray path_points_;
     };

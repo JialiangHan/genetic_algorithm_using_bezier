@@ -179,27 +179,38 @@ namespace GeneticAlgorithm
         }
 
         points_vec_.emplace_back(goal_point_);
-        // for(const auto& point : points_vec_)
+        // for (const auto &point : points_vec_)
         // {
         //     DLOG(INFO) << "points are " << point.x() << " " << point.y();
         // }
+        // DLOG(INFO) << "point vec size is " << points_vec_.size();
     }
 
     void PiecewiseCubicBezier::CalculateCubicBezier()
     {
         cubic_bezier_vec_.clear();
-        std::vector<Eigen::Vector3d> points_lists;
+        Eigen::Matrix<double, 3, 4> points_lists;
+        uint j = 0;
         for (uint i = 0; i < points_vec_.size(); ++i)
         {
-            points_lists.emplace_back(points_vec_[i]);
-            // DLOG(INFO) << "points are " << points_vec_[i].x() << " " << points_vec_[i].y();
-            if (points_lists.size() == 4)
+            // DLOG(INFO) << "j equal to " << j;
+            points_lists.block<3, 1>(0, j) = points_vec_[i];
+            // points_lists.emplace_back(points_vec_[i]);
+            // DLOG(INFO) << i << "th points are " << points_vec_[i].x() << " " << points_vec_[i].y();
+            j++;
+            if (j == 4)
             {
                 cubic_bezier_vec_.emplace_back(CubicBezier::CubicBezier(points_lists));
+                // for (int index = 0; index < 4; index++)
+                // {
+                //     DLOG(INFO) << "point x " << points_lists(0, index) << " y " << points_lists(1, index);
+                // }
                 i = i - 1;
-                points_lists.clear();
+
+                j = 0;
             }
         }
+        // DLOG(INFO) << "size cubic bezier vec is " << cubic_bezier_vec_.size();
     }
 
     float PiecewiseCubicBezier::GetAngleAt(const float &u)
@@ -248,24 +259,37 @@ namespace GeneticAlgorithm
         if (cubic_bezier_vec_.size() == 0)
         {
             length_ = 0;
+            DLOG(INFO) << "length is 0 due to no cubic bezier;";
         }
         else
         {
-            for (const auto &cubic_bezier : cubic_bezier_vec_)
+            for (auto &cubic_bezier : cubic_bezier_vec_)
             {
-                length_ += cubic_bezier.GetLength();
+                double cubic_bezier_length = cubic_bezier.GetLength();
+                // DLOG(INFO) << "cubic bezier length is " << cubic_bezier_length;
+                length_ += cubic_bezier_length;
             }
+            // DLOG(INFO) << "length is " << length_;
         }
     }
 
-    std::vector<Eigen::Vector3d> PiecewiseCubicBezier::ConvertPiecewiseCubicBezierToVector3d()
+    std::vector<Eigen::Vector3d> PiecewiseCubicBezier::ConvertPiecewiseCubicBezierToVector3d(const int &number_of_points)
     {
+        CalculateCubicBezier();
+        // DLOG(INFO) << "size cubic bezier vec is " << cubic_bezier_vec_.size();
         std::vector<Eigen::Vector3d> out;
+        int index = 0;
         for (auto &bezier : cubic_bezier_vec_)
         {
             std::vector<Eigen::Vector3d> path;
-            path = bezier.ConvertCubicBezierToVector3d();
+            path = bezier.ConvertCubicBezierToVector3d(number_of_points);
+            // DLOG(INFO) << index << "th cubic bezier";
+            // for (const auto &point : path)
+            // {
+            //     DLOG(INFO) << "point x " << point.x() << " y " << point.y();
+            // }
             out.insert(out.end(), path.begin(), path.end());
+            index++;
         }
         return out;
     }
