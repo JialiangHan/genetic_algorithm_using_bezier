@@ -44,6 +44,7 @@ namespace CubicBezier
         };
         CubicBezier(const Eigen::Matrix<double, 3, 4> &point_matrix)
         {
+
             basis_matrix_ << 1, -3, 3, -1,
                 0, 3, -6, 3,
                 0, 0, 3, -3,
@@ -55,8 +56,11 @@ namespace CubicBezier
             else
             {
                 geometrical_constraint_matrix_ = point_matrix;
+                start_point_ = geometrical_constraint_matrix_.block<3, 1>(0, 0);
+                goal_point_ = geometrical_constraint_matrix_.block<3, 1>(0, 3);
              }
             // CalculateLength();
+
             CalculateAnchorPoints();
         }
 

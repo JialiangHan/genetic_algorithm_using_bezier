@@ -21,15 +21,8 @@ Planner::Planner()
 
     // ___________________
     // TOPICS TO SUBSCRIBE
-    if (params_.manual)
-    {
-        sub_map_ = nh_.subscribe("/map", 1, &Planner::SetMap, this);
-    }
-    else
-    {
-        sub_map_ = nh_.subscribe("/occ_map", 1, &Planner::SetMap, this);
-    }
 
+    sub_map_ = nh_.subscribe("/map", 1, &Planner::SetMap, this);
     sub_goal_ = nh_.subscribe("/move_base_simple/goal", 1, &Planner::SetGoal, this);
     sub_start_ = nh_.subscribe("/initialpose", 1, &Planner::SetStart, this);
     DLOG(INFO) << "Initialized finished planner!!";
@@ -174,7 +167,7 @@ void Planner::MakePlan()
         bool check_piecewise_cubic_bezier = false;
         if (check_piecewise_cubic_bezier == true)
         {
-            piecewise_cubic_bezier_ = PiecewiseCubicBezier(start, goal);
+            piecewise_cubic_bezier_ptr_.reset(new PiecewiseCubicBezier(start, goal));
             std::vector<Eigen::Vector3d> anchor_points;
             uint number_of_anchor_points = 10;
             for (uint i = 0; i < number_of_anchor_points; ++i)
@@ -190,10 +183,10 @@ void Planner::MakePlan()
                 }
                 anchor_points.emplace_back(anchor_point);
             }
-
-            piecewise_cubic_bezier_.SetAnchorPoints(anchor_points);
-            path = piecewise_cubic_bezier_.ConvertPiecewiseCubicBezierToVector3d(100);
-            points = piecewise_cubic_bezier_.GetPointsVec();
+            DLOG(INFO) << "in check piecewise cubic bezier.";
+            piecewise_cubic_bezier_ptr_->SetAnchorPoints(anchor_points);
+            path = piecewise_cubic_bezier_ptr_->ConvertPiecewiseCubicBezierToVector3d(100);
+            points = piecewise_cubic_bezier_ptr_->GetPointsVec();
         }
         // ___________________________
         // START AND TIME THE PLANNING
@@ -210,7 +203,7 @@ void Planner::MakePlan()
 
             std::chrono::duration<double, std::milli> ms_double = t2 - t1;
 
-            DLOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz";
+            LOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz";
         }
         // CLEAR THE PATH
         // path_publisher_ptr_->Clear();

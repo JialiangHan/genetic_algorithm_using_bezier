@@ -137,6 +137,10 @@ namespace CubicBezier
         anchor_points_vec_.clear();
         anchor_points_vec_.emplace_back(start_point_);
         anchor_points_vec_.emplace_back(goal_point_);
+        // for (const auto &point : anchor_points_vec_)
+        // {
+        //     DLOG(INFO) << "anchor points is " << point.x() << " " << point.y();
+        // }
     }
 
     Eigen::Vector3d CubicBezier::GetValueAt(const double &t)

@@ -31,8 +31,10 @@ namespace GeneticAlgorithm
      */
     PiecewiseCubicBezier(const Eigen::Vector3d &start, const Eigen::Vector3d &goal)
     {
+      // DLOG(INFO) << "PiecewiseCubicBezier in:";
       start_point_ = start;
       goal_point_ = goal;
+      // DLOG(INFO) << "PiecewiseCubicBezier out";
     };
 
     /**
@@ -50,10 +52,13 @@ namespace GeneticAlgorithm
 
     void SetAnchorPoints(const std::vector<Eigen::Vector3d> &anchor_points_vec)
     {
+      DLOG(INFO) << "SetAnchorPoints in:";
       anchor_points3d_vec_ = anchor_points_vec;
       GetAnchorPointDirection();
       CalculateControlPoints();
       CalculatePointsVec();
+      CalculateCubicBezier();
+      DLOG(INFO) << "SetAnchorPoints out.";
     }
 
     /**
@@ -63,7 +68,7 @@ namespace GeneticAlgorithm
      */
     double GetLength()
     {
-      CalculateCubicBezier();
+      // CalculateCubicBezier();
       CalculateLength();
       return length_;
     };

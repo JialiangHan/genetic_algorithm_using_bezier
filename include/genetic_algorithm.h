@@ -68,7 +68,6 @@ namespace GeneticAlgorithm
          goal_ = goal;
          collision_detection_ptr_.reset(new CollisionDetection(map));
          grid_ = map;
-         current_best_.second = 0;
          best_of_best_.second = 0;
 
          MainLoop();

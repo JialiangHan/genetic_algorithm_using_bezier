@@ -1,5 +1,5 @@
 # number of points in one cubic bezier
-number_of_points: 50
+number_of_points: 100
 bloating : 0
 number_of_gene_in_chromosome: 1
 vehicle_width : 1.75
@@ -7,7 +7,7 @@ vehicle_width : 1.75
 vehicle_length : 2.65
 
   # the range for local mutation, unit is [meter]
-local_search_range_radius : 0.5
+local_search_range_radius : 2
 # /**
 #  * @brief the range for local mutation, unit is [rad],for angle, this value must small than 2*pi
 #  * 
@@ -29,7 +29,7 @@ population_size : 20
 penalty_fitness : 70
 
   # use to switch mutation mode 
-h_s : 5
+h_s : 250
   #  use to terminate revolution process
-h_t : 20
+h_t : 500
 

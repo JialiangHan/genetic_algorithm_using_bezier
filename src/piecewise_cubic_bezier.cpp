@@ -16,7 +16,7 @@ namespace GeneticAlgorithm
 
     void PiecewiseCubicBezier::GetAnchorPointDirection()
     {
-        // anchor_points2d_vec_.clear();
+        // DLOG(INFO) << "GetAnchorPointDirection in:";
         anchor_points_dir_vec_.clear();
         if (anchor_points3d_vec_.size() == 0)
         {
@@ -34,10 +34,12 @@ namespace GeneticAlgorithm
                 anchor_points_dir_vec_.emplace_back(direction);
             }
         }
+        // DLOG(INFO) << "GetAnchorPointDirection out.";
     }
 
     void PiecewiseCubicBezier::CalculateControlPoints()
     {
+        // DLOG(INFO) << "CalculateControlPoints in:";
         control_points_vec_.clear();
         double start_angle = start_point_.z();
         double goal_angle = goal_point_.z();
@@ -148,10 +150,12 @@ namespace GeneticAlgorithm
             }
             control_points_vec_.emplace_back(last_control_point);
         }
+        // DLOG(INFO) << "CalculateControlPoints out.";
     }
 
     void PiecewiseCubicBezier::CalculatePointsVec()
     {
+        // DLOG(INFO) << "CalculatePointsVec in:";
         points_vec_.clear();
 
         points_vec_.emplace_back(start_point_);
@@ -179,6 +183,7 @@ namespace GeneticAlgorithm
         }
 
         points_vec_.emplace_back(goal_point_);
+        // DLOG(INFO) << "CalculatePointsVec out.";
         // for (const auto &point : points_vec_)
         // {
         //     DLOG(INFO) << "points are " << point.x() << " " << point.y();
@@ -188,6 +193,7 @@ namespace GeneticAlgorithm
 
     void PiecewiseCubicBezier::CalculateCubicBezier()
     {
+        // DLOG(INFO) << "CalculateCubicBezier in:";
         cubic_bezier_vec_.clear();
         Eigen::Matrix<double, 3, 4> points_lists;
         uint j = 0;
@@ -210,6 +216,7 @@ namespace GeneticAlgorithm
                 j = 0;
             }
         }
+        // DLOG(INFO) << "CalculateCubicBezier out.";
         // DLOG(INFO) << "size cubic bezier vec is " << cubic_bezier_vec_.size();
     }
 

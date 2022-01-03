@@ -22,7 +22,6 @@
 #include "gflags/gflags.h"
 #include "utility.h"
 #include "path_publisher.h"
-#include "cubic_bezier.h"
 #include "parameter_manager.h"
 namespace GeneticAlgorithm
 {
@@ -96,9 +95,7 @@ namespace GeneticAlgorithm
 
       std::shared_ptr<PathPublisher> path_publisher_ptr_;
 
-      // CubicBezier::CubicBezier cubic_bezier_;
-
-      PiecewiseCubicBezier piecewise_cubic_bezier_;
+      std::shared_ptr<PiecewiseCubicBezier> piecewise_cubic_bezier_ptr_;
 
       std::shared_ptr<GeneticAlgorithm> genetic_algorithm_ptr_;
    };
