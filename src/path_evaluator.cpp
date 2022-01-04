@@ -26,7 +26,7 @@ namespace PathEvaluator
 
         std::vector<double> curvature_vec;
         double curvature;
-        DLOG(INFO) << "In CalculateCurvature: " << topic_name << " path size is :" << path.size();
+        // DLOG(INFO) << "In CalculateCurvature: " << topic_name << " path size is :" << path.size();
         // for (const auto &point : path)
         // {
         //     DLOG(INFO) << "point is " << point.x() << " " << point.y() << " " << point.z();
@@ -39,12 +39,6 @@ namespace PathEvaluator
             Eigen::Vector3d xi = path[i + 1];
             Eigen::Vector3d xs = path[i + 2];
 
-            if ((xp.x() == xi.x() && xp.y() == xi.y()) || (xs.x() == xi.x() && xs.y() == xi.y()))
-            {
-                DLOG(WARNING) << "In CalculateCurvature: some points are equal, skip these points for curvature calculation!!";
-                continue;
-            }
-
             //get two vector between these three nodes
             Eigen::Vector2d pre_vector = Utility::ConvertVector3dToVector2d(xi - xp);
             Eigen::Vector2d succ_vector = Utility::ConvertVector3dToVector2d(xs - xi);
@@ -52,7 +46,11 @@ namespace PathEvaluator
             //calculate delta distance and delta angle
             double delta_distance = succ_vector.norm();
             double pre_vector_length = pre_vector.norm();
-
+            if (delta_distance < 1e-3 || pre_vector_length < 1e-3)
+            {
+                DLOG(WARNING) << "In CalculateCurvature: some points are too close, skip these points for curvature calculation!!";
+                continue;
+            }
             // there would some calculation error here causing number inside acos greater than 1 or smaller than -1.
             double temp = pre_vector.dot(succ_vector) / (delta_distance * pre_vector_length);
             if (temp > 1 || temp < -1)
@@ -83,26 +81,26 @@ namespace PathEvaluator
                 }
             }
 
-            DLOG(INFO) << "xp x is :" << xp.x() << " y is: " << xp.y();
-            DLOG(INFO) << "xi x is :" << xi.x() << " y is: " << xi.y();
-            DLOG(INFO) << "xs x is :" << xs.x() << " y is: " << xs.y();
-            DLOG(INFO) << "pre_vector x is :" << pre_vector(0, 0) << "y is: " << pre_vector.y();
-            DLOG(INFO) << "succ_vector x is :" << succ_vector(0, 0) << "y is: " << succ_vector.y();
-            DLOG(INFO) << "delta_distance is:" << delta_distance;
-            DLOG(INFO) << "pre_vector_length is: " << pre_vector_length;
-            DLOG(INFO) << "delta_angle is: " << delta_angle;
-            DLOG(INFO) << "In CalculateCurvature:" << i << "th curvature is:" << curvature;
+            // LOG(INFO) << "xp x is :" << xp.x() << " y is: " << xp.y();
+            // LOG(INFO) << "xi x is :" << xi.x() << " y is: " << xi.y();
+            // LOG(INFO) << "xs x is :" << xs.x() << " y is: " << xs.y();
+            // LOG(INFO) << "pre_vector x is :" << pre_vector(0, 0) << "y is: " << pre_vector.y();
+            // LOG(INFO) << "succ_vector x is :" << succ_vector(0, 0) << "y is: " << succ_vector.y();
+            // LOG(INFO) << "delta_distance is:" << delta_distance;
+            // LOG(INFO) << "pre_vector_length is: " << pre_vector_length;
+            // LOG(INFO) << "delta_angle is: " << delta_angle;
+            // LOG(INFO) << "In CalculateCurvature:" << i << "th curvature is:" << curvature;
         }
         if (curvature_map_.count(topic_name) > 0)
         {
             curvature_map_.at(topic_name).clear();
             curvature_map_.at(topic_name) = curvature_vec;
-            DLOG(INFO) << "In CalculateCurvature: " << topic_name << " is already in curvature map, clear vector and put new curvature into vector.";
+            // DLOG(INFO) << "In CalculateCurvature: " << topic_name << " is already in curvature map, clear vector and put new curvature into vector.";
         }
         else
         {
             curvature_map_.insert({topic_name, curvature_vec});
-            DLOG(INFO) << "In CalculateCurvature: " << topic_name << " is not in the curvature map, insert into the map.";
+            // DLOG(INFO) << "In CalculateCurvature: " << topic_name << " is not in the curvature map, insert into the map.";
         }
         return 1;
     }
@@ -111,7 +109,7 @@ namespace PathEvaluator
     {
         if (path.size() < 3)
         {
-            DLOG(WARNING) << "In CalculateSmoothness: path does not have enough points!!!";
+            // DLOG(WARNING) << "In CalculateSmoothness: path does not have enough points!!!";
             return 0;
         }
         // smoothness = (deltax(i+1)-delta(xi))^2
@@ -124,11 +122,7 @@ namespace PathEvaluator
             Eigen::Vector2d xp(path[i].x(), path[i].y());
             Eigen::Vector2d xi(path[i + 1].x(), path[i + 1].y());
             Eigen::Vector2d xs(path[i + 2].x(), path[i + 2].y());
-            if (xp == xi || xi == xs)
-            {
-                DLOG(WARNING) << "In CalculateSmoothness: some points are equal, skip these points for curvature calculation!!";
-                continue;
-            }
+
             //get two vector between these three nodes
             Eigen::Vector2d pre_vector = xi - xp;
             Eigen::Vector2d succ_vector = xs - xi;
@@ -140,12 +134,12 @@ namespace PathEvaluator
         {
             smoothness_map_.at(topic_name).clear();
             smoothness_map_.at(topic_name) = smoothness_vec;
-            DLOG(INFO) << "In CalculateSmoothness:" << topic_name << " is already in smoothness map, clear vector and put new curvature into vector.";
+            // DLOG(INFO) << "In CalculateSmoothness:" << topic_name << " is already in smoothness map, clear vector and put new curvature into vector.";
         }
         else
         {
             smoothness_map_.insert({topic_name, smoothness_vec});
-            DLOG(INFO) << "In CalculateSmoothness:" << topic_name << " is not in the smoothness map, insert into the map.";
+            // DLOG(INFO) << "In CalculateSmoothness:" << topic_name << " is not in the smoothness map, insert into the map.";
         }
         return 1;
     }
@@ -240,8 +234,12 @@ namespace PathEvaluator
         std::string topic_name = "fitness";
         if (fitness_map_.count(topic_name) > 0)
         {
-            fitness_map_.at(topic_name).clear();
-            fitness_map_.at(topic_name) = fitness_vec->fitness_vec;
+            if (fitness_vec->fitness_vec.size() > 0)
+            {
+                fitness_map_.at(topic_name).resize(fitness_vec->fitness_vec.size());
+                fitness_map_.at(topic_name) = fitness_vec->fitness_vec;
+                // LOG(INFO) << "fitness map size is " << fitness_map_.at(topic_name).size();
+            }
             // DLOG(INFO) << "In CalculateClearance:" << topic_name << " is already in clearance map, clear vector and put new curvature into vector.";
         }
         else
@@ -255,15 +253,13 @@ namespace PathEvaluator
     {
         std::vector<Eigen::Vector3d> vector_3d_vec;
         Utility::ConvertRosPathToVectorVector3D(path, vector_3d_vec);
-        DLOG(INFO) << "path size is " << vector_3d_vec.size();
+        // DLOG(INFO) << "path size is " << vector_3d_vec.size();
         //reverse path since path is from goal to start.
         // std::reverse(vector_3d_vec.begin(), vector_3d_vec.end());
         CalculateCurvature(vector_3d_vec, topic_name);
         CalculateSmoothness(vector_3d_vec, topic_name);
         CalculateClearance(vector_3d_vec, topic_name);
         CalculateSteeringAngle(vector_3d_vec, topic_name);
-        CalculateMetricMap();
-        Plot();
     }
 
     int PathEvaluator::CalculateMetricMap()
@@ -321,13 +317,23 @@ namespace PathEvaluator
         metric_name = "fitness";
         if (metric_map_.count(metric_name) > 0)
         {
+            // fitness_map_.at(topic_name).resize(fitness_vec->fitness_vec.size());
+            // fitness_map_.at(topic_name) = fitness_vec->fitness_vec;
             metric_map_.at(metric_name).clear();
             metric_map_.at(metric_name) = fitness_map_;
+            // for (const auto &item : metric_map_.at(metric_name))
+            // {
+            //     LOG(INFO) << "item size " << item.second.size();
+            // }
             // DLOG(INFO) << "In CalculateClearance:" << metric_name << " is already in clearance map, clear vector and put new curvature into vector.";
         }
         else
         {
             metric_map_.insert({metric_name, fitness_map_});
+            // for (const auto &item : metric_map_.at(metric_name))
+            // {
+            //     LOG(INFO) << "item size " << item.second.size();
+            // }
             // DLOG(INFO) << "In CalculateClearance:" << metric_name << " is not in the clearance map, insert into the map.";
         }
 
@@ -336,6 +342,7 @@ namespace PathEvaluator
 
     void PathEvaluator::Plot()
     {
+        CalculateMetricMap();
         matplotlibcpp::ion();
 
         int metric_size = metric_map_.size();

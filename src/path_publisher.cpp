@@ -48,6 +48,7 @@ void PathPublisher::UpdateFitness(const std::vector<double> &fitness_vec)
 {
 
   fitness_msg_.fitness_vec = fitness_vec;
+  // LOG(INFO) << "fitness msg size is " << fitness_msg_.fitness_vec.size();
 }
 // ___________
 // ADD SEGMENT

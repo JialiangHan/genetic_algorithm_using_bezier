@@ -16,11 +16,11 @@ namespace GeneticAlgorithm
 
     void PiecewiseCubicBezier::GetAnchorPointDirection()
     {
-        //DLOG(INFO) << "GetAnchorPointDirection in:";
+        // DLOG(INFO) << "GetAnchorPointDirection in:";
         anchor_points_dir_vec_.clear();
         if (anchor_points3d_vec_.size() == 0)
         {
-            //DLOG(WARNING) << "anchor points are zero!!!";
+            DLOG(WARNING) << "anchor points are zero!!!";
         }
         else
         {
@@ -34,12 +34,12 @@ namespace GeneticAlgorithm
                 anchor_points_dir_vec_.emplace_back(direction);
             }
         }
-        //DLOG(INFO) << "GetAnchorPointDirection out.";
+        // DLOG(INFO) << "GetAnchorPointDirection out.";
     }
 
     void PiecewiseCubicBezier::CalculateControlPoints()
     {
-        //DLOG(INFO) << "CalculateControlPoints in:";
+        // DLOG(INFO) << "CalculateControlPoints in:";
         control_points_vec_.clear();
         double start_angle = start_point_.z();
         double goal_angle = goal_point_.z();
@@ -52,7 +52,7 @@ namespace GeneticAlgorithm
         Eigen::Vector3d first_control_point, last_control_point;
         uint anchor_points_vec_size = anchor_points3d_vec_.size();
 
-        //DLOG(INFO) << "free anchor points size is " << anchor_points_vec_size << "; " << anchor_points_vec_size + 1 << " bezier!";
+        // DLOG(INFO) << "free anchor points size is " << anchor_points_vec_size << "; " << anchor_points_vec_size + 1 << " bezier!";
         double t_start, t_goal;
         if (anchor_points_vec_size == 0)
         {
@@ -64,7 +64,7 @@ namespace GeneticAlgorithm
 
             control_points_vec_.emplace_back(first_control_point);
             control_points_vec_.emplace_back(last_control_point);
-            //DLOG(INFO) << "start is " << start_point_.x() << " " << start_point_.y() << " angle " << Utility::ConvertRadToDeg(start_point_.z()) << " first control point is " << first_control_point.x() << " " << first_control_point.y() << " t_start is " << t_start << " direction start is " << direction_start.x() << " " << direction_start.y() << " " << direction_start.z();
+            // DLOG(INFO) << "start is " << start_point_.x() << " " << start_point_.y() << " angle " << Utility::ConvertRadToDeg(start_point_.z()) << " first control point is " << first_control_point.x() << " " << first_control_point.y() << " t_start is " << t_start << " direction start is " << direction_start.x() << " " << direction_start.y() << " " << direction_start.z();
         }
         else if (anchor_points_vec_size == 1)
         {
@@ -85,15 +85,13 @@ namespace GeneticAlgorithm
             control_points_vec_.emplace_back(c3);
 
             control_points_vec_.emplace_back(last_control_point);
-            //DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
-            //DLOG(INFO) << "second control point is " << c2.x() << " " << c2.y();
-            //DLOG(INFO) << "anchor  point is " << anchor_point_3d.x() << " " << anchor_point_3d.y();
-            //DLOG(INFO) << "c3 control point is " << c3.x() << " " << c3.y();
-            //DLOG(INFO) << "c4 control point is " << last_control_point.x() << " " << last_control_point.y();
+            // DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
+            // DLOG(INFO) << "second control point is " << c2.x() << " " << c2.y();
+            // DLOG(INFO) << "anchor  point is " << anchor_point_3d.x() << " " << anchor_point_3d.y();
+            // DLOG(INFO) << "c3 control point is " << c3.x() << " " << c3.y();
+            // DLOG(INFO) << "c4 control point is " << last_control_point.x() << " " << last_control_point.y();
         }
 
-        //DLOG(INFO) << "goal is " << goal_2d.x() << " " << goal_2d.y();
-        //DLOG(INFO) << "points vec size is " << points_vec_.size();
         else
         {
             //basically is Ax=b, x is the distance factor, its pre and succ control point is control point pre= anchor-distance_factor*direction.
@@ -150,12 +148,13 @@ namespace GeneticAlgorithm
             }
             control_points_vec_.emplace_back(last_control_point);
         }
-        //DLOG(INFO) << "CalculateControlPoints out.";
+        // DLOG(INFO) << "points vec size is " << points_vec_.size();
+        // DLOG(INFO) << "CalculateControlPoints out.";
     }
 
     void PiecewiseCubicBezier::CalculatePointsVec()
     {
-        //DLOG(INFO) << "CalculatePointsVec in:";
+        // DLOG(INFO) << "CalculatePointsVec in:";
         points_vec_.clear();
 
         points_vec_.emplace_back(start_point_);
@@ -165,7 +164,7 @@ namespace GeneticAlgorithm
         for (uint control_point_index = 0; control_point_index < control_points_vec_.size(); ++control_point_index)
         {
             points_vec_.emplace_back(control_points_vec_[control_point_index]);
-            //DLOG(INFO) << "control point is " << control_points_vec_[control_point_index].x() << " " << control_points_vec_[control_point_index].y();
+            // DLOG(INFO) << "control point is " << control_points_vec_[control_point_index].x() << " " << control_points_vec_[control_point_index].y();
             count++;
             if (count % 3 == 2)
             {
@@ -174,8 +173,8 @@ namespace GeneticAlgorithm
 
                     Eigen::Vector3d anchor_point_3d = anchor_points3d_vec_[anchor_point_index];
                     points_vec_.emplace_back(anchor_point_3d);
-                    //DLOG(INFO) << "anchor point 2d is " << anchor_point_3d.x() << " " << anchor_point_3d.y();
-                    //DLOG(INFO) << "anchor point index is " << anchor_point_index;
+                    // DLOG(INFO) << "anchor point 2d is " << anchor_point_3d.x() << " " << anchor_point_3d.y();
+                    // DLOG(INFO) << "anchor point index is " << anchor_point_index;
                     anchor_point_index++;
                     count++;
                 }
@@ -183,41 +182,41 @@ namespace GeneticAlgorithm
         }
 
         points_vec_.emplace_back(goal_point_);
-        //DLOG(INFO) << "CalculatePointsVec out.";
+        // DLOG(INFO) << "CalculatePointsVec out.";
         // for (const auto &point : points_vec_)
         // {
-        //DLOG(INFO) << "points are " << point.x() << " " << point.y();
+        // DLOG(INFO) << "points are " << point.x() << " " << point.y();
         // }
-        //DLOG(INFO) << "point vec size is " << points_vec_.size();
+        // DLOG(INFO) << "point vec size is " << points_vec_.size();
     }
 
     void PiecewiseCubicBezier::CalculateCubicBezier()
     {
-        //DLOG(INFO) << "CalculateCubicBezier in:";
+        // DLOG(INFO) << "CalculateCubicBezier in:";
         cubic_bezier_vec_.clear();
         Eigen::Matrix<double, 3, 4> points_lists;
         uint j = 0;
         for (uint i = 0; i < points_vec_.size(); ++i)
         {
-            //DLOG(INFO) << "j equal to " << j;
+            // DLOG(INFO) << "j equal to " << j;
             points_lists.block<3, 1>(0, j) = points_vec_[i];
             // points_lists.emplace_back(points_vec_[i]);
-            //DLOG(INFO) << i << "th points are " << points_vec_[i].x() << " " << points_vec_[i].y();
+            // DLOG(INFO) << i << "th points are " << points_vec_[i].x() << " " << points_vec_[i].y();
             j++;
             if (j == 4)
             {
                 cubic_bezier_vec_.emplace_back(CubicBezier::CubicBezier(points_lists));
                 // for (int index = 0; index < 4; index++)
                 // {
-                //DLOG(INFO) << "point x " << points_lists(0, index) << " y " << points_lists(1, index);
+                // DLOG(INFO) << "point x " << points_lists(0, index) << " y " << points_lists(1, index);
                 // }
                 i = i - 1;
 
                 j = 0;
             }
         }
-        //DLOG(INFO) << "CalculateCubicBezier out.";
-        //DLOG(INFO) << "size cubic bezier vec is " << cubic_bezier_vec_.size();
+        // DLOG(INFO) << "CalculateCubicBezier out.";
+        // DLOG(INFO) << "size cubic bezier vec is " << cubic_bezier_vec_.size();
     }
 
     double PiecewiseCubicBezier::GetAngleAt(const double &u)
@@ -226,7 +225,7 @@ namespace GeneticAlgorithm
         int total_number_of_bezier = cubic_bezier_vec_.size();
         if (total_number_of_bezier == 0)
         {
-            //DLOG(INFO) << "No bezier, Please calculate first";
+            DLOG(INFO) << "No bezier, Please calculate first";
             angle = -100000;
         }
         else
@@ -246,7 +245,7 @@ namespace GeneticAlgorithm
         int total_number_of_bezier = cubic_bezier_vec_.size();
         if (total_number_of_bezier == 0)
         {
-            //DLOG(INFO) << "No bezier, Please calculate first";
+            // DLOG(INFO) << "No bezier, Please calculate first";
             out.x() = -10000;
             out.y() = -10000;
         }
@@ -255,7 +254,7 @@ namespace GeneticAlgorithm
             int current_index_of_bezier;
             current_index_of_bezier = (int)std::floor(u * total_number_of_bezier);
             double current_factor = total_number_of_bezier * u - current_index_of_bezier;
-            //DLOG(INFO) << "u is " << u << " total number of bezier is " << total_number_of_bezier << " current index of bezier is " << current_index_of_bezier << " current factor is " << current_factor;
+            // DLOG(INFO) << "u is " << u << " total number of bezier is " << total_number_of_bezier << " current index of bezier is " << current_index_of_bezier << " current factor is " << current_factor;
             out = cubic_bezier_vec_[current_index_of_bezier].GetValueAt(current_factor);
         }
         return out;
@@ -266,17 +265,17 @@ namespace GeneticAlgorithm
         if (cubic_bezier_vec_.size() == 0)
         {
             length_ = 0;
-            //DLOG(INFO) << "length is 0 due to no cubic bezier;";
+            // DLOG(INFO) << "length is 0 due to no cubic bezier;";
         }
         else
         {
             for (auto &cubic_bezier : cubic_bezier_vec_)
             {
                 double cubic_bezier_length = cubic_bezier.GetLength();
-                //DLOG(INFO) << "cubic bezier length is " << cubic_bezier_length;
+                // DLOG(INFO) << "cubic bezier length is " << cubic_bezier_length;
                 length_ += cubic_bezier_length;
             }
-            //DLOG(INFO) << "length is " << length_;
+            // DLOG(INFO) << "length is " << length_;
         }
     }
     double PiecewiseCubicBezier::GetCurvatureAt(const double &u)
@@ -286,7 +285,7 @@ namespace GeneticAlgorithm
         int total_number_of_bezier = cubic_bezier_vec_.size();
         if (total_number_of_bezier == 0)
         {
-            //DLOG(INFO) << "No bezier, Please calculate first";
+            DLOG(INFO) << "No bezier, Please calculate first";
             out = -10000;
         }
         else
@@ -294,7 +293,7 @@ namespace GeneticAlgorithm
             int current_index_of_bezier;
             current_index_of_bezier = (int)std::floor(u * total_number_of_bezier);
             double current_factor = total_number_of_bezier * u - current_index_of_bezier;
-            //DLOG(INFO) << "u is " << u << " total number of bezier is " << total_number_of_bezier << " current index of bezier is " << current_index_of_bezier << " current factor is " << current_factor;
+            // DLOG(INFO) << "u is " << u << " total number of bezier is " << total_number_of_bezier << " current index of bezier is " << current_index_of_bezier << " current factor is " << current_factor;
             out = cubic_bezier_vec_[current_index_of_bezier].GetCurvatureAt(current_factor);
         }
         return out;
@@ -306,16 +305,16 @@ namespace GeneticAlgorithm
         if (cubic_bezier_vec_.size() == 0)
         {
             length_ = 0;
-            //DLOG(INFO) << "length is 0 due to no cubic bezier;";
+            // DLOG(INFO) << "length is 0 due to no cubic bezier;";
         }
         else
         {
             for (auto &cubic_bezier : cubic_bezier_vec_)
             {
-                //DLOG(INFO) << "cubic bezier length is " << cubic_bezier_length;
+                // DLOG(INFO) << "cubic bezier length is " << cubic_bezier.GetTotalCurvature();
                 total_curvature += cubic_bezier.GetTotalCurvature();
             }
-            //DLOG(INFO) << "length is " << length_;
+            // DLOG(INFO) << "length is " << length_;
         }
         return total_curvature;
     }
@@ -323,17 +322,17 @@ namespace GeneticAlgorithm
     std::vector<Eigen::Vector3d> PiecewiseCubicBezier::ConvertPiecewiseCubicBezierToVector3d(const int &number_of_points)
     {
         CalculateCubicBezier();
-        //DLOG(INFO) << "size cubic bezier vec is " << cubic_bezier_vec_.size();
+        // DLOG(INFO) << "size cubic bezier vec is " << cubic_bezier_vec_.size();
         std::vector<Eigen::Vector3d> out;
         int index = 0;
         for (auto &bezier : cubic_bezier_vec_)
         {
             std::vector<Eigen::Vector3d> path;
             path = bezier.ConvertCubicBezierToVector3d(number_of_points);
-            //DLOG(INFO) << index << "th cubic bezier";
+            // DLOG(INFO) << index << "th cubic bezier";
             // for (const auto &point : path)
             // {
-            //DLOG(INFO) << "point x " << point.x() << " y " << point.y();
+            // DLOG(INFO) << "point x " << point.x() << " y " << point.y();
             // }
             out.insert(out.end(), path.begin(), path.end());
             index++;

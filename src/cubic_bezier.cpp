@@ -22,7 +22,7 @@ namespace CubicBezier
         for (int i = 0; i < out.size(); ++i)
         {
             out[i] = std::pow(t, i);
-            //DLOG(INFO) << i << "th element in coefficient matrix is " << out[i];
+            // DLOG(INFO) << i << "th element in coefficient matrix is " << out[i];
         }
         return out;
     }
@@ -34,8 +34,8 @@ namespace CubicBezier
         for (int i = 0; i < out.size(); ++i)
         {
             out[i] = i * (i - 1 < 0 ? 0 : std::pow(t, i - 1));
-            //DLOG(INFO) << "t: " << t << " i-1 " << i - 1 << " std::pow(t, i - 1)" << (std::pow(t, i - 1));
-            //DLOG(INFO) << i << "th element in first order derivation coefficient matrix is " << out[i];
+            // DLOG(INFO) << "t: " << t << " i-1 " << i - 1 << " std::pow(t, i - 1)" << (std::pow(t, i - 1));
+            // DLOG(INFO) << i << "th element in first order derivation coefficient matrix is " << out[i];
         }
         return out;
     }
@@ -46,15 +46,15 @@ namespace CubicBezier
         for (int i = 0; i < out.size(); ++i)
         {
             out[i] = i * (i - 1) * (i - 2 < 0 ? 0 : std::pow(t, i - 2));
-            //DLOG(INFO) << "t: " << t << " i-1 " << i - 1 << " std::pow(t, i - 1)" << (std::pow(t, i - 1));
-            //DLOG(INFO) << i << "th element in first order derivation coefficient matrix is " << out[i];
+            // DLOG(INFO) << "t: " << t << " i-1 " << i - 1 << " std::pow(t, i - 1)" << (std::pow(t, i - 1));
+            // DLOG(INFO) << i << "th element in first order derivation coefficient matrix is " << out[i];
         }
         return out;
     }
     Eigen::Vector3d CubicBezier::GetFirstOrderDerivativeValueAt(const double &t)
     {
         Eigen::Vector3d out;
-        //DLOG(INFO) << "t " << t;
+        // DLOG(INFO) << "t " << t;
         Eigen::Vector4d coefficient = CalculateFirstOrderDerivativeCoefficient(t);
         out = geometrical_constraint_matrix_ * basis_matrix_ * coefficient;
         // DLOG_IF(INFO, out.x() == 0 && out.y() == 0) << "first order derivative coefficient is " << coefficient[0] << " " << coefficient[1] << " " << coefficient[2] << " " << coefficient[3];
@@ -63,7 +63,7 @@ namespace CubicBezier
     Eigen::Vector3d CubicBezier::GetSecondOrderDerivativeValueAt(const double &t)
     {
         Eigen::Vector3d out;
-        //DLOG(INFO) << "t " << t;
+        // DLOG(INFO) << "t " << t;
         out = geometrical_constraint_matrix_ * basis_matrix_ * CalculateSecondOrderDerivativeCoefficient(t);
 
         return out;
@@ -83,34 +83,34 @@ namespace CubicBezier
 
             std::vector<Eigen::Vector2d> polygon;
             polygon = Utility::CreatePolygon(map_width_, map_height_);
-            //DLOG(INFO) << " map width is " << map_width_ << " height is " << map_height_;
+            // DLOG(INFO) << " map width is " << map_width_ << " height is " << map_height_;
             //t is some random number;
             int t = rand() % ((int)std::sqrt(map_width_ * map_width_ + map_height_ * map_height_));
             first_control_point = start_point_ + direction * t;
-            //DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
+            // DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
             int flag = Utility::IsInsidePolygon(polygon, first_control_point);
             while (flag < 1)
             {
                 t = rand() % ((int)std::sqrt(map_width_ * map_width_ + map_height_ * map_height_));
                 first_control_point = start_point_ + direction * t;
-                //DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
+                // DLOG(INFO) << "first control point is " << first_control_point.x() << " " << first_control_point.y();
                 flag = Utility::IsInsidePolygon(polygon, first_control_point);
-                //DLOG(INFO) << " is this point inside map? " << flag;
+                // DLOG(INFO) << " is this point inside map? " << flag;
             }
             direction.x() = std::cos(goal_angle);
             direction.y() = std::sin(goal_angle);
             //t is another random number;
             t = rand() % ((int)std::sqrt(map_width_ * map_width_ + map_height_ * map_height_));
             second_control_point = goal_point_ - direction * t;
-            //DLOG(INFO) << "second control point is " << second_control_point.x() << " " << second_control_point.y();
+            // DLOG(INFO) << "second control point is " << second_control_point.x() << " " << second_control_point.y();
             flag = Utility::IsInsidePolygon(polygon, second_control_point);
             while (flag < 1)
             {
                 t = rand() % ((int)std::sqrt(map_width_ * map_width_ + map_height_ * map_height_));
                 second_control_point = goal_point_ - direction * t;
-                //DLOG(INFO) << "second control point is " << second_control_point.x() << " " << second_control_point.y();
+                // DLOG(INFO) << "second control point is " << second_control_point.x() << " " << second_control_point.y();
                 flag = Utility::IsInsidePolygon(polygon, second_control_point);
-                //DLOG(INFO) << " is this point inside map? " << flag;
+                // DLOG(INFO) << " is this point inside map? " << flag;
             }
         }
         else
@@ -139,7 +139,7 @@ namespace CubicBezier
         anchor_points_vec_.emplace_back(goal_point_);
         // for (const auto &point : anchor_points_vec_)
         // {
-        //DLOG(INFO) << "anchor points is " << point.x() << " " << point.y();
+        // DLOG(INFO) << "anchor points is " << point.x() << " " << point.y();
         // }
     }
 
@@ -153,19 +153,19 @@ namespace CubicBezier
 
     double CubicBezier::GetAngleAt(const double &t)
     {
-        //DLOG(INFO) << "t " << t;
+        // DLOG(INFO) << "t " << t;
         Eigen::Vector3d derivative_value = GetFirstOrderDerivativeValueAt(t);
         double angle = std::atan2(derivative_value.y(), derivative_value.x());
         return angle;
     }
     void CubicBezier::CalculateLength()
     {
-        //DLOG(INFO) << "In calculateLength()";
+        // DLOG(INFO) << "In calculateLength()";
         for (uint i = 0; i < 100; ++i)
         {
             length_ += Utility::ConvertVector3dToVector2d(GetValueAt((i + 1) / 100.0) - GetValueAt(i / 100.0)).norm();
         }
-        //DLOG(INFO) << "length is " << length_;
+        // DLOG(INFO) << "length is " << length_;
     }
     std::vector<Eigen::Vector3d> CubicBezier::ConvertCubicBezierToVector3d(const int &number_of_points)
     {
@@ -178,10 +178,10 @@ namespace CubicBezier
         for (i = 0; i < size + 1; ++i)
         {
             Eigen::Vector3d point3d;
-            //DLOG(INFO) << " i/size = " << (double)i / size;
+            // DLOG(INFO) << " i/size = " << (double)i / size;
             point3d = GetValueAt((double)i / size);
             point3d.z() = GetAngleAt((double)i / size);
-            //DLOG(INFO) << "point3d is " << point3d.x() << " " << point3d.y() << " " << point3d.z();
+            // DLOG(INFO) << "point3d is " << point3d.x() << " " << point3d.y() << " " << point3d.z();
             out.emplace_back(point3d);
         }
         return out;
@@ -190,12 +190,12 @@ namespace CubicBezier
     double CubicBezier::GetTotalCurvature()
     {
         double total_curvature = 0;
-        //DLOG(INFO) << "In calculateLength()";
+        // DLOG(INFO) << "In calculateLength()";
         for (uint i = 0; i < 100; ++i)
         {
             total_curvature += GetCurvatureAt(i / 100.0);
         }
-        //DLOG(INFO) << "total curvature is " << total_curvature;
+        // DLOG(INFO) << "total curvature is " << total_curvature;
         return total_curvature;
     }
 

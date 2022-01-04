@@ -3,7 +3,7 @@
 	<!-- ### add parameters ### -->
 
 	<arg name="deploy_dir" default="/home/jialiang/Code/thesis_ws/src/genetic_algorithm_using_bezier"/>
-	<node name="node_path_evaluator" pkg="genetic_algorithm_using_bezier" type="node_path_evaluator_ga" output="screen" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 --alsologtostderr true"  ></node>
+	<node name="node_path_evaluator" pkg="genetic_algorithm_using_bezier" type="node_path_evaluator_ga" output="screen" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 "  ></node>
 
 
 </launch>

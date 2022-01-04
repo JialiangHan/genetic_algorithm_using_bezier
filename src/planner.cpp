@@ -25,7 +25,7 @@ Planner::Planner()
     sub_map_ = nh_.subscribe("/map", 1, &Planner::SetMap, this);
     sub_goal_ = nh_.subscribe("/move_base_simple/goal", 1, &Planner::SetGoal, this);
     sub_start_ = nh_.subscribe("/initialpose", 1, &Planner::SetStart, this);
-    //DLOG(INFO) << "Initialized finished planner!!";
+    DLOG(INFO) << "Initialized finished planner!!";
 };
 
 //###################################################
@@ -79,7 +79,7 @@ void Planner::SetStart(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr 
     startN.header.frame_id = "map";
     startN.header.stamp = ros::Time::now();
 
-    //DLOG(INFO) << "I am seeing a new start x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
+    DLOG(INFO) << "I am seeing a new start x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
 
     if (grid_->info.height >= y && y >= 0 && grid_->info.width >= x && x >= 0)
     {
@@ -96,7 +96,7 @@ void Planner::SetStart(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr 
     }
     else
     {
-        //DLOG(INFO) << "invalid start x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
+        DLOG(INFO) << "invalid start x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
     }
 }
 
@@ -110,7 +110,7 @@ void Planner::SetGoal(const geometry_msgs::PoseStamped::ConstPtr &end)
     double y = end->pose.position.y / params_.cell_size;
     double t = tf::getYaw(end->pose.orientation);
 
-    //DLOG(INFO) << "I am seeing a new goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
+    DLOG(INFO) << "I am seeing a new goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
 
     if (grid_->info.height >= y && y >= 0 && grid_->info.width >= x && x >= 0)
     {
@@ -124,7 +124,7 @@ void Planner::SetGoal(const geometry_msgs::PoseStamped::ConstPtr &end)
     }
     else
     {
-        //DLOG(INFO) << "invalid goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
+        DLOG(INFO) << "invalid goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
     }
 }
 
@@ -137,13 +137,13 @@ void Planner::MakePlan()
     // if a start as well as goal are defined go ahead and plan
     if (valid_start_ && valid_goal_)
     {
-        //DLOG(INFO) << "valid start and valid goal, start to make plan!";
+        DLOG(INFO) << "valid start and valid goal, start to make plan!";
 
         // ___________________________
         // LISTS ALLOCATED ROW MAJOR ORDER
         uint width = grid_->info.width;
         uint height = grid_->info.height;
-        //DLOG(INFO) << "map size is " << width << " * " << height;
+        DLOG(INFO) << "map size is " << width << " * " << height;
 
         // ________________________
         // retrieving goal position
@@ -152,11 +152,10 @@ void Planner::MakePlan()
         double t = tf::getYaw(goal_.pose.orientation);
         // set theta to a value (0,2PI]
         t = Utility::RadNormalization(t);
-        // const Eigen::Vector3d goal(x, y, t);
-        // const Eigen::Vector3d goal(50, 5, 0);
-        const Eigen::Vector3d goal(22, 20, 0);
-        //DLOG(INFO) << "goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
-
+        const Eigen::Vector3d goal(x, y, t);
+        DLOG(INFO) << "goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
+        // const Eigen::Vector3d goal(55, 5, 0);
+        // const Eigen::Vector3d goal(22, 20, 0);
         // _________________________
         // retrieving start position
         x = start_.pose.pose.position.x / params_.cell_size;
@@ -164,9 +163,9 @@ void Planner::MakePlan()
         t = tf::getYaw(start_.pose.pose.orientation);
         // set theta to a value (0,2PI]
         t = Utility::RadNormalization(t);
-        // const Eigen::Vector3d start(x, y, t);
-        const Eigen::Vector3d start(2, 28, 0);
-        //DLOG(INFO) << "start x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
+        const Eigen::Vector3d start(x, y, t);
+        DLOG(INFO) << "start x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
+        // const Eigen::Vector3d start(2, 28, 0);
 
         std::vector<Eigen::Vector3d> path, points;
         std::vector<double> fitness_vec;
@@ -177,8 +176,13 @@ void Planner::MakePlan()
         bool use_ga = true;
         if (use_ga == true)
         {
-            auto t1 = std::chrono::high_resolution_clock::now();
 
+            auto t1 = std::chrono::high_resolution_clock::now();
+            // GeneticAlgorithm ga(param_manager_->GetGeneticAlgorithmParams());
+            // ga.Initialize(start, goal, grid_);
+            // path = ga.GetPath();
+            // points = ga.GetPoints();
+            // fitness_vec = ga.GetFitnessVec();
             genetic_algorithm_ptr_->Initialize(start, goal, grid_);
             path = genetic_algorithm_ptr_->GetPath();
             points = genetic_algorithm_ptr_->GetPoints();
@@ -187,7 +191,8 @@ void Planner::MakePlan()
 
             std::chrono::duration<double, std::milli> ms_double = t2 - t1;
 
-            LOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz";
+            LOG(INFO) << "TIME in ms: " << ms_double.count() << " frequency is : " << 1 / (ms_double.count() / 1000) << " Hz"
+                      << " number of generation is " << fitness_vec.size() << " final fitness value is " << fitness_vec.back();
         }
         // CLEAR THE PATH
         path_publisher_ptr_->Clear();
@@ -206,6 +211,6 @@ void Planner::MakePlan()
     }
     else
     {
-        //DLOG(INFO) << "missing goal or start";
+        DLOG(INFO) << "missing goal or start";
     }
 }

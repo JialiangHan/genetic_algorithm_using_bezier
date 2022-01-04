@@ -13,23 +13,18 @@ local_search_range_radius : 2
 #  * 
 #  */
 local_search_range_angle: 1
-# position_resolution : 1
-
-# headings : 72
 
 manual : true
-
-# dubins_lookup : false
 
 cell_size : 1
   
 #  population size of chromosome 
-population_size : 20
+population_size : 10
 #  penalty for fitness function
 penalty_fitness : 70
 
   # use to switch mutation mode 
-h_s : 20
+h_s : 7
   #  use to terminate revolution process
-h_t : 50
+h_t : 10
 
