@@ -350,7 +350,7 @@ namespace GeneticAlgorithm
         int number_of_times_in_collsion = collision_detection_ptr_->GetTimesInCollision(piecewise_cubic_bezier);
         double total_curvature = piecewise_cubic_bezier.GetTotalCurvature();
         fitness = 10000 / (path_length + params_.penalty_fitness * number_of_times_in_collsion + total_curvature);
-        DLOG_IF(INFO, std::isnan(fitness)) << "current fitness is " << fitness << " path length is " << path_length << " penalty fitness is " << params_.penalty_fitness << " number of times in collision :" << number_of_times_in_collsion << " total curvature is " << total_curvature;
+        // DLOG_IF(INFO, std::isnan(fitness)) << "current fitness is " << fitness << " path length is " << path_length << " penalty fitness is " << params_.penalty_fitness << " number of times in collision :" << number_of_times_in_collsion << " total curvature is " << total_curvature;
         //DLOG(INFO) << "current fitness is " << fitness << " path length is " << path_length << " for obstacle is " << params_.penalty_fitness * number_of_times_in_collsion << " total curvature is " << total_curvature;
         //DLOG(INFO) << "CalculateFitness out.";
         return fitness;

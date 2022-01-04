@@ -2,7 +2,7 @@
  <!-- Turn on hybrid_astar node -->
 	<arg name="deploy_dir" default="/home/jialiang/Code/thesis_ws/src/genetic_algorithm_using_bezier"/>
 
-	<node name="genetic_algorithm_using_bezier" pkg="genetic_algorithm_using_bezier" type="genetic_algorithm_using_bezier" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 --alsologtostderr true" launch-prefix="xterm -e gdb -ex run --args ">
+	<node name="genetic_algorithm_using_bezier" pkg="genetic_algorithm_using_bezier" type="genetic_algorithm_using_bezier" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 " >
 		<rosparam command="load" file="$(find genetic_algorithm_using_bezier)/param/parameters.yaml" /> 
 	</node>
 	

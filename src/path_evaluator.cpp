@@ -27,10 +27,10 @@ namespace PathEvaluator
         std::vector<double> curvature_vec;
         double curvature;
         DLOG(INFO) << "In CalculateCurvature: " << topic_name << " path size is :" << path.size();
-        for (const auto &point : path)
-        {
-            DLOG(INFO) << "point is " << point.x() << " " << point.y() << " " << point.z();
-        }
+        // for (const auto &point : path)
+        // {
+        //     DLOG(INFO) << "point is " << point.x() << " " << point.y() << " " << point.z();
+        // }
         // use three points to calculate curvature;
         for (uint i = 0; i < path.size() - 2; ++i)
         {
@@ -39,7 +39,7 @@ namespace PathEvaluator
             Eigen::Vector3d xi = path[i + 1];
             Eigen::Vector3d xs = path[i + 2];
 
-            if (xp == xi || xi == xs)
+            if ((xp.x() == xi.x() && xp.y() == xi.y()) || (xs.x() == xi.x() && xs.y() == xi.y()))
             {
                 DLOG(WARNING) << "In CalculateCurvature: some points are equal, skip these points for curvature calculation!!";
                 continue;
@@ -83,15 +83,15 @@ namespace PathEvaluator
                 }
             }
 
-            // DLOG(INFO) << "xp x is :" << xp.x() << " y is: " << xp.y();
-            // DLOG(INFO) << "xi x is :" << xi.x() << " y is: " << xi.y();
-            // DLOG(INFO) << "xs x is :" << xs.x() << " y is: " << xs.y();
-            // DLOG(INFO) << "pre_vector x is :" << pre_vector(0, 0) << "y is: " << pre_vector.y();
-            // DLOG(INFO) << "succ_vector x is :" << succ_vector(0, 0) << "y is: " << succ_vector.y();
-            // DLOG(INFO) << "delta_distance is:" << delta_distance;
-            // DLOG(INFO) << "pre_vector_length is: " << pre_vector_length;
-            // DLOG(INFO) << "delta_angle is: " << delta_angle;
-            // DLOG(INFO) << "In CalculateCurvature:" << i << "th curvature is:" << curvature;
+            DLOG(INFO) << "xp x is :" << xp.x() << " y is: " << xp.y();
+            DLOG(INFO) << "xi x is :" << xi.x() << " y is: " << xi.y();
+            DLOG(INFO) << "xs x is :" << xs.x() << " y is: " << xs.y();
+            DLOG(INFO) << "pre_vector x is :" << pre_vector(0, 0) << "y is: " << pre_vector.y();
+            DLOG(INFO) << "succ_vector x is :" << succ_vector(0, 0) << "y is: " << succ_vector.y();
+            DLOG(INFO) << "delta_distance is:" << delta_distance;
+            DLOG(INFO) << "pre_vector_length is: " << pre_vector_length;
+            DLOG(INFO) << "delta_angle is: " << delta_angle;
+            DLOG(INFO) << "In CalculateCurvature:" << i << "th curvature is:" << curvature;
         }
         if (curvature_map_.count(topic_name) > 0)
         {

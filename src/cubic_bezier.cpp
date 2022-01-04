@@ -174,7 +174,7 @@ namespace CubicBezier
         CalculateLength();
         // uint size = GetLength() / 2;
         uint size = number_of_points;
-        DLOG_IF(WARNING, size == 0) << "path size is zero!!!";
+        // DLOG_IF(WARNING, size == 0) << "path size is zero!!!";
         for (i = 0; i < size + 1; ++i)
         {
             Eigen::Vector3d point3d;
@@ -213,7 +213,7 @@ namespace CubicBezier
             curvature = 100000;
         }
 
-        DLOG_IF(INFO, std::isnan(curvature)) << "curvature at " << t << " is " << curvature << " its first derivative norm is " << first_order_derivative.norm() << " first derivative is " << first_order_derivative.x() << " " << first_order_derivative.y();
+        // DLOG_IF(INFO, std::isnan(curvature)) << "curvature at " << t << " is " << curvature << " its first derivative norm is " << first_order_derivative.norm() << " first derivative is " << first_order_derivative.x() << " " << first_order_derivative.y();
         return curvature;
     }
 }

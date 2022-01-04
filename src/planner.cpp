@@ -153,7 +153,8 @@ void Planner::MakePlan()
         // set theta to a value (0,2PI]
         t = Utility::RadNormalization(t);
         // const Eigen::Vector3d goal(x, y, t);
-        const Eigen::Vector3d goal(50, 5, 0);
+        // const Eigen::Vector3d goal(50, 5, 0);
+        const Eigen::Vector3d goal(22, 20, 0);
         //DLOG(INFO) << "goal x:" << x << " y:" << y << " t:" << Utility::ConvertRadToDeg(t);
 
         // _________________________
