@@ -43,6 +43,12 @@ void PathPublisher::UpdatePoint(const std::vector<Eigen::Vector3d> &point_vec)
     i++;
   }
 }
+
+void PathPublisher::UpdateFitness(const std::vector<double> &fitness_vec)
+{
+
+  fitness_msg_.fitness_vec = fitness_vec;
+}
 // ___________
 // ADD SEGMENT
 void PathPublisher::AddSegment(const Eigen::Vector3d &node)

@@ -51,7 +51,7 @@ namespace CubicBezier
                 0, 0, 0, 1;
             if (point_matrix.rows() != 3 || point_matrix.cols() != 4)
             {
-                // DLOG(WARNING) << "points_vec size is not correct!!!";
+                //DLOG(WARNING) << "points_vec size is not correct!!!";
             }
             else
             {

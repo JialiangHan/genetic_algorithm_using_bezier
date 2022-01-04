@@ -6,7 +6,7 @@
 		<rosparam command="load" file="$(find genetic_algorithm_using_bezier)/param/parameters.yaml" /> 
 	</node>
 	
-	<node name="tf_broadcaster" pkg="genetic_algorithm_using_bezier" type="tf_broadcaster_ga" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 --alsologtostderr true"/>
+	<node name="tf_broadcaster" pkg="genetic_algorithm_using_bezier" type="tf_broadcaster_ga" args="--log_dir $(arg deploy_dir)/log --minloglevel 0 --max_log_size 100 "/>
 
 	<node name="map_server" pkg="map_server" type="map_server" args="$(find genetic_algorithm_using_bezier)/maps/map.yaml" />
 

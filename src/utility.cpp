@@ -133,7 +133,7 @@ namespace Utility
     {
         double out;
         out = p1.x() * p2.y() - p2.x() * p1.y();
-        // DLOG(INFO) << "result is " << out;
+        //DLOG(INFO) << "result is " << out;
         return out;
     }
 
@@ -144,7 +144,7 @@ namespace Utility
             std::max(p1.x(), p2.x()) < std::min(p3.x(), p4.x()) ||
             std::max(p1.y(), p2.y()) < std::min(p3.y(), p4.y()))
         {
-            DLOG(INFO) << "these two segments are far away!";
+            //DLOG(INFO) << "these two segments are far away!";
             return 0;
         }
         else
@@ -152,7 +152,7 @@ namespace Utility
             if (CrossProduct(p1 - p3, p4 - p3) * CrossProduct(p2 - p3, p4 - p3) <= 0 &&
                 CrossProduct(p3 - p2, p1 - p2) * CrossProduct(p4 - p2, p1 - p2) <= 0)
             {
-                DLOG(INFO) << "Intersection!!";
+                //DLOG(INFO) << "Intersection!!";
                 return 1;
             }
             return 0;
@@ -231,20 +231,20 @@ namespace Utility
             //check if point is on polygon edge
             if (OnSegment(polygon[i], polygon[i + 1], point))
             {
-                DLOG(INFO) << "Point is on polygon edge.";
+                //DLOG(INFO) << "Point is on polygon edge.";
                 return 1;
             }
             //if edge intersect with vector from point to far away point
             if (IsIntersect(point, far_away_point, polygon[i], polygon[i + 1]) == 1)
             {
                 Eigen::Vector2d intersection_point = FindIntersectionPoint(point, far_away_point, polygon[i], polygon[i + 1]);
-                DLOG(INFO) << "point horizontal vector is intersecting polygon!";
+                //DLOG(INFO) << "point horizontal vector is intersecting polygon!";
                 if ((polygon[i] - intersection_point).norm() < 1e-3)
                 {
                     if (IsAboveSegment(point, far_away_point, polygon[i + 1]) == 0)
                     {
                         number_intersection += 1;
-                        DLOG(INFO) << "true intersection!! +1";
+                        //DLOG(INFO) << "true intersection!! +1";
                     }
                 }
                 else if ((polygon[i + 1] - intersection_point).norm() < 1e-3)
@@ -252,17 +252,17 @@ namespace Utility
                     if (IsAboveSegment(point, far_away_point, polygon[i]) == 0)
                     {
                         number_intersection += 1;
-                        DLOG(INFO) << "true intersection!! +1";
+                        //DLOG(INFO) << "true intersection!! +1";
                     }
                 }
                 else
                 {
                     number_intersection += 1;
-                    DLOG(INFO) << "true intersection!! +1";
+                    //DLOG(INFO) << "true intersection!! +1";
                 }
             }
         }
-        DLOG(INFO) << "number of intersection is " << number_intersection;
+        //DLOG(INFO) << "number of intersection is " << number_intersection;
         if ((number_intersection % 2) == 0)
         {
             return 0;

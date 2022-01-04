@@ -12,7 +12,7 @@ nav_msgs::OccupancyGridPtr grid;
 
 // map callback
 void setMap(const nav_msgs::OccupancyGrid::Ptr map) {
-  DLOG(INFO) << "Creating transform for map...";
+  //DLOG(INFO) << "Creating transform for map...";
   grid = map;
 }
 

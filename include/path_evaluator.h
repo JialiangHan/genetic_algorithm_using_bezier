@@ -18,6 +18,7 @@
 #include "glog/logging.h"
 #include "gflags/gflags.h"
 #include "genetic_algorithm_using_bezier/FitnessMsgVec.h"
+#include "utility.h"
 namespace PathEvaluator
 {
     class PathEvaluator

@@ -81,6 +81,8 @@ namespace GeneticAlgorithm
        */
       Chromosome GetPoints();
 
+      std::vector<double> GetFitnessVec() { return fitness_vec_; };
+
       void PublishThread();
 
    private:

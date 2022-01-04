@@ -19,7 +19,7 @@ namespace GeneticAlgorithm
   void ParameterManager::GetSingleParam(const std::string &param_name, T &param_data)
   {
     nh_.getParam(param_name, param_data);
-    // DLOG(INFO) << "Load param: " << param_name << " value is :" << param_data;
+    //DLOG(INFO) << "Load param: " << param_name << " value is :" << param_data;
   }
 
   std::shared_ptr<ParameterContainer> ParameterManager::GetAllParams()

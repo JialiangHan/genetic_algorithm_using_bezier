@@ -23,6 +23,7 @@
 #include "parameter_manager.h"
 #include <Eigen/Dense>
 #include "utility.h"
+#include "genetic_algorithm_using_bezier/FitnessMsgVec.h"
 namespace GeneticAlgorithm
 {
     /*!
@@ -41,6 +42,7 @@ namespace GeneticAlgorithm
             // TOPICS TO PUBLISH
                    pub_path_ = nh_.advertise<nav_msgs::Path>(path_topic, 1);
                    pub_path_point_ = nh_.advertise<visualization_msgs::MarkerArray>(path_point_topic, 1);
+                   pub_fitness_ = nh_.advertise<genetic_algorithm_using_bezier::FitnessMsgVec>("/fitness", 1);
                    // CONFIGURE THE CONTAINER
                    path_.header.frame_id = "path";
         }
@@ -53,6 +55,8 @@ namespace GeneticAlgorithm
         void UpdatePath(const std::vector<Eigen::Vector3d> &nodePath);
 
         void UpdatePoint(const std::vector<Eigen::Vector3d> &point_vec);
+
+        void UpdateFitness(const std::vector<double> &fitness_vec);
         /*!
      \brief Adds a segment to the path
      \param node a 3D node
@@ -66,10 +70,12 @@ namespace GeneticAlgorithm
         /// Clears the path
         void Clear();
         /// Publishes the path
-        void PublishPath() { pub_path_.publish(path_); }
+        void PublishPath() { pub_path_.publish(path_); };
         /// Publishes the nodes of the path
 
-        void PublishPathPoints() { pub_path_point_.publish(path_points_); }
+        void PublishPathPoints() { pub_path_point_.publish(path_points_); };
+
+        void PublishFitness() { pub_fitness_.publish(fitness_msg_); };
 
     private:
         /// A handle to the ROS node
@@ -80,10 +86,14 @@ namespace GeneticAlgorithm
         // publisher for all points from bezier
         ros::Publisher pub_path_point_;
 
+        ros::Publisher pub_fitness_;
+
         /// Path data structure for visualization
         nav_msgs::Path path_;
 
         ParameterPathPublisher params_;
         visualization_msgs::MarkerArray path_points_;
+
+        genetic_algorithm_using_bezier::FitnessMsgVec fitness_msg_;
     };
 }
