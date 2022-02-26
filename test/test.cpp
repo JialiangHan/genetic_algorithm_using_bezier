@@ -10,9 +10,6 @@
  */
 
 #include "gtest/gtest.h"
-#include "glog/logging.h"
-#include "gflags/gflags.h"
-#include <eigen3/Eigen/Dense>
 #include "utility.h"
 #include "genetic_algorithm.h"
 

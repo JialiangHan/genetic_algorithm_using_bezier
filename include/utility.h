@@ -35,7 +35,12 @@ namespace Utility
      * @return double 
      */
     double DegNormalization(const double &deg);
-
+    /**
+     * @brief convert angle in deg into [-PI,Pi)
+     * 
+     * @param rad 
+     * @return double 
+     */
     double RadNormalization(const double &rad);
 
     Eigen::Vector2d ConvertVector3dToVector2d(const Eigen::Vector3d &vector_3d);

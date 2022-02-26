@@ -16,12 +16,10 @@
 
 #include <ros/ros.h>
 #include <tf/transform_datatypes.h>
-#include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
 #include <visualization_msgs/MarkerArray.h>
 #include "parameter_manager.h"
-#include <Eigen/Dense>
 #include "utility.h"
 #include "genetic_algorithm_using_bezier/FitnessMsgVec.h"
 namespace GeneticAlgorithm

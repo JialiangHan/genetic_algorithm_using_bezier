@@ -18,8 +18,6 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include "collision_detection.h"
 #include "genetic_algorithm.h"
-#include "glog/logging.h"
-#include "gflags/gflags.h"
 #include "utility.h"
 #include "path_publisher.h"
 #include "parameter_manager.h"

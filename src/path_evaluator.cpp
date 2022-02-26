@@ -9,7 +9,6 @@
  * 
  **/
 #include "path_evaluator.h"
-#include <cmath>
 #include "matplotlibcpp.h"
 #include "utility.h"
 #include <algorithm>

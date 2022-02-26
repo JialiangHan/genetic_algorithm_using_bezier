@@ -10,10 +10,8 @@
  */
 #pragma once
 #include <vector>
-#include <eigen3/Eigen/Dense>
 #include "cubic_bezier.h"
 #include "utility.h"
-#include <cmath>
 namespace GeneticAlgorithm
 {
   class PiecewiseCubicBezier
